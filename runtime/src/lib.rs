@@ -270,6 +270,37 @@ impl pallet_template::Config for Runtime {
 	type Event = Event;
 }
 
+parameter_types! {
+	// choose a fee that incentivizes diseriarize behavior. 
+	pub const NickReservationFee: u128 = 100;
+	pub const MinNickLength: usize = 8;
+	// meximum bounds on storage are important to secure your chain 
+	pub const MaxNickLength: usize = 32;
+}
+
+impl pallet_nicks::Config for Runtime {
+	// the balances pallet implements the ReservableCurrency trait. 
+	type Currency = pallet_balances::Module<Runtime>;
+
+	// use the nickreservationfee from the parameter_types block.
+	type ReservationFee = NickReservationFee;
+
+	// no action is taken when deposits are forfeited. 
+	type Slashed = ();
+
+	// configure the FRAME systems root origin as the nick pallet admin
+	type ForceOrigin = frame_system::EnsureRoot<AccountId>;
+
+	// use the minnicklength from the parameter_types block
+	type MinLength = MinNickLength;
+
+	// use the maxnickkength from the parameter_types block
+	type MaxLength = MaxNickLength;
+
+	// the ubiquitous event type
+	type Event = Event; 
+}
+
 // Create the runtime by composing the FRAME pallets that were previously configured.
 construct_runtime!(
 	pub enum Runtime where
@@ -287,6 +318,7 @@ construct_runtime!(
 		Sudo: pallet_sudo::{Module, Call, Config<T>, Storage, Event<T>},
 		// Include the custom logic from the pallet-template in the runtime.
 		TemplateModule: pallet_template::{Module, Call, Storage, Event<T>},
+		Nicks: pallet_nicks::{Module, Call, Storage, Event<T>},
 	}
 );
 

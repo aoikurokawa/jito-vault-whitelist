@@ -1,0 +1,9 @@
+[workspace]
+members = [
+	"core",
+	"program"
+]
+
+resolver = "2"
+
+[workspace.dependencies]

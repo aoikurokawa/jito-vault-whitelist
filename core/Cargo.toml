@@ -1,8 +1,13 @@
 [package]
-name = "core"
+name = "vault-whitelist-core"
 version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+bytemuck = { workspace = true }
 codama = { workspace = true }
+jito-account-traits-derive = { workspace = true }
+jito-bytemuck = { workspace = true }
 solana-pubkey = { workspace = true }
+solana-program = { workspace = true }
+solana-sdk = { workspace = true }

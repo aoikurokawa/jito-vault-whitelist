@@ -1,8 +1,10 @@
 [package]
-name = "sdk"
+name = "vault-whitelist-sdk"
 version = "0.1.0"
-edition = "2024"
+edition = "2021"
 
 [dependencies]
 codama = { workspace = true }
 solana-pubkey = { workspace = true }
+solana-program = { workspace = true }
+thiserror = { workspace = true }

@@ -465,6 +465,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "codama-cli"
+version = "0.1.0"
+dependencies = [
+ "codama",
+]
+
+[[package]]
 name = "codama-errors"
 version = "0.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2932,6 +2939,7 @@ dependencies = [
 name = "vault-whitelist-program"
 version = "0.1.0"
 dependencies = [
+ "borsh 0.10.4",
  "jito-account-traits-derive",
  "jito-bytemuck",
  "jito-jsm-core",
@@ -2944,6 +2952,7 @@ dependencies = [
 name = "vault-whitelist-sdk"
 version = "0.1.0"
 dependencies = [
+ "borsh 0.10.4",
  "codama",
  "solana-program",
  "solana-pubkey",

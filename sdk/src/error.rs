@@ -1,7 +1,8 @@
+use codama::CodamaErrors;
 use solana_program::program_error::ProgramError;
 use thiserror::Error;
 
-#[derive(Debug, Error, PartialEq, Eq)]
+#[derive(Debug, Error, PartialEq, Eq, CodamaErrors)]
 pub enum VaultWhitelistError {
     #[error("ArithmeticOverflow")]
     ArithmeticOverflow = 3000,

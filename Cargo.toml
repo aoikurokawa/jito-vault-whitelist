@@ -1,5 +1,5 @@
 [workspace]
-members = [
+members = [ "codama-cli",
 	"core",
 	"program"
 , "sdk"]
@@ -7,6 +7,7 @@ members = [
 resolver = "2"
 
 [workspace.dependencies]
+borsh = { version = "0.10.3" }
 bytemuck = { version = "1.16.3", features = ["min_const_generics"] }
 codama = "0.3.0"
 jito-account-traits-derive = { git = "https://github.com/jito-foundation/restaking.git", rev = "9efa55c30b3427d94975b22dcd27a82181c776ba" }

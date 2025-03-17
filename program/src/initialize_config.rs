@@ -28,7 +28,10 @@ pub fn process_initialize_config(program_id: &Pubkey, accounts: &[AccountInfo]) 
         return Err(ProgramError::InvalidAccountData);
     }
 
-    msg!("Initializing NCN Config at address {}", config_info.key);
+    msg!(
+        "Initializing Vault Whitelist at address {}",
+        config_info.key
+    );
     create_account(
         vault_admin_info,
         config_info,

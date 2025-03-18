@@ -1,0 +1,105 @@
+{
+  "kind": "rootNode",
+  "standard": "codama",
+  "version": "1.0.0",
+  "program": {
+    "kind": "programNode",
+    "name": "vaultWhitelistProgram",
+    "publicKey": "env ! (VAULT_WHITELIST_PROGRAM_ID)",
+    "version": "0.1.0",
+    "accounts": [
+      {
+        "kind": "accountNode",
+        "name": "config",
+        "data": {
+          "kind": "structTypeNode",
+          "fields": [
+            {
+              "kind": "structFieldTypeNode",
+              "name": "vault",
+              "type": {
+                "kind": "publicKeyTypeNode"
+              }
+            }
+          ]
+        }
+      }
+    ],
+    "instructions": [
+      {
+        "kind": "instructionNode",
+        "name": "initializeConfig",
+        "accounts": [
+          {
+            "kind": "instructionAccountNode",
+            "name": "configInfo",
+            "isWritable": true,
+            "isSigner": false
+          },
+          {
+            "kind": "instructionAccountNode",
+            "name": "vaultInfo",
+            "isWritable": false,
+            "isSigner": false
+          },
+          {
+            "kind": "instructionAccountNode",
+            "name": "vaultAdminInfo",
+            "isWritable": true,
+            "isSigner": true
+          },
+          {
+            "kind": "instructionAccountNode",
+            "name": "systemProgram",
+            "isWritable": false,
+            "isSigner": false
+          }
+        ],
+        "arguments": [
+          {
+            "kind": "instructionArgumentNode",
+            "name": "discriminator",
+            "defaultValueStrategy": "omitted",
+            "type": {
+              "kind": "numberTypeNode",
+              "format": "u8",
+              "endian": "le"
+            },
+            "defaultValue": {
+              "kind": "numberValueNode",
+              "number": 0
+            }
+          }
+        ],
+        "discriminators": [
+          {
+            "kind": "fieldDiscriminatorNode",
+            "name": "discriminator",
+            "offset": 0
+          }
+        ]
+      }
+    ],
+    "errors": [
+      {
+        "kind": "errorNode",
+        "name": "arithmeticOverflow",
+        "code": 3000,
+        "message": "ArithmeticOverflow"
+      },
+      {
+        "kind": "errorNode",
+        "name": "arithmeticUnderflow",
+        "code": 3001,
+        "message": "ArithmeticUnderflow"
+      },
+      {
+        "kind": "errorNode",
+        "name": "divisionByZero",
+        "code": 3002,
+        "message": "DivisionByZero"
+      }
+    ]
+  },
+  "additionalPrograms": []
+}

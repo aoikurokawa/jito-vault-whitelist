@@ -1,6 +1,24 @@
 [package]
-name = "program"
+name = "vault-whitelist-program"
 version = "0.1.0"
 edition = "2021"
 
+[lib]
+crate-type = ["cdylib", "lib"]
+name = "vault_whitelist_program"
+
+[features]
+no-entrypoint = []
+test-sbf = []
+custom-panic = []
+custom-heap = []
+solana = []
+
 [dependencies]
+borsh = { workspace = true }
+jito-account-traits-derive = { workspace = true }
+jito-bytemuck = { workspace = true }
+jito-jsm-core = { workspace = true }
+solana-program = { workspace = true }
+vault-whitelist-core = { workspace = true }
+vault-whitelist-sdk = { workspace = true }

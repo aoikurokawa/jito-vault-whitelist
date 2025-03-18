@@ -27,15 +27,191 @@ const RAW_RUNTIME_STATE =
       [null, {\
         "packageLocation": "./",\
         "packageDependencies": [\
+          ["@codama/nodes-from-anchor", "npm:1.1.8"],\
+          ["@codama/renderers", "npm:1.0.16"],\
           ["@exo-tech-xyz/nodes-from-anchor", "npm:0.21.3"],\
           ["@exo-tech-xyz/renderers", "npm:0.21.4"],\
           ["@exo-tech-xyz/renderers-js-umi", "npm:0.21.7"],\
           ["@exo-tech-xyz/renderers-rust", "npm:0.21.8"],\
-          ["corepack", "npm:0.29.4"],\
-          ["kinobi", "npm:0.21.1"],\
-          ["yarn", "npm:2.4.3"]\
+          ["codama", "npm:1.2.8"],\
+          ["corepack", "npm:0.29.4"]\
         ],\
         "linkType": "SOFT"\
+      }]\
+    ]],\
+    ["@codama/cli", [\
+      ["npm:1.0.7", {\
+        "packageLocation": "../../../.yarn/berry/cache/@codama-cli-npm-1.0.7-be181c97ba-10c0.zip/node_modules/@codama/cli/",\
+        "packageDependencies": [\
+          ["@codama/cli", "npm:1.0.7"],\
+          ["@codama/nodes", "npm:1.2.8"],\
+          ["@codama/nodes-from-anchor", "npm:1.1.8"],\
+          ["@codama/renderers", "npm:1.0.16"],\
+          ["@codama/renderers-js", "npm:1.2.7"],\
+          ["@codama/renderers-js-umi", "npm:1.1.9"],\
+          ["@codama/renderers-rust", "npm:1.0.16"],\
+          ["@codama/visitors", "npm:1.2.8"],\
+          ["@codama/visitors-core", "npm:1.2.8"],\
+          ["commander", "npm:13.1.0"],\
+          ["picocolors", "npm:1.1.1"],\
+          ["prompts", "npm:2.4.2"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["@codama/errors", [\
+      ["npm:1.2.8", {\
+        "packageLocation": "../../../.yarn/berry/cache/@codama-errors-npm-1.2.8-f1eadb36f6-10c0.zip/node_modules/@codama/errors/",\
+        "packageDependencies": [\
+          ["@codama/errors", "npm:1.2.8"],\
+          ["@codama/node-types", "npm:1.2.8"],\
+          ["chalk", "npm:5.4.1"],\
+          ["commander", "npm:13.1.0"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["@codama/node-types", [\
+      ["npm:1.2.8", {\
+        "packageLocation": "../../../.yarn/berry/cache/@codama-node-types-npm-1.2.8-cb7991fa45-10c0.zip/node_modules/@codama/node-types/",\
+        "packageDependencies": [\
+          ["@codama/node-types", "npm:1.2.8"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["@codama/nodes", [\
+      ["npm:1.2.8", {\
+        "packageLocation": "../../../.yarn/berry/cache/@codama-nodes-npm-1.2.8-e034706de0-10c0.zip/node_modules/@codama/nodes/",\
+        "packageDependencies": [\
+          ["@codama/nodes", "npm:1.2.8"],\
+          ["@codama/errors", "npm:1.2.8"],\
+          ["@codama/node-types", "npm:1.2.8"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["@codama/nodes-from-anchor", [\
+      ["npm:1.1.8", {\
+        "packageLocation": "../../../.yarn/berry/cache/@codama-nodes-from-anchor-npm-1.1.8-9c9b79acbe-10c0.zip/node_modules/@codama/nodes-from-anchor/",\
+        "packageDependencies": [\
+          ["@codama/nodes-from-anchor", "npm:1.1.8"],\
+          ["@codama/errors", "npm:1.2.8"],\
+          ["@codama/nodes", "npm:1.2.8"],\
+          ["@codama/visitors", "npm:1.2.8"],\
+          ["@noble/hashes", "npm:1.7.1"],\
+          ["@solana/codecs", "virtual:9c9b79acbe0b5520d59eba060ca6131056621ebcdc08d7444af6fc625758dffdfda63b10355c5d0d1208d69c9ed57c25c0938f5abeb6622fbccf37888b3c01bd#npm:2.0.0"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["@codama/renderers", [\
+      ["npm:1.0.16", {\
+        "packageLocation": "../../../.yarn/berry/cache/@codama-renderers-npm-1.0.16-621b4b57aa-10c0.zip/node_modules/@codama/renderers/",\
+        "packageDependencies": [\
+          ["@codama/renderers", "npm:1.0.16"],\
+          ["@codama/renderers-js", "npm:1.2.7"],\
+          ["@codama/renderers-js-umi", "npm:1.1.9"],\
+          ["@codama/renderers-rust", "npm:1.0.16"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["@codama/renderers-core", [\
+      ["npm:1.0.10", {\
+        "packageLocation": "../../../.yarn/berry/cache/@codama-renderers-core-npm-1.0.10-cbe3fe12cc-10c0.zip/node_modules/@codama/renderers-core/",\
+        "packageDependencies": [\
+          ["@codama/renderers-core", "npm:1.0.10"],\
+          ["@codama/errors", "npm:1.2.8"],\
+          ["@codama/nodes", "npm:1.2.8"],\
+          ["@codama/visitors-core", "npm:1.2.8"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["@codama/renderers-js", [\
+      ["npm:1.2.7", {\
+        "packageLocation": "../../../.yarn/berry/cache/@codama-renderers-js-npm-1.2.7-2c834cf308-10c0.zip/node_modules/@codama/renderers-js/",\
+        "packageDependencies": [\
+          ["@codama/renderers-js", "npm:1.2.7"],\
+          ["@codama/errors", "npm:1.2.8"],\
+          ["@codama/nodes", "npm:1.2.8"],\
+          ["@codama/nodes-from-anchor", "npm:1.1.8"],\
+          ["@codama/renderers-core", "npm:1.0.10"],\
+          ["@codama/visitors-core", "npm:1.2.8"],\
+          ["@solana/codecs-strings", "virtual:d847478a99135ada673525fb8d8fce9e7cfd12f07929f3ebcfb0cfcbe9a23a1991e556c1628efee9b5a70b6ef1e5bd3af7a1bd22735014a6bd2d26e7ead2e1f5#npm:2.0.0-rc.4"],\
+          ["nunjucks", "virtual:d847478a99135ada673525fb8d8fce9e7cfd12f07929f3ebcfb0cfcbe9a23a1991e556c1628efee9b5a70b6ef1e5bd3af7a1bd22735014a6bd2d26e7ead2e1f5#npm:3.2.4"],\
+          ["prettier", "npm:3.5.3"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["@codama/renderers-js-umi", [\
+      ["npm:1.1.9", {\
+        "packageLocation": "../../../.yarn/berry/cache/@codama-renderers-js-umi-npm-1.1.9-d847478a99-10c0.zip/node_modules/@codama/renderers-js-umi/",\
+        "packageDependencies": [\
+          ["@codama/renderers-js-umi", "npm:1.1.9"],\
+          ["@codama/errors", "npm:1.2.8"],\
+          ["@codama/nodes", "npm:1.2.8"],\
+          ["@codama/renderers-core", "npm:1.0.10"],\
+          ["@codama/validators", "npm:1.2.8"],\
+          ["@codama/visitors-core", "npm:1.2.8"],\
+          ["@solana/codecs-strings", "virtual:d847478a99135ada673525fb8d8fce9e7cfd12f07929f3ebcfb0cfcbe9a23a1991e556c1628efee9b5a70b6ef1e5bd3af7a1bd22735014a6bd2d26e7ead2e1f5#npm:2.0.0-rc.4"],\
+          ["nunjucks", "virtual:d847478a99135ada673525fb8d8fce9e7cfd12f07929f3ebcfb0cfcbe9a23a1991e556c1628efee9b5a70b6ef1e5bd3af7a1bd22735014a6bd2d26e7ead2e1f5#npm:3.2.4"],\
+          ["prettier", "npm:3.5.3"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["@codama/renderers-rust", [\
+      ["npm:1.0.16", {\
+        "packageLocation": "../../../.yarn/berry/cache/@codama-renderers-rust-npm-1.0.16-36d5c3870c-10c0.zip/node_modules/@codama/renderers-rust/",\
+        "packageDependencies": [\
+          ["@codama/renderers-rust", "npm:1.0.16"],\
+          ["@codama/errors", "npm:1.2.8"],\
+          ["@codama/nodes", "npm:1.2.8"],\
+          ["@codama/renderers-core", "npm:1.0.10"],\
+          ["@codama/visitors-core", "npm:1.2.8"],\
+          ["@solana/codecs-strings", "virtual:d847478a99135ada673525fb8d8fce9e7cfd12f07929f3ebcfb0cfcbe9a23a1991e556c1628efee9b5a70b6ef1e5bd3af7a1bd22735014a6bd2d26e7ead2e1f5#npm:2.0.0-rc.4"],\
+          ["nunjucks", "virtual:d847478a99135ada673525fb8d8fce9e7cfd12f07929f3ebcfb0cfcbe9a23a1991e556c1628efee9b5a70b6ef1e5bd3af7a1bd22735014a6bd2d26e7ead2e1f5#npm:3.2.4"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["@codama/validators", [\
+      ["npm:1.2.8", {\
+        "packageLocation": "../../../.yarn/berry/cache/@codama-validators-npm-1.2.8-77611ce169-10c0.zip/node_modules/@codama/validators/",\
+        "packageDependencies": [\
+          ["@codama/validators", "npm:1.2.8"],\
+          ["@codama/errors", "npm:1.2.8"],\
+          ["@codama/nodes", "npm:1.2.8"],\
+          ["@codama/visitors-core", "npm:1.2.8"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["@codama/visitors", [\
+      ["npm:1.2.8", {\
+        "packageLocation": "../../../.yarn/berry/cache/@codama-visitors-npm-1.2.8-d7460446fb-10c0.zip/node_modules/@codama/visitors/",\
+        "packageDependencies": [\
+          ["@codama/visitors", "npm:1.2.8"],\
+          ["@codama/errors", "npm:1.2.8"],\
+          ["@codama/nodes", "npm:1.2.8"],\
+          ["@codama/visitors-core", "npm:1.2.8"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["@codama/visitors-core", [\
+      ["npm:1.2.8", {\
+        "packageLocation": "../../../.yarn/berry/cache/@codama-visitors-core-npm-1.2.8-e60854f2d4-10c0.zip/node_modules/@codama/visitors-core/",\
+        "packageDependencies": [\
+          ["@codama/visitors-core", "npm:1.2.8"],\
+          ["@codama/errors", "npm:1.2.8"],\
+          ["@codama/nodes", "npm:1.2.8"],\
+          ["json-stable-stringify", "npm:1.2.1"]\
+        ],\
+        "linkType": "HARD"\
       }]\
     ]],\
     ["@exo-tech-xyz/errors", [\
@@ -117,8 +293,8 @@ const RAW_RUNTIME_STATE =
           ["@exo-tech-xyz/nodes-from-anchor", "npm:0.21.3"],\
           ["@exo-tech-xyz/renderers-core", "npm:0.21.3"],\
           ["@exo-tech-xyz/visitors-core", "npm:0.21.5"],\
-          ["@solana/codecs-strings", "virtual:c774bcb510715e5103ccbf174409e31b99e62118bc695889b40f928531032e416ddb6917b4e4bdf9caa13bcb881ba0bc8e333119a7e2819b676981bab103c6e3#npm:2.0.0-rc.4"],\
-          ["nunjucks", "virtual:c774bcb510715e5103ccbf174409e31b99e62118bc695889b40f928531032e416ddb6917b4e4bdf9caa13bcb881ba0bc8e333119a7e2819b676981bab103c6e3#npm:3.2.4"],\
+          ["@solana/codecs-strings", "virtual:d847478a99135ada673525fb8d8fce9e7cfd12f07929f3ebcfb0cfcbe9a23a1991e556c1628efee9b5a70b6ef1e5bd3af7a1bd22735014a6bd2d26e7ead2e1f5#npm:2.0.0-rc.4"],\
+          ["nunjucks", "virtual:d847478a99135ada673525fb8d8fce9e7cfd12f07929f3ebcfb0cfcbe9a23a1991e556c1628efee9b5a70b6ef1e5bd3af7a1bd22735014a6bd2d26e7ead2e1f5#npm:3.2.4"],\
           ["prettier", "npm:3.5.3"]\
         ],\
         "linkType": "HARD"\
@@ -134,8 +310,8 @@ const RAW_RUNTIME_STATE =
           ["@exo-tech-xyz/renderers-core", "npm:0.21.3"],\
           ["@exo-tech-xyz/validators", "npm:0.21.5"],\
           ["@exo-tech-xyz/visitors-core", "npm:0.21.5"],\
-          ["@solana/codecs-strings", "virtual:c774bcb510715e5103ccbf174409e31b99e62118bc695889b40f928531032e416ddb6917b4e4bdf9caa13bcb881ba0bc8e333119a7e2819b676981bab103c6e3#npm:2.0.0-rc.4"],\
-          ["nunjucks", "virtual:c774bcb510715e5103ccbf174409e31b99e62118bc695889b40f928531032e416ddb6917b4e4bdf9caa13bcb881ba0bc8e333119a7e2819b676981bab103c6e3#npm:3.2.4"],\
+          ["@solana/codecs-strings", "virtual:d847478a99135ada673525fb8d8fce9e7cfd12f07929f3ebcfb0cfcbe9a23a1991e556c1628efee9b5a70b6ef1e5bd3af7a1bd22735014a6bd2d26e7ead2e1f5#npm:2.0.0-rc.4"],\
+          ["nunjucks", "virtual:d847478a99135ada673525fb8d8fce9e7cfd12f07929f3ebcfb0cfcbe9a23a1991e556c1628efee9b5a70b6ef1e5bd3af7a1bd22735014a6bd2d26e7ead2e1f5#npm:3.2.4"],\
           ["prettier", "npm:3.5.3"]\
         ],\
         "linkType": "HARD"\
@@ -150,8 +326,8 @@ const RAW_RUNTIME_STATE =
           ["@exo-tech-xyz/nodes", "npm:0.21.5"],\
           ["@exo-tech-xyz/renderers-core", "npm:0.21.3"],\
           ["@exo-tech-xyz/visitors-core", "npm:0.21.5"],\
-          ["@solana/codecs-strings", "virtual:c774bcb510715e5103ccbf174409e31b99e62118bc695889b40f928531032e416ddb6917b4e4bdf9caa13bcb881ba0bc8e333119a7e2819b676981bab103c6e3#npm:2.0.0-rc.4"],\
-          ["nunjucks", "virtual:c774bcb510715e5103ccbf174409e31b99e62118bc695889b40f928531032e416ddb6917b4e4bdf9caa13bcb881ba0bc8e333119a7e2819b676981bab103c6e3#npm:3.2.4"]\
+          ["@solana/codecs-strings", "virtual:d847478a99135ada673525fb8d8fce9e7cfd12f07929f3ebcfb0cfcbe9a23a1991e556c1628efee9b5a70b6ef1e5bd3af7a1bd22735014a6bd2d26e7ead2e1f5#npm:2.0.0-rc.4"],\
+          ["nunjucks", "virtual:d847478a99135ada673525fb8d8fce9e7cfd12f07929f3ebcfb0cfcbe9a23a1991e556c1628efee9b5a70b6ef1e5bd3af7a1bd22735014a6bd2d26e7ead2e1f5#npm:3.2.4"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -192,74 +368,6 @@ const RAW_RUNTIME_STATE =
         "linkType": "HARD"\
       }]\
     ]],\
-    ["@kinobi-so/errors", [\
-      ["npm:0.21.1", {\
-        "packageLocation": "../../../.yarn/berry/cache/@kinobi-so-errors-npm-0.21.1-de413f375e-10c0.zip/node_modules/@kinobi-so/errors/",\
-        "packageDependencies": [\
-          ["@kinobi-so/errors", "npm:0.21.1"],\
-          ["@kinobi-so/node-types", "npm:0.21.1"],\
-          ["chalk", "npm:5.4.1"],\
-          ["commander", "npm:12.1.0"]\
-        ],\
-        "linkType": "HARD"\
-      }]\
-    ]],\
-    ["@kinobi-so/node-types", [\
-      ["npm:0.21.1", {\
-        "packageLocation": "../../../.yarn/berry/cache/@kinobi-so-node-types-npm-0.21.1-1604971ed1-10c0.zip/node_modules/@kinobi-so/node-types/",\
-        "packageDependencies": [\
-          ["@kinobi-so/node-types", "npm:0.21.1"]\
-        ],\
-        "linkType": "HARD"\
-      }]\
-    ]],\
-    ["@kinobi-so/nodes", [\
-      ["npm:0.21.1", {\
-        "packageLocation": "../../../.yarn/berry/cache/@kinobi-so-nodes-npm-0.21.1-c7c5ebadea-10c0.zip/node_modules/@kinobi-so/nodes/",\
-        "packageDependencies": [\
-          ["@kinobi-so/nodes", "npm:0.21.1"],\
-          ["@kinobi-so/errors", "npm:0.21.1"],\
-          ["@kinobi-so/node-types", "npm:0.21.1"]\
-        ],\
-        "linkType": "HARD"\
-      }]\
-    ]],\
-    ["@kinobi-so/validators", [\
-      ["npm:0.21.1", {\
-        "packageLocation": "../../../.yarn/berry/cache/@kinobi-so-validators-npm-0.21.1-7b25de1c74-10c0.zip/node_modules/@kinobi-so/validators/",\
-        "packageDependencies": [\
-          ["@kinobi-so/validators", "npm:0.21.1"],\
-          ["@kinobi-so/errors", "npm:0.21.1"],\
-          ["@kinobi-so/nodes", "npm:0.21.1"],\
-          ["@kinobi-so/visitors-core", "npm:0.21.1"]\
-        ],\
-        "linkType": "HARD"\
-      }]\
-    ]],\
-    ["@kinobi-so/visitors", [\
-      ["npm:0.21.1", {\
-        "packageLocation": "../../../.yarn/berry/cache/@kinobi-so-visitors-npm-0.21.1-a7383805d8-10c0.zip/node_modules/@kinobi-so/visitors/",\
-        "packageDependencies": [\
-          ["@kinobi-so/visitors", "npm:0.21.1"],\
-          ["@kinobi-so/errors", "npm:0.21.1"],\
-          ["@kinobi-so/nodes", "npm:0.21.1"],\
-          ["@kinobi-so/visitors-core", "npm:0.21.1"]\
-        ],\
-        "linkType": "HARD"\
-      }]\
-    ]],\
-    ["@kinobi-so/visitors-core", [\
-      ["npm:0.21.1", {\
-        "packageLocation": "../../../.yarn/berry/cache/@kinobi-so-visitors-core-npm-0.21.1-89e5b3aeea-10c0.zip/node_modules/@kinobi-so/visitors-core/",\
-        "packageDependencies": [\
-          ["@kinobi-so/visitors-core", "npm:0.21.1"],\
-          ["@kinobi-so/errors", "npm:0.21.1"],\
-          ["@kinobi-so/nodes", "npm:0.21.1"],\
-          ["json-stable-stringify", "npm:1.2.1"]\
-        ],\
-        "linkType": "HARD"\
-      }]\
-    ]],\
     ["@noble/hashes", [\
       ["npm:1.7.1", {\
         "packageLocation": "../../../.yarn/berry/cache/@noble-hashes-npm-1.7.1-4106ab26c5-10c0.zip/node_modules/@noble/hashes/",\
@@ -269,7 +377,41 @@ const RAW_RUNTIME_STATE =
         "linkType": "HARD"\
       }]\
     ]],\
+    ["@solana/codecs", [\
+      ["npm:2.0.0", {\
+        "packageLocation": "../../../.yarn/berry/cache/@solana-codecs-npm-2.0.0-1c70968422-10c0.zip/node_modules/@solana/codecs/",\
+        "packageDependencies": [\
+          ["@solana/codecs", "npm:2.0.0"]\
+        ],\
+        "linkType": "SOFT"\
+      }],\
+      ["virtual:9c9b79acbe0b5520d59eba060ca6131056621ebcdc08d7444af6fc625758dffdfda63b10355c5d0d1208d69c9ed57c25c0938f5abeb6622fbccf37888b3c01bd#npm:2.0.0", {\
+        "packageLocation": "./.yarn/__virtual__/@solana-codecs-virtual-1636cc9bbb/4/.yarn/berry/cache/@solana-codecs-npm-2.0.0-1c70968422-10c0.zip/node_modules/@solana/codecs/",\
+        "packageDependencies": [\
+          ["@solana/codecs", "virtual:9c9b79acbe0b5520d59eba060ca6131056621ebcdc08d7444af6fc625758dffdfda63b10355c5d0d1208d69c9ed57c25c0938f5abeb6622fbccf37888b3c01bd#npm:2.0.0"],\
+          ["@solana/codecs-core", "virtual:1636cc9bbbb90b57fd5b82ab08ed91f8139db0ba9f513d9eb1aef547f854c98313dcaff6e022b863a970b56cb1281db6658ca77e74344c8bc1db58c8c97fd7e1#npm:2.0.0"],\
+          ["@solana/codecs-data-structures", "virtual:1636cc9bbbb90b57fd5b82ab08ed91f8139db0ba9f513d9eb1aef547f854c98313dcaff6e022b863a970b56cb1281db6658ca77e74344c8bc1db58c8c97fd7e1#npm:2.0.0"],\
+          ["@solana/codecs-numbers", "virtual:1636cc9bbbb90b57fd5b82ab08ed91f8139db0ba9f513d9eb1aef547f854c98313dcaff6e022b863a970b56cb1281db6658ca77e74344c8bc1db58c8c97fd7e1#npm:2.0.0"],\
+          ["@solana/codecs-strings", "virtual:1636cc9bbbb90b57fd5b82ab08ed91f8139db0ba9f513d9eb1aef547f854c98313dcaff6e022b863a970b56cb1281db6658ca77e74344c8bc1db58c8c97fd7e1#npm:2.0.0"],\
+          ["@solana/options", "virtual:1636cc9bbbb90b57fd5b82ab08ed91f8139db0ba9f513d9eb1aef547f854c98313dcaff6e022b863a970b56cb1281db6658ca77e74344c8bc1db58c8c97fd7e1#npm:2.0.0"],\
+          ["@types/typescript", null],\
+          ["typescript", null]\
+        ],\
+        "packagePeers": [\
+          "@types/typescript",\
+          "typescript"\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
     ["@solana/codecs-core", [\
+      ["npm:2.0.0", {\
+        "packageLocation": "../../../.yarn/berry/cache/@solana-codecs-core-npm-2.0.0-9537ef66a5-10c0.zip/node_modules/@solana/codecs-core/",\
+        "packageDependencies": [\
+          ["@solana/codecs-core", "npm:2.0.0"]\
+        ],\
+        "linkType": "SOFT"\
+      }],\
       ["npm:2.0.0-rc.4", {\
         "packageLocation": "../../../.yarn/berry/cache/@solana-codecs-core-npm-2.0.0-rc.4-ebb7527f16-10c0.zip/node_modules/@solana/codecs-core/",\
         "packageDependencies": [\
@@ -277,11 +419,50 @@ const RAW_RUNTIME_STATE =
         ],\
         "linkType": "SOFT"\
       }],\
-      ["virtual:32ef5b8849e975fee57f7da137dbaca0161e17d35b21ce13853cc661e2e9a8b3107f6e94fb5e7617cf9bc99b13666a6e55ef022552d245eb41562113919c30ac#npm:2.0.0-rc.4", {\
-        "packageLocation": "./.yarn/__virtual__/@solana-codecs-core-virtual-c7cfe8aaa3/4/.yarn/berry/cache/@solana-codecs-core-npm-2.0.0-rc.4-ebb7527f16-10c0.zip/node_modules/@solana/codecs-core/",\
+      ["virtual:1636cc9bbbb90b57fd5b82ab08ed91f8139db0ba9f513d9eb1aef547f854c98313dcaff6e022b863a970b56cb1281db6658ca77e74344c8bc1db58c8c97fd7e1#npm:2.0.0", {\
+        "packageLocation": "./.yarn/__virtual__/@solana-codecs-core-virtual-82d71c0bea/4/.yarn/berry/cache/@solana-codecs-core-npm-2.0.0-9537ef66a5-10c0.zip/node_modules/@solana/codecs-core/",\
         "packageDependencies": [\
-          ["@solana/codecs-core", "virtual:32ef5b8849e975fee57f7da137dbaca0161e17d35b21ce13853cc661e2e9a8b3107f6e94fb5e7617cf9bc99b13666a6e55ef022552d245eb41562113919c30ac#npm:2.0.0-rc.4"],\
-          ["@solana/errors", "virtual:32ef5b8849e975fee57f7da137dbaca0161e17d35b21ce13853cc661e2e9a8b3107f6e94fb5e7617cf9bc99b13666a6e55ef022552d245eb41562113919c30ac#npm:2.0.0-rc.4"],\
+          ["@solana/codecs-core", "virtual:1636cc9bbbb90b57fd5b82ab08ed91f8139db0ba9f513d9eb1aef547f854c98313dcaff6e022b863a970b56cb1281db6658ca77e74344c8bc1db58c8c97fd7e1#npm:2.0.0"],\
+          ["@solana/errors", "virtual:82d71c0beab6007cb5b056607af16b64c801df5fbefff6a463ce8b847520aae09744074595f0e025eacc5da5b6acdd31390bdbea10a9910da61a36ede8f15e70#npm:2.0.0"],\
+          ["@types/typescript", null],\
+          ["typescript", null]\
+        ],\
+        "packagePeers": [\
+          "@types/typescript",\
+          "typescript"\
+        ],\
+        "linkType": "HARD"\
+      }],\
+      ["virtual:35994444d2546429e16b86e29bea8d33d4a838bdbcb7fdb5088d8fa4161c99ad65dfc6b913e64bb0c2422362f51725d933312bfadb71da2fc5c3db621dd51e9b#npm:2.0.0-rc.4", {\
+        "packageLocation": "./.yarn/__virtual__/@solana-codecs-core-virtual-4ab9149989/4/.yarn/berry/cache/@solana-codecs-core-npm-2.0.0-rc.4-ebb7527f16-10c0.zip/node_modules/@solana/codecs-core/",\
+        "packageDependencies": [\
+          ["@solana/codecs-core", "virtual:35994444d2546429e16b86e29bea8d33d4a838bdbcb7fdb5088d8fa4161c99ad65dfc6b913e64bb0c2422362f51725d933312bfadb71da2fc5c3db621dd51e9b#npm:2.0.0-rc.4"],\
+          ["@solana/errors", "virtual:35994444d2546429e16b86e29bea8d33d4a838bdbcb7fdb5088d8fa4161c99ad65dfc6b913e64bb0c2422362f51725d933312bfadb71da2fc5c3db621dd51e9b#npm:2.0.0-rc.4"],\
+          ["@types/typescript", null],\
+          ["typescript", null]\
+        ],\
+        "packagePeers": [\
+          "@types/typescript",\
+          "typescript"\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["@solana/codecs-data-structures", [\
+      ["npm:2.0.0", {\
+        "packageLocation": "../../../.yarn/berry/cache/@solana-codecs-data-structures-npm-2.0.0-d0b746fee5-10c0.zip/node_modules/@solana/codecs-data-structures/",\
+        "packageDependencies": [\
+          ["@solana/codecs-data-structures", "npm:2.0.0"]\
+        ],\
+        "linkType": "SOFT"\
+      }],\
+      ["virtual:1636cc9bbbb90b57fd5b82ab08ed91f8139db0ba9f513d9eb1aef547f854c98313dcaff6e022b863a970b56cb1281db6658ca77e74344c8bc1db58c8c97fd7e1#npm:2.0.0", {\
+        "packageLocation": "./.yarn/__virtual__/@solana-codecs-data-structures-virtual-432e8a10a6/4/.yarn/berry/cache/@solana-codecs-data-structures-npm-2.0.0-d0b746fee5-10c0.zip/node_modules/@solana/codecs-data-structures/",\
+        "packageDependencies": [\
+          ["@solana/codecs-data-structures", "virtual:1636cc9bbbb90b57fd5b82ab08ed91f8139db0ba9f513d9eb1aef547f854c98313dcaff6e022b863a970b56cb1281db6658ca77e74344c8bc1db58c8c97fd7e1#npm:2.0.0"],\
+          ["@solana/codecs-core", "virtual:1636cc9bbbb90b57fd5b82ab08ed91f8139db0ba9f513d9eb1aef547f854c98313dcaff6e022b863a970b56cb1281db6658ca77e74344c8bc1db58c8c97fd7e1#npm:2.0.0"],\
+          ["@solana/codecs-numbers", "virtual:1636cc9bbbb90b57fd5b82ab08ed91f8139db0ba9f513d9eb1aef547f854c98313dcaff6e022b863a970b56cb1281db6658ca77e74344c8bc1db58c8c97fd7e1#npm:2.0.0"],\
+          ["@solana/errors", "virtual:82d71c0beab6007cb5b056607af16b64c801df5fbefff6a463ce8b847520aae09744074595f0e025eacc5da5b6acdd31390bdbea10a9910da61a36ede8f15e70#npm:2.0.0"],\
           ["@types/typescript", null],\
           ["typescript", null]\
         ],\
@@ -293,6 +474,13 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["@solana/codecs-numbers", [\
+      ["npm:2.0.0", {\
+        "packageLocation": "../../../.yarn/berry/cache/@solana-codecs-numbers-npm-2.0.0-7b4b321a9f-10c0.zip/node_modules/@solana/codecs-numbers/",\
+        "packageDependencies": [\
+          ["@solana/codecs-numbers", "npm:2.0.0"]\
+        ],\
+        "linkType": "SOFT"\
+      }],\
       ["npm:2.0.0-rc.4", {\
         "packageLocation": "../../../.yarn/berry/cache/@solana-codecs-numbers-npm-2.0.0-rc.4-bd6ecbff2e-10c0.zip/node_modules/@solana/codecs-numbers/",\
         "packageDependencies": [\
@@ -300,12 +488,27 @@ const RAW_RUNTIME_STATE =
         ],\
         "linkType": "SOFT"\
       }],\
-      ["virtual:32ef5b8849e975fee57f7da137dbaca0161e17d35b21ce13853cc661e2e9a8b3107f6e94fb5e7617cf9bc99b13666a6e55ef022552d245eb41562113919c30ac#npm:2.0.0-rc.4", {\
-        "packageLocation": "./.yarn/__virtual__/@solana-codecs-numbers-virtual-f948b6d703/4/.yarn/berry/cache/@solana-codecs-numbers-npm-2.0.0-rc.4-bd6ecbff2e-10c0.zip/node_modules/@solana/codecs-numbers/",\
+      ["virtual:1636cc9bbbb90b57fd5b82ab08ed91f8139db0ba9f513d9eb1aef547f854c98313dcaff6e022b863a970b56cb1281db6658ca77e74344c8bc1db58c8c97fd7e1#npm:2.0.0", {\
+        "packageLocation": "./.yarn/__virtual__/@solana-codecs-numbers-virtual-d6465c12c0/4/.yarn/berry/cache/@solana-codecs-numbers-npm-2.0.0-7b4b321a9f-10c0.zip/node_modules/@solana/codecs-numbers/",\
         "packageDependencies": [\
-          ["@solana/codecs-numbers", "virtual:32ef5b8849e975fee57f7da137dbaca0161e17d35b21ce13853cc661e2e9a8b3107f6e94fb5e7617cf9bc99b13666a6e55ef022552d245eb41562113919c30ac#npm:2.0.0-rc.4"],\
-          ["@solana/codecs-core", "virtual:32ef5b8849e975fee57f7da137dbaca0161e17d35b21ce13853cc661e2e9a8b3107f6e94fb5e7617cf9bc99b13666a6e55ef022552d245eb41562113919c30ac#npm:2.0.0-rc.4"],\
-          ["@solana/errors", "virtual:32ef5b8849e975fee57f7da137dbaca0161e17d35b21ce13853cc661e2e9a8b3107f6e94fb5e7617cf9bc99b13666a6e55ef022552d245eb41562113919c30ac#npm:2.0.0-rc.4"],\
+          ["@solana/codecs-numbers", "virtual:1636cc9bbbb90b57fd5b82ab08ed91f8139db0ba9f513d9eb1aef547f854c98313dcaff6e022b863a970b56cb1281db6658ca77e74344c8bc1db58c8c97fd7e1#npm:2.0.0"],\
+          ["@solana/codecs-core", "virtual:1636cc9bbbb90b57fd5b82ab08ed91f8139db0ba9f513d9eb1aef547f854c98313dcaff6e022b863a970b56cb1281db6658ca77e74344c8bc1db58c8c97fd7e1#npm:2.0.0"],\
+          ["@solana/errors", "virtual:82d71c0beab6007cb5b056607af16b64c801df5fbefff6a463ce8b847520aae09744074595f0e025eacc5da5b6acdd31390bdbea10a9910da61a36ede8f15e70#npm:2.0.0"],\
+          ["@types/typescript", null],\
+          ["typescript", null]\
+        ],\
+        "packagePeers": [\
+          "@types/typescript",\
+          "typescript"\
+        ],\
+        "linkType": "HARD"\
+      }],\
+      ["virtual:35994444d2546429e16b86e29bea8d33d4a838bdbcb7fdb5088d8fa4161c99ad65dfc6b913e64bb0c2422362f51725d933312bfadb71da2fc5c3db621dd51e9b#npm:2.0.0-rc.4", {\
+        "packageLocation": "./.yarn/__virtual__/@solana-codecs-numbers-virtual-8f9109da00/4/.yarn/berry/cache/@solana-codecs-numbers-npm-2.0.0-rc.4-bd6ecbff2e-10c0.zip/node_modules/@solana/codecs-numbers/",\
+        "packageDependencies": [\
+          ["@solana/codecs-numbers", "virtual:35994444d2546429e16b86e29bea8d33d4a838bdbcb7fdb5088d8fa4161c99ad65dfc6b913e64bb0c2422362f51725d933312bfadb71da2fc5c3db621dd51e9b#npm:2.0.0-rc.4"],\
+          ["@solana/codecs-core", "virtual:35994444d2546429e16b86e29bea8d33d4a838bdbcb7fdb5088d8fa4161c99ad65dfc6b913e64bb0c2422362f51725d933312bfadb71da2fc5c3db621dd51e9b#npm:2.0.0-rc.4"],\
+          ["@solana/errors", "virtual:35994444d2546429e16b86e29bea8d33d4a838bdbcb7fdb5088d8fa4161c99ad65dfc6b913e64bb0c2422362f51725d933312bfadb71da2fc5c3db621dd51e9b#npm:2.0.0-rc.4"],\
           ["@types/typescript", null],\
           ["typescript", null]\
         ],\
@@ -317,6 +520,13 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["@solana/codecs-strings", [\
+      ["npm:2.0.0", {\
+        "packageLocation": "../../../.yarn/berry/cache/@solana-codecs-strings-npm-2.0.0-de3462a6c4-10c0.zip/node_modules/@solana/codecs-strings/",\
+        "packageDependencies": [\
+          ["@solana/codecs-strings", "npm:2.0.0"]\
+        ],\
+        "linkType": "SOFT"\
+      }],\
       ["npm:2.0.0-rc.4", {\
         "packageLocation": "../../../.yarn/berry/cache/@solana-codecs-strings-npm-2.0.0-rc.4-a03b9d507a-10c0.zip/node_modules/@solana/codecs-strings/",\
         "packageDependencies": [\
@@ -324,13 +534,33 @@ const RAW_RUNTIME_STATE =
         ],\
         "linkType": "SOFT"\
       }],\
-      ["virtual:c774bcb510715e5103ccbf174409e31b99e62118bc695889b40f928531032e416ddb6917b4e4bdf9caa13bcb881ba0bc8e333119a7e2819b676981bab103c6e3#npm:2.0.0-rc.4", {\
-        "packageLocation": "./.yarn/__virtual__/@solana-codecs-strings-virtual-32ef5b8849/4/.yarn/berry/cache/@solana-codecs-strings-npm-2.0.0-rc.4-a03b9d507a-10c0.zip/node_modules/@solana/codecs-strings/",\
+      ["virtual:1636cc9bbbb90b57fd5b82ab08ed91f8139db0ba9f513d9eb1aef547f854c98313dcaff6e022b863a970b56cb1281db6658ca77e74344c8bc1db58c8c97fd7e1#npm:2.0.0", {\
+        "packageLocation": "./.yarn/__virtual__/@solana-codecs-strings-virtual-2b07374b64/4/.yarn/berry/cache/@solana-codecs-strings-npm-2.0.0-de3462a6c4-10c0.zip/node_modules/@solana/codecs-strings/",\
         "packageDependencies": [\
-          ["@solana/codecs-strings", "virtual:c774bcb510715e5103ccbf174409e31b99e62118bc695889b40f928531032e416ddb6917b4e4bdf9caa13bcb881ba0bc8e333119a7e2819b676981bab103c6e3#npm:2.0.0-rc.4"],\
-          ["@solana/codecs-core", "virtual:32ef5b8849e975fee57f7da137dbaca0161e17d35b21ce13853cc661e2e9a8b3107f6e94fb5e7617cf9bc99b13666a6e55ef022552d245eb41562113919c30ac#npm:2.0.0-rc.4"],\
-          ["@solana/codecs-numbers", "virtual:32ef5b8849e975fee57f7da137dbaca0161e17d35b21ce13853cc661e2e9a8b3107f6e94fb5e7617cf9bc99b13666a6e55ef022552d245eb41562113919c30ac#npm:2.0.0-rc.4"],\
-          ["@solana/errors", "virtual:32ef5b8849e975fee57f7da137dbaca0161e17d35b21ce13853cc661e2e9a8b3107f6e94fb5e7617cf9bc99b13666a6e55ef022552d245eb41562113919c30ac#npm:2.0.0-rc.4"],\
+          ["@solana/codecs-strings", "virtual:1636cc9bbbb90b57fd5b82ab08ed91f8139db0ba9f513d9eb1aef547f854c98313dcaff6e022b863a970b56cb1281db6658ca77e74344c8bc1db58c8c97fd7e1#npm:2.0.0"],\
+          ["@solana/codecs-core", "virtual:1636cc9bbbb90b57fd5b82ab08ed91f8139db0ba9f513d9eb1aef547f854c98313dcaff6e022b863a970b56cb1281db6658ca77e74344c8bc1db58c8c97fd7e1#npm:2.0.0"],\
+          ["@solana/codecs-numbers", "virtual:1636cc9bbbb90b57fd5b82ab08ed91f8139db0ba9f513d9eb1aef547f854c98313dcaff6e022b863a970b56cb1281db6658ca77e74344c8bc1db58c8c97fd7e1#npm:2.0.0"],\
+          ["@solana/errors", "virtual:82d71c0beab6007cb5b056607af16b64c801df5fbefff6a463ce8b847520aae09744074595f0e025eacc5da5b6acdd31390bdbea10a9910da61a36ede8f15e70#npm:2.0.0"],\
+          ["@types/fastestsmallesttextencoderdecoder", null],\
+          ["@types/typescript", null],\
+          ["fastestsmallesttextencoderdecoder", null],\
+          ["typescript", null]\
+        ],\
+        "packagePeers": [\
+          "@types/fastestsmallesttextencoderdecoder",\
+          "@types/typescript",\
+          "fastestsmallesttextencoderdecoder",\
+          "typescript"\
+        ],\
+        "linkType": "HARD"\
+      }],\
+      ["virtual:d847478a99135ada673525fb8d8fce9e7cfd12f07929f3ebcfb0cfcbe9a23a1991e556c1628efee9b5a70b6ef1e5bd3af7a1bd22735014a6bd2d26e7ead2e1f5#npm:2.0.0-rc.4", {\
+        "packageLocation": "./.yarn/__virtual__/@solana-codecs-strings-virtual-35994444d2/4/.yarn/berry/cache/@solana-codecs-strings-npm-2.0.0-rc.4-a03b9d507a-10c0.zip/node_modules/@solana/codecs-strings/",\
+        "packageDependencies": [\
+          ["@solana/codecs-strings", "virtual:d847478a99135ada673525fb8d8fce9e7cfd12f07929f3ebcfb0cfcbe9a23a1991e556c1628efee9b5a70b6ef1e5bd3af7a1bd22735014a6bd2d26e7ead2e1f5#npm:2.0.0-rc.4"],\
+          ["@solana/codecs-core", "virtual:35994444d2546429e16b86e29bea8d33d4a838bdbcb7fdb5088d8fa4161c99ad65dfc6b913e64bb0c2422362f51725d933312bfadb71da2fc5c3db621dd51e9b#npm:2.0.0-rc.4"],\
+          ["@solana/codecs-numbers", "virtual:35994444d2546429e16b86e29bea8d33d4a838bdbcb7fdb5088d8fa4161c99ad65dfc6b913e64bb0c2422362f51725d933312bfadb71da2fc5c3db621dd51e9b#npm:2.0.0-rc.4"],\
+          ["@solana/errors", "virtual:35994444d2546429e16b86e29bea8d33d4a838bdbcb7fdb5088d8fa4161c99ad65dfc6b913e64bb0c2422362f51725d933312bfadb71da2fc5c3db621dd51e9b#npm:2.0.0-rc.4"],\
           ["@types/fastestsmallesttextencoderdecoder", null],\
           ["@types/typescript", null],\
           ["fastestsmallesttextencoderdecoder", null],\
@@ -346,6 +576,13 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["@solana/errors", [\
+      ["npm:2.0.0", {\
+        "packageLocation": "../../../.yarn/berry/cache/@solana-errors-npm-2.0.0-3aae2586cd-10c0.zip/node_modules/@solana/errors/",\
+        "packageDependencies": [\
+          ["@solana/errors", "npm:2.0.0"]\
+        ],\
+        "linkType": "SOFT"\
+      }],\
       ["npm:2.0.0-rc.4", {\
         "packageLocation": "../../../.yarn/berry/cache/@solana-errors-npm-2.0.0-rc.4-a686bc471a-10c0.zip/node_modules/@solana/errors/",\
         "packageDependencies": [\
@@ -353,13 +590,55 @@ const RAW_RUNTIME_STATE =
         ],\
         "linkType": "SOFT"\
       }],\
-      ["virtual:32ef5b8849e975fee57f7da137dbaca0161e17d35b21ce13853cc661e2e9a8b3107f6e94fb5e7617cf9bc99b13666a6e55ef022552d245eb41562113919c30ac#npm:2.0.0-rc.4", {\
-        "packageLocation": "./.yarn/__virtual__/@solana-errors-virtual-cf86843cf9/4/.yarn/berry/cache/@solana-errors-npm-2.0.0-rc.4-a686bc471a-10c0.zip/node_modules/@solana/errors/",\
+      ["virtual:35994444d2546429e16b86e29bea8d33d4a838bdbcb7fdb5088d8fa4161c99ad65dfc6b913e64bb0c2422362f51725d933312bfadb71da2fc5c3db621dd51e9b#npm:2.0.0-rc.4", {\
+        "packageLocation": "./.yarn/__virtual__/@solana-errors-virtual-c5df827806/4/.yarn/berry/cache/@solana-errors-npm-2.0.0-rc.4-a686bc471a-10c0.zip/node_modules/@solana/errors/",\
         "packageDependencies": [\
-          ["@solana/errors", "virtual:32ef5b8849e975fee57f7da137dbaca0161e17d35b21ce13853cc661e2e9a8b3107f6e94fb5e7617cf9bc99b13666a6e55ef022552d245eb41562113919c30ac#npm:2.0.0-rc.4"],\
+          ["@solana/errors", "virtual:35994444d2546429e16b86e29bea8d33d4a838bdbcb7fdb5088d8fa4161c99ad65dfc6b913e64bb0c2422362f51725d933312bfadb71da2fc5c3db621dd51e9b#npm:2.0.0-rc.4"],\
           ["@types/typescript", null],\
           ["chalk", "npm:5.4.1"],\
           ["commander", "npm:12.1.0"],\
+          ["typescript", null]\
+        ],\
+        "packagePeers": [\
+          "@types/typescript",\
+          "typescript"\
+        ],\
+        "linkType": "HARD"\
+      }],\
+      ["virtual:82d71c0beab6007cb5b056607af16b64c801df5fbefff6a463ce8b847520aae09744074595f0e025eacc5da5b6acdd31390bdbea10a9910da61a36ede8f15e70#npm:2.0.0", {\
+        "packageLocation": "./.yarn/__virtual__/@solana-errors-virtual-ab10db2203/4/.yarn/berry/cache/@solana-errors-npm-2.0.0-3aae2586cd-10c0.zip/node_modules/@solana/errors/",\
+        "packageDependencies": [\
+          ["@solana/errors", "virtual:82d71c0beab6007cb5b056607af16b64c801df5fbefff6a463ce8b847520aae09744074595f0e025eacc5da5b6acdd31390bdbea10a9910da61a36ede8f15e70#npm:2.0.0"],\
+          ["@types/typescript", null],\
+          ["chalk", "npm:5.4.1"],\
+          ["commander", "npm:12.1.0"],\
+          ["typescript", null]\
+        ],\
+        "packagePeers": [\
+          "@types/typescript",\
+          "typescript"\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["@solana/options", [\
+      ["npm:2.0.0", {\
+        "packageLocation": "../../../.yarn/berry/cache/@solana-options-npm-2.0.0-d0007e1035-10c0.zip/node_modules/@solana/options/",\
+        "packageDependencies": [\
+          ["@solana/options", "npm:2.0.0"]\
+        ],\
+        "linkType": "SOFT"\
+      }],\
+      ["virtual:1636cc9bbbb90b57fd5b82ab08ed91f8139db0ba9f513d9eb1aef547f854c98313dcaff6e022b863a970b56cb1281db6658ca77e74344c8bc1db58c8c97fd7e1#npm:2.0.0", {\
+        "packageLocation": "./.yarn/__virtual__/@solana-options-virtual-9fa7f87b32/4/.yarn/berry/cache/@solana-options-npm-2.0.0-d0007e1035-10c0.zip/node_modules/@solana/options/",\
+        "packageDependencies": [\
+          ["@solana/options", "virtual:1636cc9bbbb90b57fd5b82ab08ed91f8139db0ba9f513d9eb1aef547f854c98313dcaff6e022b863a970b56cb1281db6658ca77e74344c8bc1db58c8c97fd7e1#npm:2.0.0"],\
+          ["@solana/codecs-core", "virtual:1636cc9bbbb90b57fd5b82ab08ed91f8139db0ba9f513d9eb1aef547f854c98313dcaff6e022b863a970b56cb1281db6658ca77e74344c8bc1db58c8c97fd7e1#npm:2.0.0"],\
+          ["@solana/codecs-data-structures", "virtual:1636cc9bbbb90b57fd5b82ab08ed91f8139db0ba9f513d9eb1aef547f854c98313dcaff6e022b863a970b56cb1281db6658ca77e74344c8bc1db58c8c97fd7e1#npm:2.0.0"],\
+          ["@solana/codecs-numbers", "virtual:1636cc9bbbb90b57fd5b82ab08ed91f8139db0ba9f513d9eb1aef547f854c98313dcaff6e022b863a970b56cb1281db6658ca77e74344c8bc1db58c8c97fd7e1#npm:2.0.0"],\
+          ["@solana/codecs-strings", "virtual:1636cc9bbbb90b57fd5b82ab08ed91f8139db0ba9f513d9eb1aef547f854c98313dcaff6e022b863a970b56cb1281db6658ca77e74344c8bc1db58c8c97fd7e1#npm:2.0.0"],\
+          ["@solana/errors", "virtual:82d71c0beab6007cb5b056607af16b64c801df5fbefff6a463ce8b847520aae09744074595f0e025eacc5da5b6acdd31390bdbea10a9910da61a36ede8f15e70#npm:2.0.0"],\
+          ["@types/typescript", null],\
           ["typescript", null]\
         ],\
         "packagePeers": [\
@@ -431,11 +710,32 @@ const RAW_RUNTIME_STATE =
         "linkType": "HARD"\
       }]\
     ]],\
+    ["codama", [\
+      ["npm:1.2.8", {\
+        "packageLocation": "../../../.yarn/berry/cache/codama-npm-1.2.8-d477d05fb1-10c0.zip/node_modules/codama/",\
+        "packageDependencies": [\
+          ["codama", "npm:1.2.8"],\
+          ["@codama/cli", "npm:1.0.7"],\
+          ["@codama/errors", "npm:1.2.8"],\
+          ["@codama/nodes", "npm:1.2.8"],\
+          ["@codama/validators", "npm:1.2.8"],\
+          ["@codama/visitors", "npm:1.2.8"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
     ["commander", [\
       ["npm:12.1.0", {\
         "packageLocation": "../../../.yarn/berry/cache/commander-npm-12.1.0-65c868e907-10c0.zip/node_modules/commander/",\
         "packageDependencies": [\
           ["commander", "npm:12.1.0"]\
+        ],\
+        "linkType": "HARD"\
+      }],\
+      ["npm:13.1.0", {\
+        "packageLocation": "../../../.yarn/berry/cache/commander-npm-13.1.0-bdbbfaaf9d-10c0.zip/node_modules/commander/",\
+        "packageDependencies": [\
+          ["commander", "npm:13.1.0"]\
         ],\
         "linkType": "HARD"\
       }],\
@@ -617,15 +917,11 @@ const RAW_RUNTIME_STATE =
         "linkType": "HARD"\
       }]\
     ]],\
-    ["kinobi", [\
-      ["npm:0.21.1", {\
-        "packageLocation": "../../../.yarn/berry/cache/kinobi-npm-0.21.1-2381b9bcb5-10c0.zip/node_modules/kinobi/",\
+    ["kleur", [\
+      ["npm:3.0.3", {\
+        "packageLocation": "../../../.yarn/berry/cache/kleur-npm-3.0.3-f6f53649a4-10c0.zip/node_modules/kleur/",\
         "packageDependencies": [\
-          ["kinobi", "npm:0.21.1"],\
-          ["@kinobi-so/errors", "npm:0.21.1"],\
-          ["@kinobi-so/nodes", "npm:0.21.1"],\
-          ["@kinobi-so/validators", "npm:0.21.1"],\
-          ["@kinobi-so/visitors", "npm:0.21.1"]\
+          ["kleur", "npm:3.0.3"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -647,10 +943,10 @@ const RAW_RUNTIME_STATE =
         ],\
         "linkType": "SOFT"\
       }],\
-      ["virtual:c774bcb510715e5103ccbf174409e31b99e62118bc695889b40f928531032e416ddb6917b4e4bdf9caa13bcb881ba0bc8e333119a7e2819b676981bab103c6e3#npm:3.2.4", {\
-        "packageLocation": "./.yarn/__virtual__/nunjucks-virtual-5d46929f89/4/.yarn/berry/cache/nunjucks-npm-3.2.4-c2cdc53bf5-10c0.zip/node_modules/nunjucks/",\
+      ["virtual:d847478a99135ada673525fb8d8fce9e7cfd12f07929f3ebcfb0cfcbe9a23a1991e556c1628efee9b5a70b6ef1e5bd3af7a1bd22735014a6bd2d26e7ead2e1f5#npm:3.2.4", {\
+        "packageLocation": "./.yarn/__virtual__/nunjucks-virtual-1bbc84d3ad/4/.yarn/berry/cache/nunjucks-npm-3.2.4-c2cdc53bf5-10c0.zip/node_modules/nunjucks/",\
         "packageDependencies": [\
-          ["nunjucks", "virtual:c774bcb510715e5103ccbf174409e31b99e62118bc695889b40f928531032e416ddb6917b4e4bdf9caa13bcb881ba0bc8e333119a7e2819b676981bab103c6e3#npm:3.2.4"],\
+          ["nunjucks", "virtual:d847478a99135ada673525fb8d8fce9e7cfd12f07929f3ebcfb0cfcbe9a23a1991e556c1628efee9b5a70b6ef1e5bd3af7a1bd22735014a6bd2d26e7ead2e1f5#npm:3.2.4"],\
           ["@types/chokidar", null],\
           ["a-sync-waterfall", "npm:1.0.1"],\
           ["asap", "npm:2.0.6"],\
@@ -673,11 +969,31 @@ const RAW_RUNTIME_STATE =
         "linkType": "HARD"\
       }]\
     ]],\
+    ["picocolors", [\
+      ["npm:1.1.1", {\
+        "packageLocation": "../../../.yarn/berry/cache/picocolors-npm-1.1.1-4fede47cf1-10c0.zip/node_modules/picocolors/",\
+        "packageDependencies": [\
+          ["picocolors", "npm:1.1.1"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
     ["prettier", [\
       ["npm:3.5.3", {\
         "packageLocation": "./.yarn/unplugged/prettier-npm-3.5.3-787132ce04/node_modules/prettier/",\
         "packageDependencies": [\
           ["prettier", "npm:3.5.3"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["prompts", [\
+      ["npm:2.4.2", {\
+        "packageLocation": "../../../.yarn/berry/cache/prompts-npm-2.4.2-f5d25d5eea-10c0.zip/node_modules/prompts/",\
+        "packageDependencies": [\
+          ["prompts", "npm:2.4.2"],\
+          ["kleur", "npm:3.0.3"],\
+          ["sisteransi", "npm:1.0.5"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -697,29 +1013,30 @@ const RAW_RUNTIME_STATE =
         "linkType": "HARD"\
       }]\
     ]],\
+    ["sisteransi", [\
+      ["npm:1.0.5", {\
+        "packageLocation": "../../../.yarn/berry/cache/sisteransi-npm-1.0.5-af60cc0cfa-10c0.zip/node_modules/sisteransi/",\
+        "packageDependencies": [\
+          ["sisteransi", "npm:1.0.5"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
     ["vault-whitelist", [\
       ["workspace:.", {\
         "packageLocation": "./",\
         "packageDependencies": [\
           ["vault-whitelist", "workspace:."],\
+          ["@codama/nodes-from-anchor", "npm:1.1.8"],\
+          ["@codama/renderers", "npm:1.0.16"],\
           ["@exo-tech-xyz/nodes-from-anchor", "npm:0.21.3"],\
           ["@exo-tech-xyz/renderers", "npm:0.21.4"],\
           ["@exo-tech-xyz/renderers-js-umi", "npm:0.21.7"],\
           ["@exo-tech-xyz/renderers-rust", "npm:0.21.8"],\
-          ["corepack", "npm:0.29.4"],\
-          ["kinobi", "npm:0.21.1"],\
-          ["yarn", "npm:2.4.3"]\
+          ["codama", "npm:1.2.8"],\
+          ["corepack", "npm:0.29.4"]\
         ],\
         "linkType": "SOFT"\
-      }]\
-    ]],\
-    ["yarn", [\
-      ["npm:2.4.3", {\
-        "packageLocation": "../../../.yarn/berry/cache/yarn-npm-2.4.3-6ff8fd49d4-10c0.zip/node_modules/yarn/",\
-        "packageDependencies": [\
-          ["yarn", "npm:2.4.3"]\
-        ],\
-        "linkType": "HARD"\
       }]\
     ]]\
   ]\

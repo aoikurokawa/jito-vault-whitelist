@@ -10,7 +10,7 @@ use solana_program::{
     pubkey::Pubkey, rent::Rent, sysvar::Sysvar,
 };
 
-/// Process Initialize Config
+/// Process initializing Config
 pub fn process_initialize_config(program_id: &Pubkey, accounts: &[AccountInfo]) -> ProgramResult {
     let [config_info, vault_info, vault_admin_info, system_program_info] = accounts else {
         return Err(ProgramError::NotEnoughAccountKeys);
@@ -29,10 +29,7 @@ pub fn process_initialize_config(program_id: &Pubkey, accounts: &[AccountInfo]) 
         return Err(ProgramError::InvalidAccountData);
     }
 
-    msg!(
-        "Initializing Vault Whitelist at address {}",
-        config_info.key
-    );
+    msg!("Initializing Config at address {}", config_info.key);
     create_account(
         vault_admin_info,
         config_info,

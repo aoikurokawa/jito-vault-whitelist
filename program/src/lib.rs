@@ -1,13 +1,15 @@
 use borsh::BorshDeserialize;
 use const_str_to_pubkey::str_to_pubkey;
 use initialize_config::process_initialize_config;
+use initialize_whitelist::process_initialize_whitelist;
 use jito_vault_whitelist_sdk::instruction::VaultWhitelistInstruction;
 use solana_program::{
     account_info::AccountInfo, declare_id, entrypoint::ProgramResult, msg,
     program_error::ProgramError, pubkey::Pubkey,
 };
 
-pub mod initialize_config;
+mod initialize_config;
+mod initialize_whitelist;
 
 declare_id!(str_to_pubkey(env!("VAULT_WHITELIST_PROGRAM_ID")));
 
@@ -29,6 +31,11 @@ pub fn process_instruction(
         VaultWhitelistInstruction::InitializeConfig => {
             msg!("Instruction: InitializeConfig");
             process_initialize_config(program_id, accounts)
+        }
+
+        VaultWhitelistInstruction::InitializeWhitelist { meta_merkle_root } => {
+            msg!("Instruction: InitializeWhitelist");
+            process_initialize_whitelist(program_id, accounts, &meta_merkle_root)
         }
     }
 }

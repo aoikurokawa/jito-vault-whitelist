@@ -33,8 +33,8 @@ serde_json = "1.0.133"
 serde_with = "3.9.0"
 shank = "0.4.2"
 shank_idl = "0.4.2"
-solana-program = "~2.1"
-solana-sdk = "~2.1"
+solana-program = "2.1"
+solana-sdk = "2.1"
 thiserror = "1.0.57"
 vault-whitelist-core = { path = "./core" }
 vault-whitelist-sdk = { path = "./sdk" }

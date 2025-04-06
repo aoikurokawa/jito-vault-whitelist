@@ -1,0 +1,28 @@
+{
+  "name": "vault-whitelist",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "generate-clients": "ts-node scripts/generate-clients.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.7.0",
+  "dependencies": {
+    "@exo-tech-xyz/nodes-from-anchor": "0.21.3",
+    "@exo-tech-xyz/renderers": "0.21.4",
+    "@exo-tech-xyz/renderers-js-umi": "0.21.7",
+    "@exo-tech-xyz/renderers-rust": "0.21.8",
+    "@types/node": "^22.14.0",
+    "corepack": "^0.29.3",
+    "kinobi": "^0.22.0",
+    "path": "^0.12.7"
+  },
+  "devDependencies": {
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3"
+  }
+}

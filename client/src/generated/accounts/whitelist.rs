@@ -11,17 +11,19 @@ use solana_program::pubkey::Pubkey;
 
 #[derive(BorshSerialize, BorshDeserialize, Clone, Debug, Eq, PartialEq)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub struct Config {
+pub struct Whitelist {
     pub discriminator: u64,
     #[cfg_attr(
         feature = "serde",
         serde(with = "serde_with::As::<serde_with::DisplayFromStr>")
     )]
-    pub admin: Pubkey,
+    pub vault: Pubkey,
+    pub meta_merkle_root: [u8; 32],
+    pub bump: u8,
 }
 
-impl Config {
-    pub const LEN: usize = 32;
+impl Whitelist {
+    pub const LEN: usize = 65;
 
     #[inline(always)]
     pub fn from_bytes(data: &[u8]) -> Result<Self, std::io::Error> {
@@ -30,7 +32,7 @@ impl Config {
     }
 }
 
-impl<'a> TryFrom<&solana_program::account_info::AccountInfo<'a>> for Config {
+impl<'a> TryFrom<&solana_program::account_info::AccountInfo<'a>> for Whitelist {
     type Error = std::io::Error;
 
     fn try_from(
@@ -42,21 +44,21 @@ impl<'a> TryFrom<&solana_program::account_info::AccountInfo<'a>> for Config {
 }
 
 #[cfg(feature = "anchor")]
-impl anchor_lang::AccountDeserialize for Config {
+impl anchor_lang::AccountDeserialize for Whitelist {
     fn try_deserialize_unchecked(buf: &mut &[u8]) -> anchor_lang::Result<Self> {
         Ok(Self::deserialize(buf)?)
     }
 }
 
 #[cfg(feature = "anchor")]
-impl anchor_lang::AccountSerialize for Config {}
+impl anchor_lang::AccountSerialize for Whitelist {}
 
 #[cfg(feature = "anchor")]
-impl anchor_lang::Owner for Config {
+impl anchor_lang::Owner for Whitelist {
     fn owner() -> Pubkey {
         crate::JITO_VAULT_WHITELIST_ID
     }
 }
 
 #[cfg(feature = "anchor-idl-build")]
-impl anchor_lang::IdlBuild for Config {}
+impl anchor_lang::IdlBuild for Whitelist {}

@@ -6,5 +6,7 @@
 //!
 
 pub(crate) mod r#config;
+pub(crate) mod r#whitelist;
 
 pub use self::r#config::*;
+pub use self::r#whitelist::*;

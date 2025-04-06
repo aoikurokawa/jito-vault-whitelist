@@ -4,9 +4,8 @@ use shank::ShankInstruction;
 #[derive(Debug, BorshSerialize, BorshDeserialize, ShankInstruction)]
 pub enum VaultWhitelistInstruction {
     #[account(0, writable, name = "config")]
-    #[account(1, name = "vault")]
-    #[account(2, writable, signer, name = "vault_admin")]
-    #[account(3, name = "system_program")]
+    #[account(1, writable, signer, name = "admin")]
+    #[account(2, name = "system_program")]
     InitializeConfig,
 
     #[account(0, name = "config")]

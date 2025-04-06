@@ -8,23 +8,23 @@ use solana_program::{account_info::AccountInfo, program_error::ProgramError};
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Pod, Zeroable, AccountDeserialize, ShankAccount)]
 #[repr(C)]
 pub struct Config {
-    pub vault: Pubkey,
+    admin: Pubkey,
 }
 
 impl Config {
-    /// Initiallize Config
-    pub const fn new(vault: Pubkey) -> Self {
-        Self { vault }
+    /// Initialize Config
+    pub const fn new(admin: Pubkey) -> Self {
+        Self { admin }
     }
 
     /// Seeds of Config Account
-    pub fn seeds(vault: &Pubkey) -> Vec<Vec<u8>> {
-        vec![b"config".to_vec(), vault.to_bytes().to_vec()]
+    pub fn seeds() -> Vec<Vec<u8>> {
+        vec![b"config".to_vec()]
     }
 
     /// Find the program address of Config Account
-    pub fn find_program_address(program_id: &Pubkey, vault: &Pubkey) -> (Pubkey, u8, Vec<Vec<u8>>) {
-        let seeds = Self::seeds(vault);
+    pub fn find_program_address(program_id: &Pubkey) -> (Pubkey, u8, Vec<Vec<u8>>) {
+        let seeds = Self::seeds();
         let seeds_iter: Vec<_> = seeds.iter().map(|s| s.as_slice()).collect();
         let (pda, bump) = Pubkey::find_program_address(&seeds_iter, program_id);
         (pda, bump, seeds)
@@ -34,7 +34,6 @@ impl Config {
     pub fn load(
         program_id: &Pubkey,
         account: &AccountInfo,
-        vault: &Pubkey,
         expect_writable: bool,
     ) -> Result<(), ProgramError> {
         if account.owner.ne(program_id) {
@@ -53,10 +52,7 @@ impl Config {
             msg!("Config account discriminator is invalid");
             return Err(ProgramError::InvalidAccountData);
         }
-        if account
-            .key
-            .ne(&Self::find_program_address(program_id, vault).0)
-        {
+        if account.key.ne(&Self::find_program_address(program_id).0) {
             msg!("Config account is not at the correct PDA");
             return Err(ProgramError::InvalidAccountData);
         }

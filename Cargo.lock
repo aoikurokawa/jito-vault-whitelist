@@ -2446,6 +2446,14 @@ dependencies = [
 [[package]]
 name = "vault-whitelist-core"
 version = "0.1.0"
+dependencies = [
+ "bytemuck",
+ "jito-account-traits-derive",
+ "jito-bytemuck",
+ "shank",
+ "solana-program",
+ "solana-sdk",
+]
 
 [[package]]
 name = "vault-whitelist-program"

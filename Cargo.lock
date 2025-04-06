@@ -1341,7 +1341,7 @@ dependencies = [
 
 [[package]]
 name = "jito-vault-whitelist-client"
-version = "0.1.0"
+version = "0.0.1"
 dependencies = [
  "anchor-lang",
  "borsh 0.10.4",
@@ -1356,7 +1356,7 @@ dependencies = [
 
 [[package]]
 name = "jito-vault-whitelist-core"
-version = "0.1.0"
+version = "0.0.1"
 dependencies = [
  "bytemuck",
  "jito-account-traits-derive",
@@ -1367,7 +1367,7 @@ dependencies = [
 
 [[package]]
 name = "jito-vault-whitelist-program"
-version = "0.1.0"
+version = "0.0.1"
 dependencies = [
  "borsh 0.10.4",
  "const_str_to_pubkey",
@@ -1380,7 +1380,7 @@ dependencies = [
 
 [[package]]
 name = "jito-vault-whitelist-sdk"
-version = "0.1.0"
+version = "0.0.1"
 dependencies = [
  "borsh 0.10.4",
  "shank",
@@ -2118,7 +2118,7 @@ dependencies = [
 
 [[package]]
 name = "shank-cli"
-version = "0.1.0"
+version = "0.0.1"
 dependencies = [
  "anyhow",
  "env_logger 0.10.2",

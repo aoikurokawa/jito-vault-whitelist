@@ -20,5 +20,7 @@ shank = { workspace = true }
 solana-program = { workspace = true }
 solana-program-test = { workspace = true }
 solana-sdk = { workspace = true }
+spl-associated-token-account = { workspace = true }
+spl-token = { workspace = true }
 thiserror = { workspace = true }
 tokio = { workspace = true }

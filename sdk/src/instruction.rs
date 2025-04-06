@@ -1,11 +1,11 @@
 use borsh::{BorshDeserialize, BorshSerialize};
-use codama::{codama, CodamaInstruction, CodamaInstructions};
+use shank::ShankInstruction;
 
-#[derive(Debug, BorshSerialize, BorshDeserialize, CodamaInstructions)]
+#[derive(Debug, BorshSerialize, BorshDeserialize, ShankInstruction)]
 pub enum VaultWhitelistInstruction {
-    #[codama(account(name = "config_info", writable))]
-    #[codama(account(name = "vault_info"))]
-    #[codama(account(name = "vault_admin_info", writable, signer))]
-    #[codama(account(name = "system_program"))]
+    #[account(0, writable, name = "config")]
+    #[account(1, name = "vault")]
+    #[account(2, writable, signer, name = "vault_admin")]
+    #[account(3, name = "system_program")]
     InitializeConfig,
 }

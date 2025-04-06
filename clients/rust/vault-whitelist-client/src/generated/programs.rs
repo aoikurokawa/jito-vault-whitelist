@@ -4,8 +4,3 @@
 //!
 //! <https://github.com/codama-idl/codama>
 //!
-
-use solana_program::{pubkey, pubkey::Pubkey};
-
-/// `` program ID.
-pub const _ID: Pubkey = pubkey!("");

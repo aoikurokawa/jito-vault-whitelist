@@ -1,7 +1,6 @@
 [workspace]
 members = [
 	"clients/rust/vault-whitelist-client",
-	"codama-cli",
 	"core",
 	"program",
 	"sdk"

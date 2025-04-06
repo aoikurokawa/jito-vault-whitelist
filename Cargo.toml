@@ -9,6 +9,11 @@ members = [
 
 resolver = "2"
 
+[workspace.package]
+version = "0.0.1"
+edition = "2021"
+readme = "README.md"
+
 [workspace.dependencies]
 anchor-lang = { git = "https://github.com/coral-xyz/anchor", rev = "96ed3b791c6fed9ab64cb138397795fe55991280", features = ["idl-build"] }
 anyhow = "1.0.97"

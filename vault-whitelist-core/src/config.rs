@@ -2,8 +2,8 @@ use bytemuck::{Pod, Zeroable};
 use jito_bytemuck::{AccountDeserialize, Discriminator};
 use shank::ShankAccount;
 use solana_program::msg;
-use solana_program::pubkey::Pubkey;
 use solana_program::{account_info::AccountInfo, program_error::ProgramError};
+use solana_sdk::pubkey::Pubkey;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Pod, Zeroable, AccountDeserialize, ShankAccount)]
 #[repr(C)]

@@ -1,9 +1,9 @@
 use std::{fs::File, io::Write};
 
-use anyhow::{Result, anyhow};
+use anyhow::{anyhow, Result};
 use env_logger::Env;
 use log::{debug, info};
-use shank_idl::{ParseIdlOpts, extract_idl, manifest::Manifest};
+use shank_idl::{extract_idl, manifest::Manifest, ParseIdlOpts};
 
 struct IdlConfiguration {
     program_id: String,

@@ -6,10 +6,16 @@
     "@exo-tech-xyz/renderers": "0.21.4",
     "@exo-tech-xyz/renderers-js-umi": "0.21.7",
     "@exo-tech-xyz/renderers-rust": "0.21.8",
+    "@types/node": "^22.14.0",
     "corepack": "^0.29.3",
-    "kinobi": "^0.22.0"
+    "kinobi": "^0.22.0",
+    "path": "^0.12.7"
   },
   "scripts": {
-    "generate-clients": "node scripts/generate-clients.js"
+    "generate-clients": "ts-node scripts/generate-clients.ts"
+  },
+  "devDependencies": {
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3"
   }
 }

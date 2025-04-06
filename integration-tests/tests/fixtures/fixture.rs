@@ -2,7 +2,9 @@ use std::fmt::{Debug, Formatter};
 
 use solana_program_test::{processor, ProgramTest, ProgramTestContext};
 
-use crate::client::vault_whitelist_client::VaultWhitelistClient;
+use crate::client::{
+    vault_client::VaultProgramClient, vault_whitelist_client::VaultWhitelistClient,
+};
 
 pub struct TestBuilder {
     pub context: ProgramTestContext,
@@ -27,6 +29,13 @@ impl TestBuilder {
 
         let context = program_test.start_with_context().await;
         Self { context }
+    }
+
+    pub fn vault_program_client(&self) -> VaultProgramClient {
+        VaultProgramClient::new(
+            self.context.banks_client.clone(),
+            self.context.payer.insecure_clone(),
+        )
     }
 
     pub fn vault_whitelist_program_client(&self) -> VaultWhitelistClient {

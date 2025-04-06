@@ -1,4 +1,4 @@
-# Whitelist Vault Program
+# Vault Whitelist Program
 
 ## Whitelist
 

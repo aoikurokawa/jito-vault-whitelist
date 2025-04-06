@@ -52,3 +52,4 @@ tokio-tungstenite = "0.24.0"
 tower-http = { version = "0.6.2", features = ["fs", "trace"] }
 tracing = "0.1.41"
 tracing-subscriber = { version = "0.3.19", features = ["env-filter"] }
+vault-whitelist-core = { path = "./vault-whitelist-core" }

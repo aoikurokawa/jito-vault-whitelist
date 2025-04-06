@@ -2464,6 +2464,7 @@ dependencies = [
  "jito-bytemuck",
  "jito-jsm-core",
  "solana-program",
+ "vault-whitelist-core",
 ]
 
 [[package]]

@@ -9,10 +9,13 @@ use borsh::BorshDeserialize;
 use borsh::BorshSerialize;
 
 /// Accounts.
-pub struct InitializeConfig {
+pub struct InitializeWhitelist {
       
               
           pub config: solana_program::pubkey::Pubkey,
+          
+              
+          pub whitelist: solana_program::pubkey::Pubkey,
           
               
           pub vault: solana_program::pubkey::Pubkey,
@@ -24,15 +27,19 @@ pub struct InitializeConfig {
           pub system_program: solana_program::pubkey::Pubkey,
       }
 
-impl InitializeConfig {
-  pub fn instruction(&self) -> solana_program::instruction::Instruction {
-    self.instruction_with_remaining_accounts(&[])
+impl InitializeWhitelist {
+  pub fn instruction(&self, args: InitializeWhitelistInstructionArgs) -> solana_program::instruction::Instruction {
+    self.instruction_with_remaining_accounts(args, &[])
   }
   #[allow(clippy::vec_init_then_push)]
-  pub fn instruction_with_remaining_accounts(&self, remaining_accounts: &[solana_program::instruction::AccountMeta]) -> solana_program::instruction::Instruction {
-    let mut accounts = Vec::with_capacity(4 + remaining_accounts.len());
-                            accounts.push(solana_program::instruction::AccountMeta::new(
+  pub fn instruction_with_remaining_accounts(&self, args: InitializeWhitelistInstructionArgs, remaining_accounts: &[solana_program::instruction::AccountMeta]) -> solana_program::instruction::Instruction {
+    let mut accounts = Vec::with_capacity(5 + remaining_accounts.len());
+                            accounts.push(solana_program::instruction::AccountMeta::new_readonly(
             self.config,
+            false
+          ));
+                                          accounts.push(solana_program::instruction::AccountMeta::new(
+            self.whitelist,
             false
           ));
                                           accounts.push(solana_program::instruction::AccountMeta::new_readonly(
@@ -48,7 +55,9 @@ impl InitializeConfig {
             false
           ));
                       accounts.extend_from_slice(remaining_accounts);
-    let data = InitializeConfigInstructionData::new().try_to_vec().unwrap();
+    let mut data = InitializeWhitelistInstructionData::new().try_to_vec().unwrap();
+          let mut args = args.try_to_vec().unwrap();
+      data.append(&mut args);
     
     solana_program::instruction::Instruction {
       program_id: crate::JITO_VAULT_WHITELIST_ID,
@@ -59,50 +68,63 @@ impl InitializeConfig {
 }
 
 #[derive(BorshDeserialize, BorshSerialize)]
-pub struct InitializeConfigInstructionData {
+pub struct InitializeWhitelistInstructionData {
             discriminator: u8,
-      }
+            }
 
-impl InitializeConfigInstructionData {
+impl InitializeWhitelistInstructionData {
   pub fn new() -> Self {
     Self {
-                        discriminator: 0,
-                  }
+                        discriminator: 1,
+                                }
   }
 }
 
-impl Default for InitializeConfigInstructionData {
+impl Default for InitializeWhitelistInstructionData {
   fn default() -> Self {
     Self::new()
   }
 }
 
+#[derive(BorshSerialize, BorshDeserialize, Clone, Debug, Eq, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub struct InitializeWhitelistInstructionArgs {
+                  pub meta_merkle_root: [u8; 32],
+      }
 
 
-/// Instruction builder for `InitializeConfig`.
+/// Instruction builder for `InitializeWhitelist`.
 ///
 /// ### Accounts:
 ///
-                ///   0. `[writable]` config
-          ///   1. `[]` vault
-                      ///   2. `[writable, signer]` vault_admin
-                ///   3. `[optional]` system_program (default to `11111111111111111111111111111111`)
+          ///   0. `[]` config
+                ///   1. `[writable]` whitelist
+          ///   2. `[]` vault
+                      ///   3. `[writable, signer]` vault_admin
+                ///   4. `[optional]` system_program (default to `11111111111111111111111111111111`)
 #[derive(Clone, Debug, Default)]
-pub struct InitializeConfigBuilder {
+pub struct InitializeWhitelistBuilder {
             config: Option<solana_program::pubkey::Pubkey>,
+                whitelist: Option<solana_program::pubkey::Pubkey>,
                 vault: Option<solana_program::pubkey::Pubkey>,
                 vault_admin: Option<solana_program::pubkey::Pubkey>,
                 system_program: Option<solana_program::pubkey::Pubkey>,
-                __remaining_accounts: Vec<solana_program::instruction::AccountMeta>,
+                        meta_merkle_root: Option<[u8; 32]>,
+        __remaining_accounts: Vec<solana_program::instruction::AccountMeta>,
 }
 
-impl InitializeConfigBuilder {
+impl InitializeWhitelistBuilder {
   pub fn new() -> Self {
     Self::default()
   }
             #[inline(always)]
     pub fn config(&mut self, config: solana_program::pubkey::Pubkey) -> &mut Self {
                         self.config = Some(config);
+                    self
+    }
+            #[inline(always)]
+    pub fn whitelist(&mut self, whitelist: solana_program::pubkey::Pubkey) -> &mut Self {
+                        self.whitelist = Some(whitelist);
                     self
     }
             #[inline(always)]
@@ -121,7 +143,12 @@ impl InitializeConfigBuilder {
                         self.system_program = Some(system_program);
                     self
     }
-            /// Add an additional account to the instruction.
+                    #[inline(always)]
+      pub fn meta_merkle_root(&mut self, meta_merkle_root: [u8; 32]) -> &mut Self {
+        self.meta_merkle_root = Some(meta_merkle_root);
+        self
+      }
+        /// Add an additional account to the instruction.
   #[inline(always)]
   pub fn add_remaining_account(&mut self, account: solana_program::instruction::AccountMeta) -> &mut Self {
     self.__remaining_accounts.push(account);
@@ -135,22 +162,29 @@ impl InitializeConfigBuilder {
   }
   #[allow(clippy::clone_on_copy)]
   pub fn instruction(&self) -> solana_program::instruction::Instruction {
-    let accounts = InitializeConfig {
+    let accounts = InitializeWhitelist {
                               config: self.config.expect("config is not set"),
+                                        whitelist: self.whitelist.expect("whitelist is not set"),
                                         vault: self.vault.expect("vault is not set"),
                                         vault_admin: self.vault_admin.expect("vault_admin is not set"),
                                         system_program: self.system_program.unwrap_or(solana_program::pubkey!("11111111111111111111111111111111")),
                       };
+          let args = InitializeWhitelistInstructionArgs {
+                                                              meta_merkle_root: self.meta_merkle_root.clone().expect("meta_merkle_root is not set"),
+                                    };
     
-    accounts.instruction_with_remaining_accounts(&self.__remaining_accounts)
+    accounts.instruction_with_remaining_accounts(args, &self.__remaining_accounts)
   }
 }
 
-  /// `initialize_config` CPI accounts.
-  pub struct InitializeConfigCpiAccounts<'a, 'b> {
+  /// `initialize_whitelist` CPI accounts.
+  pub struct InitializeWhitelistCpiAccounts<'a, 'b> {
           
                     
               pub config: &'b solana_program::account_info::AccountInfo<'a>,
+                
+                    
+              pub whitelist: &'b solana_program::account_info::AccountInfo<'a>,
                 
                     
               pub vault: &'b solana_program::account_info::AccountInfo<'a>,
@@ -162,13 +196,16 @@ impl InitializeConfigBuilder {
               pub system_program: &'b solana_program::account_info::AccountInfo<'a>,
             }
 
-/// `initialize_config` CPI instruction.
-pub struct InitializeConfigCpi<'a, 'b> {
+/// `initialize_whitelist` CPI instruction.
+pub struct InitializeWhitelistCpi<'a, 'b> {
   /// The program to invoke.
   pub __program: &'b solana_program::account_info::AccountInfo<'a>,
       
               
           pub config: &'b solana_program::account_info::AccountInfo<'a>,
+          
+              
+          pub whitelist: &'b solana_program::account_info::AccountInfo<'a>,
           
               
           pub vault: &'b solana_program::account_info::AccountInfo<'a>,
@@ -178,20 +215,25 @@ pub struct InitializeConfigCpi<'a, 'b> {
           
               
           pub system_program: &'b solana_program::account_info::AccountInfo<'a>,
-        }
+            /// The arguments for the instruction.
+    pub __args: InitializeWhitelistInstructionArgs,
+  }
 
-impl<'a, 'b> InitializeConfigCpi<'a, 'b> {
+impl<'a, 'b> InitializeWhitelistCpi<'a, 'b> {
   pub fn new(
     program: &'b solana_program::account_info::AccountInfo<'a>,
-          accounts: InitializeConfigCpiAccounts<'a, 'b>,
-          ) -> Self {
+          accounts: InitializeWhitelistCpiAccounts<'a, 'b>,
+              args: InitializeWhitelistInstructionArgs,
+      ) -> Self {
     Self {
       __program: program,
               config: accounts.config,
+              whitelist: accounts.whitelist,
               vault: accounts.vault,
               vault_admin: accounts.vault_admin,
               system_program: accounts.system_program,
-                }
+                    __args: args,
+          }
   }
   #[inline(always)]
   pub fn invoke(&self) -> solana_program::entrypoint::ProgramResult {
@@ -212,9 +254,13 @@ impl<'a, 'b> InitializeConfigCpi<'a, 'b> {
     signers_seeds: &[&[&[u8]]],
     remaining_accounts: &[(&'b solana_program::account_info::AccountInfo<'a>, bool, bool)]
   ) -> solana_program::entrypoint::ProgramResult {
-    let mut accounts = Vec::with_capacity(4 + remaining_accounts.len());
-                            accounts.push(solana_program::instruction::AccountMeta::new(
+    let mut accounts = Vec::with_capacity(5 + remaining_accounts.len());
+                            accounts.push(solana_program::instruction::AccountMeta::new_readonly(
             *self.config.key,
+            false
+          ));
+                                          accounts.push(solana_program::instruction::AccountMeta::new(
+            *self.whitelist.key,
             false
           ));
                                           accounts.push(solana_program::instruction::AccountMeta::new_readonly(
@@ -236,16 +282,19 @@ impl<'a, 'b> InitializeConfigCpi<'a, 'b> {
           is_writable: remaining_account.2,
       })
     });
-    let data = InitializeConfigInstructionData::new().try_to_vec().unwrap();
+    let mut data = InitializeWhitelistInstructionData::new().try_to_vec().unwrap();
+          let mut args = self.__args.try_to_vec().unwrap();
+      data.append(&mut args);
     
     let instruction = solana_program::instruction::Instruction {
       program_id: crate::JITO_VAULT_WHITELIST_ID,
       accounts,
       data,
     };
-    let mut account_infos = Vec::with_capacity(4 + 1 + remaining_accounts.len());
+    let mut account_infos = Vec::with_capacity(5 + 1 + remaining_accounts.len());
     account_infos.push(self.__program.clone());
                   account_infos.push(self.config.clone());
+                        account_infos.push(self.whitelist.clone());
                         account_infos.push(self.vault.clone());
                         account_infos.push(self.vault_admin.clone());
                         account_infos.push(self.system_program.clone());
@@ -259,34 +308,42 @@ impl<'a, 'b> InitializeConfigCpi<'a, 'b> {
   }
 }
 
-/// Instruction builder for `InitializeConfig` via CPI.
+/// Instruction builder for `InitializeWhitelist` via CPI.
 ///
 /// ### Accounts:
 ///
-                ///   0. `[writable]` config
-          ///   1. `[]` vault
-                      ///   2. `[writable, signer]` vault_admin
-          ///   3. `[]` system_program
+          ///   0. `[]` config
+                ///   1. `[writable]` whitelist
+          ///   2. `[]` vault
+                      ///   3. `[writable, signer]` vault_admin
+          ///   4. `[]` system_program
 #[derive(Clone, Debug)]
-pub struct InitializeConfigCpiBuilder<'a, 'b> {
-  instruction: Box<InitializeConfigCpiBuilderInstruction<'a, 'b>>,
+pub struct InitializeWhitelistCpiBuilder<'a, 'b> {
+  instruction: Box<InitializeWhitelistCpiBuilderInstruction<'a, 'b>>,
 }
 
-impl<'a, 'b> InitializeConfigCpiBuilder<'a, 'b> {
+impl<'a, 'b> InitializeWhitelistCpiBuilder<'a, 'b> {
   pub fn new(program: &'b solana_program::account_info::AccountInfo<'a>) -> Self {
-    let instruction = Box::new(InitializeConfigCpiBuilderInstruction {
+    let instruction = Box::new(InitializeWhitelistCpiBuilderInstruction {
       __program: program,
               config: None,
+              whitelist: None,
               vault: None,
               vault_admin: None,
               system_program: None,
-                                __remaining_accounts: Vec::new(),
+                                            meta_merkle_root: None,
+                    __remaining_accounts: Vec::new(),
     });
     Self { instruction }
   }
       #[inline(always)]
     pub fn config(&mut self, config: &'b solana_program::account_info::AccountInfo<'a>) -> &mut Self {
                         self.instruction.config = Some(config);
+                    self
+    }
+      #[inline(always)]
+    pub fn whitelist(&mut self, whitelist: &'b solana_program::account_info::AccountInfo<'a>) -> &mut Self {
+                        self.instruction.whitelist = Some(whitelist);
                     self
     }
       #[inline(always)]
@@ -304,7 +361,12 @@ impl<'a, 'b> InitializeConfigCpiBuilder<'a, 'b> {
                         self.instruction.system_program = Some(system_program);
                     self
     }
-            /// Add an additional account to the instruction.
+                    #[inline(always)]
+      pub fn meta_merkle_root(&mut self, meta_merkle_root: [u8; 32]) -> &mut Self {
+        self.instruction.meta_merkle_root = Some(meta_merkle_root);
+        self
+      }
+        /// Add an additional account to the instruction.
   #[inline(always)]
   pub fn add_remaining_account(&mut self, account: &'b solana_program::account_info::AccountInfo<'a>, is_writable: bool, is_signer: bool) -> &mut Self {
     self.instruction.__remaining_accounts.push((account, is_writable, is_signer));
@@ -326,29 +388,37 @@ impl<'a, 'b> InitializeConfigCpiBuilder<'a, 'b> {
   #[allow(clippy::clone_on_copy)]
   #[allow(clippy::vec_init_then_push)]
   pub fn invoke_signed(&self, signers_seeds: &[&[&[u8]]]) -> solana_program::entrypoint::ProgramResult {
-        let instruction = InitializeConfigCpi {
+          let args = InitializeWhitelistInstructionArgs {
+                                                              meta_merkle_root: self.instruction.meta_merkle_root.clone().expect("meta_merkle_root is not set"),
+                                    };
+        let instruction = InitializeWhitelistCpi {
         __program: self.instruction.__program,
                   
           config: self.instruction.config.expect("config is not set"),
+                  
+          whitelist: self.instruction.whitelist.expect("whitelist is not set"),
                   
           vault: self.instruction.vault.expect("vault is not set"),
                   
           vault_admin: self.instruction.vault_admin.expect("vault_admin is not set"),
                   
           system_program: self.instruction.system_program.expect("system_program is not set"),
-                    };
+                          __args: args,
+            };
     instruction.invoke_signed_with_remaining_accounts(signers_seeds, &self.instruction.__remaining_accounts)
   }
 }
 
 #[derive(Clone, Debug)]
-struct InitializeConfigCpiBuilderInstruction<'a, 'b> {
+struct InitializeWhitelistCpiBuilderInstruction<'a, 'b> {
   __program: &'b solana_program::account_info::AccountInfo<'a>,
             config: Option<&'b solana_program::account_info::AccountInfo<'a>>,
+                whitelist: Option<&'b solana_program::account_info::AccountInfo<'a>>,
                 vault: Option<&'b solana_program::account_info::AccountInfo<'a>>,
                 vault_admin: Option<&'b solana_program::account_info::AccountInfo<'a>>,
                 system_program: Option<&'b solana_program::account_info::AccountInfo<'a>>,
-                /// Additional instruction accounts `(AccountInfo, is_writable, is_signer)`.
+                        meta_merkle_root: Option<[u8; 32]>,
+        /// Additional instruction accounts `(AccountInfo, is_writable, is_signer)`.
   __remaining_accounts: Vec<(&'b solana_program::account_info::AccountInfo<'a>, bool, bool)>,
 }
 

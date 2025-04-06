@@ -2,7 +2,7 @@ use std::fmt::{Debug, Formatter};
 
 use solana_program_test::{processor, ProgramTest, ProgramTestContext};
 
-use super::ncn_portal_client::NcnPortalProgramClient;
+use super::vault_whitelist_client::VaultWhitelistProgramClient;
 
 pub struct TestBuilder {
     pub context: ProgramTestContext,

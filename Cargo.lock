@@ -2314,9 +2314,11 @@ dependencies = [
 name = "integration-tests"
 version = "0.0.1"
 dependencies = [
+ "anchor-lang",
  "borsh 0.10.4",
  "jito-bytemuck",
  "jito-jsm-core",
+ "jito-vault-whitelist-client",
  "jito-vault-whitelist-core",
  "jito-vault-whitelist-program",
  "jito-vault-whitelist-sdk",

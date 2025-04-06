@@ -11,8 +11,8 @@ solana_program::entrypoint!(process_instruction);
 
 pub fn process_instruction(
     program_id: &Pubkey,
-    accounts: &[AccountInfo],
-    instruction_data: &[u8],
+    _accounts: &[AccountInfo],
+    _instruction_data: &[u8],
 ) -> ProgramResult {
     if *program_id != id() {
         return Err(ProgramError::IncorrectProgramId);

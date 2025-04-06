@@ -173,32 +173,25 @@ jobs:
   #         fail_ci_if_error: true
   #         codecov_yml_path: codecov.yaml
 
-  # test_sbf:
-  #   name: cargo test
-  #   runs-on: ubuntu-latest
-  #   needs:
-  #     - verified_build
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - uses: aarcangeli/load-dotenv@v1.0.0
-  #       with:
-  #         path: config
-  #         filenames: program.env
-  #     - uses: actions-rust-lang/setup-rust-toolchain@v1
-  #     - name: Download restaking program
-  #       uses: actions/download-artifact@v4
-  #       with:
-  #         name: jito_restaking_program.so
-  #         path: target/sbf-solana-solana/release/
-  #     - name: Download vault program
-  #       uses: actions/download-artifact@v4
-  #       with:
-  #         name: jito_vault_program.so
-  #         path: target/sbf-solana-solana/release/
-  #     - uses: taiki-e/install-action@nextest
-  #     - run: cargo nextest run --all-features
-  #       env:
-  #         SBF_OUT_DIR: ${{ github.workspace }}/target/sbf-solana-solana/release
+  test_sbf:
+    name: cargo test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: aarcangeli/load-dotenv@v1.0.0
+        with:
+          path: config
+          filenames: program.env
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Download restaking program
+        uses: actions/download-artifact@v4
+        with:
+          name: jito_vault_whitelist_program.so
+          path: target/sbf-solana-solana/release/
+      - uses: taiki-e/install-action@nextest
+      - run: cargo nextest run --all-features
+        env:
+          SBF_OUT_DIR: ${{ github.workspace }}/target/sbf-solana-solana/release
 
   # create_release:
   #   name: Create Release

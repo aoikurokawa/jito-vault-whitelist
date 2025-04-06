@@ -1,0 +1,14 @@
+[package]
+name = "vault-whitelist-core"
+version.workspace = true
+edition.workspace = true
+readme.workspace = true
+
+[dependencies]
+bytemuck = { workspace = true }
+jito-account-traits-derive = { workspace = true }
+jito-bytemuck = { workspace = true }
+shank = { workspace = true }
+solana-program = { workspace = true }
+solana-sdk = { workspace = true }
+

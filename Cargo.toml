@@ -1,6 +1,7 @@
 [workspace]
-members = [
-	"shank-cli"
+members = [ 
+	"shank-cli",
+	"vault-whitelist-core"
 ]
 
 resolver = "2"

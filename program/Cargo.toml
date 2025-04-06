@@ -9,10 +9,14 @@ name = "vault_whitelist_program"
 
 [features]
 no-entrypoint = []
-test-sbf = []
-custom-panic = []
-custom-heap = []
-solana = []
+no-idl = []
+no-log-ix-name = []
+cpi = ["no-entrypoint"]
+default = []
+mainnet-beta = []
+testnet = []
+devnet = []
+localhost = []
 
 [dependencies]
 borsh = { workspace = true }

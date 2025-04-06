@@ -3,6 +3,7 @@ members = [
 	"client",
 	"core",
 	"integration-tests",
+	"meta-merkle-tree",
 	"program",
 	"sdk",
 	"shank-cli", 
@@ -44,7 +45,7 @@ jito-vault-whitelist-core = { path = "./core" }
 jito-vault-whitelist-sdk = { path = "./sdk" }
 jito-vault-whitelist-program = { path = "./program" }
 log = "0.4.22"
-meta-merkle-tree = { path = "meta_merkle_tree", version = "0.1.0" }
+meta-merkle-tree = { path = "./meta-merkle-tree" }
 num-derive = "0.4.2"
 num-traits = "0.2.19"
 reqwest = { version = "0.10.10", features = ["json"] }

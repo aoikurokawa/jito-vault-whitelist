@@ -1,7 +1,5 @@
 #[cfg(test)]
 mod tests {
-    use solana_sdk::pubkey::Pubkey;
-
     use crate::fixtures::fixture::TestBuilder;
 
     #[tokio::test]

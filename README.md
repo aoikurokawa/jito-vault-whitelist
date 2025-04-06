@@ -1,5 +1,5 @@
-# Vault Whitelist Program
+# Jito Vault Whitelist Program
 
-## Whitelist
+## Instructions
 
-- Initialize Whitelist
+- Initialize Config

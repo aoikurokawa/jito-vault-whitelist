@@ -1,5 +1,4 @@
 use borsh::BorshDeserialize;
-use const_str_to_pubkey::str_to_pubkey;
 use initialize_config::process_initialize_config;
 use initialize_whitelist::process_initialize_whitelist;
 use jito_vault_whitelist_sdk::instruction::VaultWhitelistInstruction;
@@ -11,7 +10,7 @@ use solana_program::{
 mod initialize_config;
 mod initialize_whitelist;
 
-declare_id!(str_to_pubkey(env!("VAULT_WHITELIST_PROGRAM_ID")));
+declare_id!(env!("VAULT_WHITELIST_PROGRAM_ID"));
 
 #[cfg(not(feature = "no-entrypoint"))]
 solana_program::entrypoint!(process_instruction);

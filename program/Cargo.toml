@@ -20,7 +20,6 @@ localhost = []
 
 [dependencies]
 borsh = { workspace = true }
-const_str_to_pubkey = { workspace = true }
 jito-bytemuck = { workspace = true }
 jito-jsm-core = { workspace = true }
 jito-vault-whitelist-core = { workspace = true }

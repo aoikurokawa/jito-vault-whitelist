@@ -3,25 +3,31 @@ members = [
 	"clients/rust/vault-whitelist-client",
 	"core",
 	"program",
-	"sdk"
+	"sdk", 
+  "shank-cli"
 ]
 
 resolver = "2"
 
 [workspace.dependencies]
 anchor-lang = { git = "https://github.com/coral-xyz/anchor", rev = "96ed3b791c6fed9ab64cb138397795fe55991280", features = ["idl-build"] }
+anyhow = "1.0.97"
 borsh = { version = "0.10.3" }
 bytemuck = { version = "1.16.3", features = ["min_const_generics"] }
-codama = "0.3.0"
+envfile = "0.2.1"
+env_logger = "0.11.8"
 jito-account-traits-derive = { git = "https://github.com/jito-foundation/restaking.git", rev = "9efa55c30b3427d94975b22dcd27a82181c776ba" }
 jito-bytemuck = { git = "https://github.com/jito-foundation/restaking.git", rev = "9efa55c30b3427d94975b22dcd27a82181c776ba" }
 jito-jsm-core = { git = "https://github.com/jito-foundation/restaking.git", rev = "9efa55c30b3427d94975b22dcd27a82181c776ba" }
+log = "0.4.27"
 num-derive = "0.4.2"
 num-traits = "0.2.19"
 serde = { version = "1.0.216", features = ["derive"] }
 serde-big-array = "0.5.1"
 serde_json = "1.0.133"
 serde_with = "3.9.0"
+shank = "0.4.2"
+shank_idl = "0.4.2"
 solana-pubkey = "~2.1"
 solana-program = "~2.1"
 solana-sdk = "~2.1"

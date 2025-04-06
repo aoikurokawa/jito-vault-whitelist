@@ -5,6 +5,6 @@
 //! <https://github.com/kinobi-so/kinobi>
 //!
 
-pub(crate) mod jito_vault_whitelist;
+pub(crate) mod r#config;
 
-pub use self::jito_vault_whitelist::JitoVaultWhitelistError;
+pub use self::r#config::*;

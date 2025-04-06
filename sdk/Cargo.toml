@@ -5,7 +5,7 @@ edition = "2021"
 
 [dependencies]
 borsh = { version = "0.10.3" }
-codama = { workspace = true }
 solana-pubkey = { workspace = true }
 solana-program = { workspace = true }
+shank = { workspace = true }
 thiserror = { workspace = true }

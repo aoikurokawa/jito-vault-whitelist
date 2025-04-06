@@ -1,7 +1,7 @@
-const codama = require("codama");
-const anchorIdl = require("@codama/nodes-from-anchor");
+const kinobi = require("kinobi");
+const anchorIdl = require("@exo-tech-xyz/nodes-from-anchor");
 const path = require("path");
-const renderers = require('@codama/renderers');
+const renderers = require('@exo-tech-xyz/renderers');
 
 // Paths.
 const projectRoot = path.join(__dirname, "..");
@@ -12,22 +12,22 @@ const rustClientsDir = path.join(__dirname, "..", "clients", "rust");
 
 // Generate the restaking client in Rust and JavaScript.
 const rustRestakingClientDir = path.join(rustClientsDir, "vault-whitelist-client");
-const restakingRootNode = anchorIdl.rootNodeFromAnchor(require(path.join(idlDir, "vault_whitelist.json")));
-const restakingKinobi = codama.createFromRoot(restakingRootNode);
-restakingKinobi.update(codama.bottomUpTransformerVisitor([
+const restakingRootNode = anchorIdl.rootNodeFromAnchor(require(path.join(idlDir, "jito_vault_whitelist.json")));
+const restakingKinobi = kinobi.createFromRoot(restakingRootNode);
+restakingKinobi.update(kinobi.bottomUpTransformerVisitor([
    {
         // PodU128 -> u128
         select: (node) => {
             return (
-                codama.isNode(node, "structFieldTypeNode") &&
+                kinobi.isNode(node, "structFieldTypeNode") &&
                 node.type.name === "podU128"
             );
         },
         transform: (node) => {
-            codama.assertIsNode(node, "structFieldTypeNode");
+            kinobi.assertIsNode(node, "structFieldTypeNode");
             return {
                 ...node,
-                type: codama.numberTypeNode("u128"),
+                type: kinobi.numberTypeNode("u128"),
             };
         },
     },
@@ -35,15 +35,15 @@ restakingKinobi.update(codama.bottomUpTransformerVisitor([
         // PodU64 -> u64
         select: (node) => {
             return (
-                codama.isNode(node, "structFieldTypeNode") &&
+                kinobi.isNode(node, "structFieldTypeNode") &&
                 node.type.name === "podU64"
             );
         },
         transform: (node) => {
-            codama.assertIsNode(node, "structFieldTypeNode");
+            kinobi.assertIsNode(node, "structFieldTypeNode");
             return {
                 ...node,
-                type: codama.numberTypeNode("u64"),
+                type: kinobi.numberTypeNode("u64"),
             };
         },
     },
@@ -51,15 +51,15 @@ restakingKinobi.update(codama.bottomUpTransformerVisitor([
         // PodU32 -> u32
         select: (node) => {
             return (
-                codama.isNode(node, "structFieldTypeNode") &&
+                kinobi.isNode(node, "structFieldTypeNode") &&
                 node.type.name === "podU32"
             );
         },
         transform: (node) => {
-            codama.assertIsNode(node, "structFieldTypeNode");
+            kinobi.assertIsNode(node, "structFieldTypeNode");
             return {
                 ...node,
-                type: codama.numberTypeNode("u32"),
+                type: kinobi.numberTypeNode("u32"),
             };
         },
     },
@@ -67,15 +67,15 @@ restakingKinobi.update(codama.bottomUpTransformerVisitor([
         // PodU16 -> u16
         select: (node) => {
             return (
-                codama.isNode(node, "structFieldTypeNode") &&
+                kinobi.isNode(node, "structFieldTypeNode") &&
                 node.type.name === "podU16"
             );
         },
         transform: (node) => {
-            codama.assertIsNode(node, "structFieldTypeNode");
+            kinobi.assertIsNode(node, "structFieldTypeNode");
             return {
                 ...node,
-                type: codama.numberTypeNode("u16"),
+                type: kinobi.numberTypeNode("u16"),
             };
         },
     },
@@ -83,18 +83,18 @@ restakingKinobi.update(codama.bottomUpTransformerVisitor([
     {
         select: (node) => {
             return (
-                codama.isNode(node, "accountNode")
+                kinobi.isNode(node, "accountNode")
             );
         },
         transform: (node) => {
-            codama.assertIsNode(node, "accountNode");
+            kinobi.assertIsNode(node, "accountNode");
 
             return {
                 ...node,
                 data: {
                     ...node.data,
                     fields: [
-                        codama.structFieldTypeNode({ name: 'discriminator', type: codama.numberTypeNode('u64') }),
+                        kinobi.structFieldTypeNode({ name: 'discriminator', type: kinobi.numberTypeNode('u64') }),
                         ...node.data.fields
                     ]
                 }

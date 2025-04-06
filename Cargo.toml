@@ -3,8 +3,9 @@ members = [
 	"clients/rust/vault-whitelist-client",
 	"core",
 	"program",
-	"sdk"
-, "shank-cli"]
+	"sdk", 
+  "shank-cli"
+]
 
 resolver = "2"
 

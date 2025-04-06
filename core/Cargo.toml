@@ -9,5 +9,4 @@ jito-account-traits-derive = { workspace = true }
 jito-bytemuck = { workspace = true }
 shank = { workspace = true }
 solana-program = { workspace = true }
-solana-pubkey = { workspace = true }
 solana-sdk = { workspace = true }

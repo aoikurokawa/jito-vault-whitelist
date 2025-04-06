@@ -3,7 +3,7 @@ use jito_bytemuck::{AccountDeserialize, Discriminator};
 use shank::ShankAccount;
 use solana_program::msg;
 use solana_program::{account_info::AccountInfo, program_error::ProgramError};
-use solana_pubkey::Pubkey;
+use solana_sdk::pubkey::Pubkey;
 
 #[derive(Debug, Clone, Copy, Zeroable, Pod, AccountDeserialize, ShankAccount)]
 #[repr(C)]

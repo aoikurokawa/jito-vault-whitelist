@@ -5,7 +5,7 @@ edition = { workspace = true }
 
 [dependencies]
 borsh = { version = "0.10.3" }
-solana-pubkey = { workspace = true }
-solana-program = { workspace = true }
 shank = { workspace = true }
+solana-program = { workspace = true }
+solana-pubkey = { workspace = true }
 thiserror = { workspace = true }

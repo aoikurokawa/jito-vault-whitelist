@@ -6,7 +6,5 @@
 //!
 
 pub(crate) mod r#config;
-pub(crate) mod r#config;
 
-pub use self::r#config::*;
 pub use self::r#config::*;

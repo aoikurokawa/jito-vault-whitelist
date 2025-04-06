@@ -9,7 +9,7 @@ mod tests {
         let fixture = TestBuilder::new().await;
         let mut vault_program_client = fixture.vault_program_client();
         vault_program_client.do_initialize_config().await.unwrap();
-        vault_program_client
+        let vault_root = vault_program_client
             .do_initialize_vault(1000, 1000, 1000, 9, &Pubkey::new_unique(), None)
             .await
             .unwrap();
@@ -17,11 +17,10 @@ mod tests {
         let mut vault_whitelist_client = fixture.vault_whitelist_program_client();
         vault_whitelist_client.do_initialize_config().await.unwrap();
 
-        let vault = Pubkey::new_unique();
         let meta_merkle_root = [0; 32];
 
         vault_whitelist_client
-            .do_initialize_whitelist(vault, &meta_merkle_root)
+            .do_initialize_whitelist(vault_root.vault_pubkey, &meta_merkle_root)
             .await
             .unwrap();
     }

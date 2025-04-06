@@ -3,6 +3,7 @@ use jito_jsm_core::{
     create_account,
     loader::{load_signer, load_system_account, load_system_program},
 };
+use jito_vault_core::vault::Vault;
 use jito_vault_whitelist_core::{config::Config, whitelist::Whitelist};
 use jito_vault_whitelist_sdk::error::VaultWhitelistError;
 use solana_program::{
@@ -24,6 +25,9 @@ pub fn process_initialize_whitelist(
     Config::load(program_id, config_info, false)?;
 
     load_system_account(whitelist_info, true)?;
+
+    Vault::load(&jito_vault_program::id(), vault_info, false)?;
+
     load_signer(vault_admin_info, true)?;
     load_system_program(system_program_info)?;
 

@@ -2517,6 +2517,8 @@ dependencies = [
  "borsh 0.10.4",
  "jito-bytemuck",
  "jito-jsm-core",
+ "jito-vault-core",
+ "jito-vault-program",
  "jito-vault-whitelist-core",
  "jito-vault-whitelist-sdk",
  "solana-program",

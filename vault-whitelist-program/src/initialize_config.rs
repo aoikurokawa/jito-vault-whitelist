@@ -10,6 +10,7 @@ use solana_program::{
 use vault_whitelist_core::config::Config;
 use vault_whitelist_sdk::error::VaultWhitelistError;
 
+/// Process Initialize Config
 pub fn process_initialize_config(program_id: &Pubkey, accounts: &[AccountInfo]) -> ProgramResult {
     let [config_info, vault_info, vault_admin_info, system_program_info] = accounts else {
         return Err(ProgramError::NotEnoughAccountKeys);

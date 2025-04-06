@@ -1,13 +1,13 @@
 {
   "name": "vault-whitelist",
-  "packageManager": "yarn@4.7.0",
   "version": "0.1.0",
   "dependencies": {
     "@exo-tech-xyz/nodes-from-anchor": "0.21.3",
     "@exo-tech-xyz/renderers": "0.21.4",
     "@exo-tech-xyz/renderers-js-umi": "0.21.7",
     "@exo-tech-xyz/renderers-rust": "0.21.8",
-    "corepack": "^0.29.3"
+    "corepack": "^0.29.3",
+    "kinobi": "^0.22.0"
   },
   "scripts": {
     "generate-clients": "node scripts/generate-clients.js"

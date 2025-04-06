@@ -17,11 +17,14 @@ impl Debug for TestBuilder {
 impl TestBuilder {
     pub async fn new() -> Self {
         // $ cargo-build-sbf && SBF_OUT_DIR=$(pwd)/target/sbf-solana-solana/release cargo nextest run
-        let program_test = ProgramTest::new(
+        let mut program_test = ProgramTest::new(
             "jito_vault_whitelist_program",
             jito_vault_whitelist_program::id(),
             processor!(jito_vault_whitelist_program::process_instruction),
         );
+        program_test.prefer_bpf(true);
+        program_test.add_program("jito_vault_program", jito_vault_program::id(), None);
+
         let context = program_test.start_with_context().await;
         Self { context }
     }

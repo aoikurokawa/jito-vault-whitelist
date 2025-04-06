@@ -62,8 +62,3 @@ impl anchor_lang::Owner for Whitelist {
 
 #[cfg(feature = "anchor-idl-build")]
 impl anchor_lang::IdlBuild for Whitelist {}
-
-#[cfg(feature = "anchor-idl-build")]
-impl anchor_lang::Discriminator for Whitelist {
-    const DISCRIMINATOR: &'static [u8] = &[0; 8];
-}

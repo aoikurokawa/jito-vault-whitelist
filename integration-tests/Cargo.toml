@@ -8,10 +8,10 @@ anchor-lang = { workspace = true }
 borsh = { workspace = true }
 jito-bytemuck = { workspace = true }
 jito-jsm-core = { workspace = true }
+jito-vault-whitelist-client = { workspace = true, features = ["anchor"] }
 jito-vault-whitelist-core = { workspace = true }
 jito-vault-whitelist-program = { workspace = true }
 jito-vault-whitelist-sdk = { workspace = true }
-jito-vault-whitelist-client = { workspace = true, features =["anchor"] }
 shank = { workspace = true }
 solana-program = { workspace = true }
 solana-program-test = { workspace = true }

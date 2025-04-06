@@ -2,7 +2,7 @@
 members = [
 	"core",
 	"program",
-	"sdk", 
+	"sdk", "shank-cli", 
 ]
 resolver = "2"
 

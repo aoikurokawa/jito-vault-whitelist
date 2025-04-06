@@ -13,7 +13,7 @@ pub struct Config {
 
 impl Config {
     /// Initiallize Config
-    pub fn new(vault: Pubkey) -> Self {
+    pub const fn new(vault: Pubkey) -> Self {
         Self { vault }
     }
 

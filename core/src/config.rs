@@ -12,7 +12,7 @@ pub struct Config {
 }
 
 impl Config {
-    /// Initiallize Config
+    /// Initialize Config
     pub const fn new(admin: Pubkey) -> Self {
         Self { admin }
     }

@@ -3,12 +3,12 @@ use jito_jsm_core::{
     create_account,
     loader::{load_signer, load_system_account, load_system_program},
 };
+use jito_vault_whitelist_core::config::Config;
+use jito_vault_whitelist_sdk::error::VaultWhitelistError;
 use solana_program::{
     account_info::AccountInfo, entrypoint::ProgramResult, msg, program_error::ProgramError,
     pubkey::Pubkey, rent::Rent, sysvar::Sysvar,
 };
-use vault_whitelist_core::config::Config;
-use vault_whitelist_sdk::error::VaultWhitelistError;
 
 /// Process Initialize Config
 pub fn process_initialize_config(program_id: &Pubkey, accounts: &[AccountInfo]) -> ProgramResult {

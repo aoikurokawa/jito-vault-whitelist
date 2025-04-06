@@ -1,11 +1,11 @@
 use borsh::BorshDeserialize;
 use const_str_to_pubkey::str_to_pubkey;
 use initialize_config::process_initialize_config;
+use jito_vault_whitelist_sdk::instruction::VaultWhitelistInstruction;
 use solana_program::{
     account_info::AccountInfo, declare_id, entrypoint::ProgramResult, msg,
     program_error::ProgramError, pubkey::Pubkey,
 };
-use vault_whitelist_sdk::instruction::VaultWhitelistInstruction;
 
 pub mod initialize_config;
 

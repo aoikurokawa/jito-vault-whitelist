@@ -2,7 +2,7 @@ use std::fmt::{Debug, Formatter};
 
 use solana_program_test::{processor, ProgramTest, ProgramTestContext};
 
-use super::vault_whitelist_client::VaultWhitelistClient;
+use crate::client::vault_whitelist_client::VaultWhitelistClient;
 
 pub struct TestBuilder {
     pub context: ProgramTestContext,

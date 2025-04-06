@@ -3,7 +3,6 @@ use solana_program_test::BanksClientError;
 use thiserror::Error;
 
 pub mod fixture;
-pub mod vault_whitelist_client;
 
 pub type TestResult<T> = Result<T, TestError>;
 

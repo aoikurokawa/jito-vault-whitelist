@@ -11,12 +11,7 @@
           "isSigner": false
         },
         {
-          "name": "vault",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "vaultAdmin",
+          "name": "admin",
           "isMut": true,
           "isSigner": true
         },
@@ -85,7 +80,7 @@
         "kind": "struct",
         "fields": [
           {
-            "name": "vault",
+            "name": "admin",
             "type": "publicKey"
           }
         ]
@@ -122,7 +117,7 @@
         "kind": "struct",
         "fields": [
           {
-            "name": "vault",
+            "name": "admin",
             "type": "publicKey"
           }
         ]

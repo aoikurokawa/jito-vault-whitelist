@@ -21,9 +21,7 @@ pub fn process_initialize_whitelist(
         return Err(ProgramError::NotEnoughAccountKeys);
     };
 
-    Config::load(program_id, config_info, vault_info.key, false)?;
-
-    Whitelist::load(program_id, whitelist_info, vault_info.key, false)?;
+    Config::load(program_id, config_info, false)?;
 
     load_system_account(whitelist_info, true)?;
     load_signer(vault_admin_info, true)?;
@@ -49,7 +47,7 @@ pub fn process_initialize_whitelist(
         program_id,
         &Rent::get()?,
         8_u64
-            .checked_add(std::mem::size_of::<Config>() as u64)
+            .checked_add(std::mem::size_of::<Whitelist>() as u64)
             .ok_or(VaultWhitelistError::ArithmeticOverflow)?,
         &whitelist_seeds,
     )?;

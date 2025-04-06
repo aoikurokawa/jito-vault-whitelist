@@ -17,7 +17,7 @@ pub struct Config {
         feature = "serde",
         serde(with = "serde_with::As::<serde_with::DisplayFromStr>")
     )]
-    pub vault: Pubkey,
+    pub admin: Pubkey,
 }
 
 impl Config {
@@ -60,3 +60,8 @@ impl anchor_lang::Owner for Config {
 
 #[cfg(feature = "anchor-idl-build")]
 impl anchor_lang::IdlBuild for Config {}
+
+#[cfg(feature = "anchor-idl-build")]
+impl anchor_lang::Discriminator for Config {
+    const DISCRIMINATOR: &'static [u8] = &[0; 8];
+}

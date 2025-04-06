@@ -1,5 +1,7 @@
 use anchor_lang::AccountDeserialize;
-use jito_vault_whitelist_client::instructions::InitializeWhitelistBuilder;
+use jito_vault_whitelist_client::instructions::{
+    InitializeConfigBuilder, InitializeWhitelistBuilder,
+};
 use jito_vault_whitelist_core::{config::Config, whitelist::Whitelist};
 use solana_program_test::BanksClient;
 use solana_sdk::{
@@ -7,7 +9,7 @@ use solana_sdk::{
     signature::Keypair, signer::Signer, system_instruction::transfer, transaction::Transaction,
 };
 
-use super::TestResult;
+use crate::fixtures::TestResult;
 
 pub struct VaultWhitelistClient {
     banks_client: BanksClient,
@@ -33,7 +35,7 @@ impl VaultWhitelistClient {
         Ok(())
     }
 
-    pub async fn _airdrop(&mut self, to: &Pubkey, sol: f64) -> TestResult<()> {
+    pub async fn airdrop(&mut self, to: &Pubkey, sol: f64) -> TestResult<()> {
         let blockhash = self.banks_client.get_latest_blockhash().await?;
         self.banks_client
             .process_transaction_with_preflight_and_commitment(
@@ -62,51 +64,43 @@ impl VaultWhitelistClient {
         Ok(whitelist)
     }
 
-    // pub async fn do_initialize_config(&mut self) -> TestResult<Keypair> {
-    //     let restaking_config_pubkey =
-    //         Config::find_program_address(&jito_vault_whitelist_program::id()).0;
-    //     let restaking_config_admin = Keypair::new();
+    pub async fn do_initialize_config(&mut self) -> TestResult<()> {
+        self.airdrop(&self.payer.pubkey(), 100.0).await.unwrap();
+        self.initialize_config().await?;
 
-    //     self._airdrop(&restaking_config_admin.pubkey(), 1.0).await?;
-    //     self.initialize_config(&restaking_config_pubkey, &restaking_config_admin)
-    //         .await?;
+        Ok(())
+    }
 
-    //     Ok(restaking_config_admin)
-    // }
+    pub async fn initialize_config(&mut self) -> TestResult<()> {
+        let config = jito_vault_whitelist_core::config::Config::find_program_address(
+            &jito_vault_whitelist_program::id(),
+        )
+        .0;
 
-    // pub async fn initialize_config(
-    //     &mut self,
-    //     config: &Pubkey,
-    //     config_admin: &Keypair,
-    // ) -> TestResult<()> {
-    //     let blockhash = self.banks_client.get_latest_blockhash().await?;
-    //     self.process_transaction(&Transaction::new_signed_with_payer(
-    //         &[initialize_config(
-    //             &jito_restaking_program::id(),
-    //             config,
-    //             &config_admin.pubkey(),
-    //             &jito_vault_program::id(),
-    //         )],
-    //         Some(&config_admin.pubkey()),
-    //         &[config_admin],
-    //         blockhash,
-    //     ))
-    //     .await
-    // }
+        let mut ix = InitializeConfigBuilder::new()
+            .config(config)
+            .admin(self.payer.pubkey())
+            .instruction();
+        ix.program_id = jito_vault_whitelist_program::id();
+
+        let blockhash = self.banks_client.get_latest_blockhash().await?;
+        self.process_transaction(&Transaction::new_signed_with_payer(
+            &[ix],
+            Some(&self.payer.pubkey()),
+            &[&self.payer],
+            blockhash,
+        ))
+        .await
+    }
 
     pub async fn do_initialize_whitelist(
         &mut self,
         vault: Pubkey,
         meta_merkle_root: &[u8; 32],
-    ) -> TestResult<Keypair> {
-        let whitelist_pubkey =
-            Whitelist::find_program_address(&jito_vault_whitelist_program::id(), &vault).0;
-        let admin = Keypair::new();
-
-        self._airdrop(&admin.pubkey(), 1.0).await?;
+    ) -> TestResult<()> {
         self.initialize_whitelist(vault, meta_merkle_root).await?;
 
-        Ok(admin)
+        Ok(())
     }
 
     pub async fn initialize_whitelist(
@@ -114,17 +108,18 @@ impl VaultWhitelistClient {
         vault: Pubkey,
         meta_merkle_root: &[u8; 32],
     ) -> TestResult<()> {
-        let config = Config::find_program_address(&jito_vault_whitelist_program::id(), &vault).0;
+        let config = Config::find_program_address(&jito_vault_whitelist_program::id()).0;
         let whitelist =
             Whitelist::find_program_address(&jito_vault_whitelist_program::id(), &vault).0;
 
-        let ix = InitializeWhitelistBuilder::new()
+        let mut ix = InitializeWhitelistBuilder::new()
             .config(config)
             .whitelist(whitelist)
             .vault(vault)
             .vault_admin(self.payer.pubkey())
             .meta_merkle_root(*meta_merkle_root)
             .instruction();
+        ix.program_id = jito_vault_whitelist_program::id();
 
         let blockhash = self.banks_client.get_latest_blockhash().await?;
 

@@ -8,6 +8,10 @@ anchor-lang = { workspace = true }
 borsh = { workspace = true }
 jito-bytemuck = { workspace = true }
 jito-jsm-core = { workspace = true }
+jito-restaking-program = { workspace = true }
+jito-vault-core = { workspace = true }
+jito-vault-program = { workspace = true }
+jito-vault-sdk = { workspace = true }
 jito-vault-whitelist-client = { workspace = true, features = ["anchor"] }
 jito-vault-whitelist-core = { workspace = true }
 jito-vault-whitelist-program = { workspace = true }

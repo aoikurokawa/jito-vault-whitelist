@@ -1,2 +1,2 @@
 mod fixtures;
-mod ncn_portal;
+mod vault_whitelist;

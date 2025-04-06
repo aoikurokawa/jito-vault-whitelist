@@ -5,7 +5,7 @@ edition = { workspace = true }
 
 [lib]
 crate-type = ["cdylib", "lib"]
-name = "vault_whitelist_program"
+name = "jito_vault_whitelist_program"
 
 [features]
 no-entrypoint = []

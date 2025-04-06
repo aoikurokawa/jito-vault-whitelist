@@ -5,7 +5,7 @@ use crate::config::Config;
 /// Discriminators for HelloWorldNcn accounts
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum VaultWhitelistDiscriminator {
-    Config = 1,
+    Config = 0,
 }
 
 impl Discriminator for Config {

@@ -2,10 +2,10 @@ use bytemuck::{Pod, Zeroable};
 use jito_bytemuck::{AccountDeserialize, Discriminator};
 use shank::ShankAccount;
 use solana_program::msg;
+use solana_program::pubkey::Pubkey;
 use solana_program::{account_info::AccountInfo, program_error::ProgramError};
-use solana_sdk::pubkey::Pubkey;
 
-#[derive(Debug, Clone, Copy, Zeroable, Pod, AccountDeserialize, ShankAccount)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Pod, Zeroable, AccountDeserialize, ShankAccount)]
 #[repr(C)]
 pub struct Config {
     pub vault: Pubkey,
@@ -18,13 +18,13 @@ impl Config {
     }
 
     /// Seeds of Config Account
-    pub fn seeds(ncn: &Pubkey) -> Vec<Vec<u8>> {
-        vec![b"config".to_vec(), ncn.to_bytes().to_vec()]
+    pub fn seeds(vault: &Pubkey) -> Vec<Vec<u8>> {
+        vec![b"config".to_vec(), vault.to_bytes().to_vec()]
     }
 
     /// Find the program address of Config Account
-    pub fn find_program_address(program_id: &Pubkey, ncn: &Pubkey) -> (Pubkey, u8, Vec<Vec<u8>>) {
-        let seeds = Self::seeds(ncn);
+    pub fn find_program_address(program_id: &Pubkey, vault: &Pubkey) -> (Pubkey, u8, Vec<Vec<u8>>) {
+        let seeds = Self::seeds(vault);
         let seeds_iter: Vec<_> = seeds.iter().map(|s| s.as_slice()).collect();
         let (pda, bump) = Pubkey::find_program_address(&seeds_iter, program_id);
         (pda, bump, seeds)
@@ -34,7 +34,7 @@ impl Config {
     pub fn load(
         program_id: &Pubkey,
         account: &AccountInfo,
-        ncn: &Pubkey,
+        vault: &Pubkey,
         expect_writable: bool,
     ) -> Result<(), ProgramError> {
         if account.owner.ne(program_id) {
@@ -55,11 +55,12 @@ impl Config {
         }
         if account
             .key
-            .ne(&Self::find_program_address(program_id, ncn).0)
+            .ne(&Self::find_program_address(program_id, vault).0)
         {
             msg!("Config account is not at the correct PDA");
             return Err(ProgramError::InvalidAccountData);
         }
+
         Ok(())
     }
 }

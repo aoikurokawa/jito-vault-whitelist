@@ -24,3 +24,5 @@ const_str_to_pubkey = { workspace = true }
 jito-bytemuck = { workspace = true }
 jito-jsm-core = { workspace = true }
 solana-program = { workspace = true }
+vault-whitelist-core = { workspace = true }
+vault-whitelist-sdk = { workspace = true }

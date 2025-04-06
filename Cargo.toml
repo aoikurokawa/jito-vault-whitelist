@@ -1,16 +1,13 @@
 [workspace]
 members = [
-	"shank-cli"
+	"vault-whitelist-core",
+	"vault-whitelist-program",
+	"vault-whitelist-sdk", 
 ]
-
 resolver = "2"
 
-[workspace.package]
-version = "0.0.1"
-edition = "2021"
-readme = "README.md"
-
 [workspace.dependencies]
+anchor-lang = { version = "0.30.1", features = ["idl-build"] }
 anyhow = "1.0.94"
 axum = { version = "0.7.9", features = ["ws"] }
 axum-extra = { version = "0.9.6", features = ["typed-header"] }
@@ -33,10 +30,6 @@ jito-bytemuck = { git = "https://github.com/jito-foundation/restaking.git", rev 
 jito-jsm-core = { git = "https://github.com/jito-foundation/restaking.git", rev = "eaf88e7e5ca2845fe3108c4fc4a06a25f9a8514d" }
 log = "0.4.22"
 meta-merkle-tree = { path = "meta_merkle_tree", version = "0.1.0" }
-ncn-portal-client = { path = "clients/rust/ncn_portal_client", version = "0.1.0" }
-ncn-portal-core = { path = "ncn_portal_core", version = "0.1.0" }
-ncn-portal-program = { path = "ncn_portal_program", version = "0.1.0" }
-ncn-portal-sdk = { path = "ncn_portal_sdk", version = "0.1.0" }
 num-derive = "0.4.2"
 num-traits = "0.2.19"
 reqwest = { version = "0.10.10", features = ["json"] }
@@ -59,5 +52,3 @@ tokio-tungstenite = "0.24.0"
 tower-http = { version = "0.6.2", features = ["fs", "trace"] }
 tracing = "0.1.41"
 tracing-subscriber = { version = "0.3.19", features = ["env-filter"] }
-vault-whitelist-core = { path = "./core" }
-vault-whitelist-sdk = { path = "./sdk" }

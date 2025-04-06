@@ -115,10 +115,14 @@ impl VaultWhitelistClient {
         meta_merkle_root: &[u8; 32],
     ) -> TestResult<()> {
         let config = Config::find_program_address(&jito_vault_whitelist_program::id(), &vault).0;
+        let whitelist =
+            Whitelist::find_program_address(&jito_vault_whitelist_program::id(), &vault).0;
 
         let ix = InitializeWhitelistBuilder::new()
             .config(config)
+            .whitelist(whitelist)
             .vault(vault)
+            .vault_admin(self.payer.pubkey())
             .meta_merkle_root(*meta_merkle_root)
             .instruction();
 

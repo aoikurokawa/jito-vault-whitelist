@@ -18,7 +18,7 @@ impl TestBuilder {
     pub async fn new() -> Self {
         // $ cargo-build-sbf && SBF_OUT_DIR=$(pwd)/target/sbf-solana-solana/release cargo nextest run
         let program_test = ProgramTest::new(
-            "vault_whitelist_program",
+            "jito_vault_whitelist_program",
             jito_vault_whitelist_program::id(),
             processor!(jito_vault_whitelist_program::process_instruction),
         );

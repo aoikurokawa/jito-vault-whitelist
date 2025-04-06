@@ -1,5 +1,5 @@
 [package]
-name = "vault-whitelist-sdk"
+name = "jito-vault-whitelist-sdk"
 version = "0.1.0"
 edition = "2021"
 

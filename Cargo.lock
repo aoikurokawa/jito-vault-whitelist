@@ -973,6 +973,40 @@ dependencies = [
 ]
 
 [[package]]
+name = "jito-vault-whitelist-core"
+version = "0.1.0"
+dependencies = [
+ "bytemuck",
+ "jito-account-traits-derive",
+ "jito-bytemuck",
+ "shank",
+ "solana-program",
+]
+
+[[package]]
+name = "jito-vault-whitelist-program"
+version = "0.1.0"
+dependencies = [
+ "borsh 0.10.4",
+ "const_str_to_pubkey",
+ "jito-bytemuck",
+ "jito-jsm-core",
+ "jito-vault-whitelist-core",
+ "jito-vault-whitelist-sdk",
+ "solana-program",
+]
+
+[[package]]
+name = "jito-vault-whitelist-sdk"
+version = "0.1.0"
+dependencies = [
+ "borsh 0.10.4",
+ "shank",
+ "solana-program",
+ "thiserror",
+]
+
+[[package]]
 name = "jobserver"
 version = "0.1.33"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2441,40 +2475,6 @@ checksum = "0200d0fc04d809396c2ad43f3c95da3582a2556eba8d453c1087f4120ee352ff"
 dependencies = [
  "fnv",
  "lazy_static",
-]
-
-[[package]]
-name = "vault-whitelist-core"
-version = "0.1.0"
-dependencies = [
- "bytemuck",
- "jito-account-traits-derive",
- "jito-bytemuck",
- "shank",
- "solana-program",
-]
-
-[[package]]
-name = "vault-whitelist-program"
-version = "0.1.0"
-dependencies = [
- "borsh 0.10.4",
- "const_str_to_pubkey",
- "jito-bytemuck",
- "jito-jsm-core",
- "solana-program",
- "vault-whitelist-core",
- "vault-whitelist-sdk",
-]
-
-[[package]]
-name = "vault-whitelist-sdk"
-version = "0.1.0"
-dependencies = [
- "borsh 0.10.4",
- "shank",
- "solana-program",
- "thiserror",
 ]
 
 [[package]]

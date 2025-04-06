@@ -1,8 +1,8 @@
 [workspace]
 members = [
-	"vault-whitelist-core",
-	"vault-whitelist-program",
-	"vault-whitelist-sdk", 
+	"core",
+	"program",
+	"sdk", 
 ]
 resolver = "2"
 
@@ -28,6 +28,8 @@ hex = "0.4.3"
 jito-account-traits-derive = { git = "https://github.com/jito-foundation/restaking.git", rev = "eaf88e7e5ca2845fe3108c4fc4a06a25f9a8514d" }
 jito-bytemuck = { git = "https://github.com/jito-foundation/restaking.git", rev = "eaf88e7e5ca2845fe3108c4fc4a06a25f9a8514d" }
 jito-jsm-core = { git = "https://github.com/jito-foundation/restaking.git", rev = "eaf88e7e5ca2845fe3108c4fc4a06a25f9a8514d" }
+jito-vault-whitelist-core = { path = "./core" }
+jito-vault-whitelist-sdk = { path = "./sdk" }
 log = "0.4.22"
 meta-merkle-tree = { path = "meta_merkle_tree", version = "0.1.0" }
 num-derive = "0.4.2"
@@ -52,5 +54,3 @@ tokio-tungstenite = "0.24.0"
 tower-http = { version = "0.6.2", features = ["fs", "trace"] }
 tracing = "0.1.41"
 tracing-subscriber = { version = "0.3.19", features = ["env-filter"] }
-vault-whitelist-core = { path = "./vault-whitelist-core" }
-vault-whitelist-sdk = { path = "./vault-whitelist-sdk" }

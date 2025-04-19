@@ -71,6 +71,41 @@
         "type": "u8",
         "value": 1
       }
+    },
+    {
+      "name": "SetMintBurnAdmin",
+      "accounts": [
+        {
+          "name": "config",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "vaultConfig",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "whitelist",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "vault",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "vaultAdmin",
+          "isMut": false,
+          "isSigner": true
+        }
+      ],
+      "args": [],
+      "discriminant": {
+        "type": "u8",
+        "value": 2
+      }
     }
   ],
   "accounts": [
@@ -168,6 +203,6 @@
   ],
   "metadata": {
     "origin": "shank",
-    "address": "ncn9kxoGY7qXZMGZAE1iwoKaH8BGKPwWiWM2wNFGGYj"
+    "address": "ncncd27gXkYMV56EfwntDmYhH5Wzo896yTnrBbEq9xW"
   }
 }

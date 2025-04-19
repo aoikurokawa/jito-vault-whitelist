@@ -7,6 +7,8 @@
 
 pub(crate) mod r#initialize_config;
 pub(crate) mod r#initialize_whitelist;
+pub(crate) mod r#set_mint_burn_admin;
 
 pub use self::r#initialize_config::*;
 pub use self::r#initialize_whitelist::*;
+pub use self::r#set_mint_burn_admin::*;

@@ -132,4 +132,43 @@ impl VaultWhitelistClient {
         ))
         .await
     }
+
+    pub async fn do_set_mint_burn_admin(
+        &mut self,
+        vault: Pubkey,
+        meta_merkle_root: &[u8; 32],
+    ) -> TestResult<()> {
+        self.set_mint_burn_admin(vault, meta_merkle_root).await?;
+
+        Ok(())
+    }
+
+    pub async fn set_mint_burn_admin(
+        &mut self,
+        vault: Pubkey,
+        meta_merkle_root: &[u8; 32],
+    ) -> TestResult<()> {
+        let config = Config::find_program_address(&jito_vault_whitelist_program::id()).0;
+        let whitelist =
+            Whitelist::find_program_address(&jito_vault_whitelist_program::id(), &vault).0;
+
+        let mut ix = InitializeWhitelistBuilder::new()
+            .config(config)
+            .whitelist(whitelist)
+            .vault(vault)
+            .vault_admin(self.payer.pubkey())
+            .meta_merkle_root(*meta_merkle_root)
+            .instruction();
+        ix.program_id = jito_vault_whitelist_program::id();
+
+        let blockhash = self.banks_client.get_latest_blockhash().await?;
+
+        self.process_transaction(&Transaction::new_signed_with_payer(
+            &[ix],
+            Some(&self.payer.pubkey()),
+            &[&self.payer],
+            blockhash,
+        ))
+        .await
+    }
 }

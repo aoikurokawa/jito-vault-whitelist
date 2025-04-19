@@ -2,6 +2,7 @@ use borsh::BorshDeserialize;
 use initialize_config::process_initialize_config;
 use initialize_whitelist::process_initialize_whitelist;
 use jito_vault_whitelist_sdk::instruction::VaultWhitelistInstruction;
+use set_mint_burn_admin::process_set_mint_burn_admin;
 use solana_program::{
     account_info::AccountInfo, declare_id, entrypoint::ProgramResult, msg,
     program_error::ProgramError, pubkey::Pubkey,
@@ -9,6 +10,7 @@ use solana_program::{
 
 mod initialize_config;
 mod initialize_whitelist;
+mod set_mint_burn_admin;
 
 declare_id!(env!("VAULT_WHITELIST_PROGRAM_ID"));
 
@@ -35,6 +37,11 @@ pub fn process_instruction(
         VaultWhitelistInstruction::InitializeWhitelist { meta_merkle_root } => {
             msg!("Instruction: InitializeWhitelist");
             process_initialize_whitelist(program_id, accounts, &meta_merkle_root)
+        }
+
+        VaultWhitelistInstruction::SetMintBurnAdmin => {
+            msg!("Instruction: SetMintBurnAdmin");
+            process_set_mint_burn_admin(program_id, accounts)
         }
     }
 }

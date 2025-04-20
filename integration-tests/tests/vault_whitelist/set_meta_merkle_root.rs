@@ -24,6 +24,8 @@ mod tests {
             .await
             .unwrap();
 
+        let meta_merkle_root = [1; 32];
+
         vault_whitelist_client
             .do_set_meta_merkle_root(&vault_root, &meta_merkle_root)
             .await

@@ -27,6 +27,10 @@ pub fn process_initialize_whitelist(
     load_system_account(whitelist_info, true)?;
 
     Vault::load(&jito_vault_program::id(), vault_info, false)?;
+    let vault_data = vault_info.data.borrow();
+    let vault = Vault::try_from_slice_unchecked(&vault_data)?;
+
+    vault.check_admin(vault_admin_info.key)?;
 
     load_signer(vault_admin_info, true)?;
     load_system_program(system_program_info)?;

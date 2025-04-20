@@ -22,4 +22,10 @@ pub enum VaultWhitelistInstruction {
     #[account(4, signer, name = "vault_admin")]
     #[account(5, name = "jito_vault_program")]
     SetMintBurnAdmin,
+
+    #[account(0, name = "config")]
+    #[account(1, name = "vault")]
+    #[account(2, writable, name = "whitelist")]
+    #[account(3, signer, name = "vault_admin")]
+    SetMetaMerkleRoot { meta_merkle_root: [u8; 32] },
 }

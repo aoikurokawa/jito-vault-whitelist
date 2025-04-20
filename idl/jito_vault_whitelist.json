@@ -257,7 +257,7 @@
         },
         {
           "name": "whitelist",
-          "isMut": false,
+          "isMut": true,
           "isSigner": false
         },
         {
@@ -267,11 +267,16 @@
         },
         {
           "name": "vaultAdmin",
-          "isMut": false,
+          "isMut": true,
           "isSigner": true
         },
         {
           "name": "jitoVaultProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
           "isMut": false,
           "isSigner": false
         }

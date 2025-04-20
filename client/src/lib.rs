@@ -6,7 +6,6 @@
 #![allow(clippy::perf)]
 mod generated;
 mod log;
-pub mod pretty_display;
 
 use generated::*;
 

@@ -2589,7 +2589,7 @@ dependencies = [
 [[package]]
 name = "jito-restaking-client-common"
 version = "0.0.3"
-source = "git+https://github.com/jito-foundation/restaking?rev=fd0a42a60ce701691facc7c6cdf2c858bc639931#fd0a42a60ce701691facc7c6cdf2c858bc639931"
+source = "git+https://github.com/jito-foundation/restaking?rev=12fa363618696f2ed4d538c8c6a1c5604bea471b#12fa363618696f2ed4d538c8c6a1c5604bea471b"
 
 [[package]]
 name = "jito-restaking-core"
@@ -2643,7 +2643,7 @@ dependencies = [
 [[package]]
 name = "jito-vault-client"
 version = "0.0.3"
-source = "git+https://github.com/jito-foundation/restaking?rev=fd0a42a60ce701691facc7c6cdf2c858bc639931#fd0a42a60ce701691facc7c6cdf2c858bc639931"
+source = "git+https://github.com/jito-foundation/restaking?rev=12fa363618696f2ed4d538c8c6a1c5604bea471b#12fa363618696f2ed4d538c8c6a1c5604bea471b"
 dependencies = [
  "anchor-lang",
  "borsh 0.10.4",
@@ -2723,6 +2723,7 @@ dependencies = [
  "env_logger 0.10.2",
  "jito-bytemuck",
  "jito-jsm-core",
+ "jito-restaking-client-common",
  "jito-vault-client",
  "jito-vault-core",
  "jito-vault-sdk",
@@ -2750,6 +2751,7 @@ dependencies = [
  "anchor-lang",
  "borsh 0.10.4",
  "bytemuck",
+ "jito-restaking-client-common",
  "num-derive",
  "num-traits",
  "serde",

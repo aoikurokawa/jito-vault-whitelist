@@ -1,9 +1,10 @@
 use std::path::PathBuf;
 
+use anyhow::anyhow;
 use borsh::BorshDeserialize;
-use jito_vault_whitelist_client::{
-    instructions::{InitializeConfigBuilder, InitializeWhitelistBuilder, SetMintBurnAdminBuilder},
-    pretty_display::PrettyDisplay,
+use jito_restaking_client_common::log::PrettyDisplay;
+use jito_vault_whitelist_client::instructions::{
+    InitializeConfigBuilder, InitializeWhitelistBuilder, MintBuilder, SetMintBurnAdminBuilder,
 };
 use log::{debug, info};
 use meta_merkle_tree::{
@@ -11,10 +12,14 @@ use meta_merkle_tree::{
     vault_whitelist_meta::VaultWhitelistMeta,
 };
 use solana_program::pubkey::Pubkey;
-use solana_sdk::signer::Signer;
+use solana_sdk::{signature::read_keypair_file, signer::Signer};
+use spl_associated_token_account::{
+    get_associated_token_address, instruction::create_associated_token_account_idempotent,
+};
 
 use crate::{
     cli_config::CliConfig,
+    cli_signer::CliSigner,
     vault_whitelist::{ConfigActions, VaultWhitelistActions, VaultWhitelistCommands},
     CliHandler,
 };
@@ -77,6 +82,22 @@ impl VaultWhitelistCliHandler {
             VaultWhitelistCommands::VaultWhitelist {
                 action: VaultWhitelistActions::SetMintBurnAdmin { vault },
             } => self.set_mint_burn_admin(vault),
+            VaultWhitelistCommands::VaultWhitelist {
+                action:
+                    VaultWhitelistActions::Mint {
+                        whitelist_file_path,
+                        signer_keypair_path,
+                        vault,
+                        amount_in,
+                        min_amount_out,
+                    },
+            } => self.mint(
+                whitelist_file_path,
+                signer_keypair_path,
+                vault,
+                amount_in,
+                min_amount_out,
+            ),
         }
     }
 }
@@ -216,6 +237,113 @@ impl VaultWhitelistCliHandler {
         info!("Setting Mint Burn Admin");
 
         let ixs = [ix];
+        self.process_transaction(&ixs, &signer.pubkey(), &[signer])?;
+
+        if !self.print_tx {
+            let account =
+                self.get_account::<jito_vault_whitelist_client::accounts::Whitelist>(&whitelist)?;
+            info!("{}", account.pretty_display());
+        }
+
+        Ok(())
+    }
+
+    pub fn mint(
+        &self,
+        whitelist_file_path: PathBuf,
+        signer_keypair_path: PathBuf,
+        vault_pubkey: Pubkey,
+        amount_in: u64,
+        min_amount_out: u64,
+    ) -> anyhow::Result<()> {
+        let signer_keypair = read_keypair_file(signer_keypair_path)
+            .map_err(|e| anyhow!("Failed to read signer keypair: {}", e))?;
+        let signer = CliSigner::new(Some(signer_keypair), None);
+
+        let whitelist = jito_vault_whitelist_core::whitelist::Whitelist::find_program_address(
+            &self.vault_whitelist_program_id,
+            &vault_pubkey,
+        )
+        .0;
+
+        let vault = self.get_account::<jito_vault_client::accounts::Vault>(&vault_pubkey)?;
+
+        let depositor = signer.pubkey();
+        let depositor_token_account =
+            get_associated_token_address(&depositor, &vault.supported_mint);
+        let depositor_vrt_token_account = get_associated_token_address(&depositor, &vault.vrt_mint);
+
+        let vault_token_account =
+            get_associated_token_address(&vault_pubkey, &vault.supported_mint);
+
+        let vault_fee_token_account =
+            get_associated_token_address(&vault.fee_wallet, &vault.vrt_mint);
+
+        let depositor_ata_ix = create_associated_token_account_idempotent(
+            &depositor,
+            &depositor,
+            &vault.supported_mint,
+            &spl_token::ID,
+        );
+        let depositor_vrt_ata_ix = create_associated_token_account_idempotent(
+            &depositor,
+            &depositor,
+            &vault.vrt_mint,
+            &spl_token::ID,
+        );
+        let vault_ata_ix = create_associated_token_account_idempotent(
+            &depositor,
+            &vault_pubkey,
+            &vault.supported_mint,
+            &spl_token::ID,
+        );
+        let vault_fee_ata_ix = create_associated_token_account_idempotent(
+            &depositor,
+            &vault.fee_wallet,
+            &vault.vrt_mint,
+            &spl_token::ID,
+        );
+
+        let vault_whitelist_metas =
+            read_json_from_file::<Vec<VaultWhitelistMeta>>(&whitelist_file_path)?;
+        let proof = GeneratedMerkleTree::get_proof(&vault_whitelist_metas, &depositor);
+
+        let mut ix_builder = MintBuilder::new();
+        ix_builder
+            .config(
+                jito_vault_whitelist_core::config::Config::find_program_address(
+                    &self.vault_whitelist_program_id,
+                )
+                .0,
+            )
+            .vault_config(
+                jito_vault_core::config::Config::find_program_address(&self.vault_program_id).0,
+            )
+            .vault(vault_pubkey)
+            .vrt_mint(vault.vrt_mint)
+            .depositor(depositor)
+            .depositor_token_account(depositor_token_account)
+            .vault_token_account(vault_token_account)
+            .depositor_vrt_token_account(depositor_vrt_token_account)
+            .vault_fee_token_account(vault_fee_token_account)
+            .whitelist(whitelist)
+            .jito_vault_program(self.vault_program_id)
+            .proof(proof)
+            .amount_in(amount_in)
+            .min_amount_out(min_amount_out);
+
+        let mut ix = ix_builder.instruction();
+        ix.program_id = self.vault_whitelist_program_id;
+
+        info!("Minting tokens");
+
+        let ixs = [
+            depositor_ata_ix,
+            depositor_vrt_ata_ix,
+            vault_ata_ix,
+            vault_fee_ata_ix,
+            ix,
+        ];
         self.process_transaction(&ixs, &signer.pubkey(), &[signer])?;
 
         if !self.print_tx {

@@ -106,6 +106,9 @@ impl VaultWhitelistCliHandler {
                 amount_in,
                 min_amount_out,
             ),
+            VaultWhitelistCommands::VaultWhitelist {
+                action: VaultWhitelistActions::CloseWhitelist { vault },
+            } => self.close_whitelist(vault),
         }
     }
 }

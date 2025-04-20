@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::{pubkey_string_conversion, vault_whitelist_meta::VaultWhitelistMeta};
+use crate::vault_whitelist_meta::VaultWhitelistMeta;
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct VaultWhitelistMetaCollection {

@@ -49,7 +49,7 @@ impl VaultWhitelistMetaTreeNode {
         tree_nodes
     }
 
-    pub(crate) fn vec_from_stake_meta(
+    pub fn vec_from_stake_meta(
         vault_whitelist_meta: &VaultWhitelistMeta,
     ) -> Result<Vec<Self>, MerkleRootGeneratorError> {
         // if let Some(tip_distribution_meta) = stake_meta.maybe_tip_distribution_meta.as_ref() {

@@ -29,7 +29,7 @@ impl Whitelist {
     }
 
     /// Get meta merkle root
-    pub fn get_meta_merkle_root(&self) -> &[u8; 32] {
+    pub const fn get_meta_merkle_root(&self) -> &[u8; 32] {
         &self.meta_merkle_root
     }
 

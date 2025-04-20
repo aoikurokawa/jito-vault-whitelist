@@ -24,6 +24,7 @@ jito-bytemuck = { workspace = true }
 jito-jsm-core = { workspace = true }
 jito-vault-core = { workspace = true }
 jito-vault-program = { workspace = true }
+jito-vault-sdk = { workspace = true }
 jito-vault-whitelist-core = { workspace = true }
 jito-vault-whitelist-sdk = { workspace = true }
 solana-program = { workspace = true }

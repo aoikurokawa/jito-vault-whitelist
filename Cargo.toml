@@ -1,5 +1,6 @@
 [workspace]
-members = [
+members = [ 
+	"cli",
 	"client",
 	"core",
 	"integration-tests",
@@ -20,6 +21,7 @@ anchor-lang = { git = "https://github.com/coral-xyz/anchor", rev = "96ed3b791c6f
 anyhow = "1.0.94"
 axum = { version = "0.7.9", features = ["ws"] }
 axum-extra = { version = "0.9.6", features = ["typed-header"] }
+base64 = "0.22.1"
 borsh = { version = "0.10.3" }
 bytemuck = { version = "1.16.3", features = ["min_const_generics"] }
 chrono = "0.4.38"
@@ -38,6 +40,7 @@ jito-bytemuck = { package = "jito-bytemuck", git = "https://github.com/jito-foun
 jito-jsm-core = { package = "jito-jsm-core", git = "https://github.com/jito-foundation/restaking", rev = "fd0a42a60ce701691facc7c6cdf2c858bc639931" }
 jito-restaking-program = { package = "jito-restaking-program", git = "https://github.com/jito-foundation/restaking", rev = "fd0a42a60ce701691facc7c6cdf2c858bc639931", features = ["no-entrypoint"] }
 jito-vault-core = { package = "jito-vault-core", git = "https://github.com/jito-foundation/restaking", rev = "fd0a42a60ce701691facc7c6cdf2c858bc639931" }
+jito-vault-client = { package = "jito-vault-client", git = "https://github.com/jito-foundation/restaking", rev = "fd0a42a60ce701691facc7c6cdf2c858bc639931" }
 jito-vault-program = { package = "jito-vault-program", git = "https://github.com/jito-foundation/restaking", rev = "fd0a42a60ce701691facc7c6cdf2c858bc639931", features = ["no-entrypoint"] }
 jito-vault-sdk = { package = "jito-vault-sdk", git = "https://github.com/jito-foundation/restaking", rev = "fd0a42a60ce701691facc7c6cdf2c858bc639931" }
 jito-vault-whitelist-client = { path = "./client" }
@@ -59,6 +62,7 @@ solana-account-decoder = "2.1.18"
 solana-cli-config = "2.1.18"
 solana-program = "2.1.18"
 solana-program-test = "2.1.18"
+solana-remote-wallet = "~2.1"
 solana-sdk = "2.1.18"
 solana-rpc-client = "2.1.18"
 solana-rpc-client-api = "2.1.18"
@@ -70,3 +74,4 @@ tokio-tungstenite = "0.24.0"
 tower-http = { version = "0.6.2", features = ["fs", "trace"] }
 tracing = "0.1.41"
 tracing-subscriber = { version = "0.3.19", features = ["env-filter"] }
+uriparse = "0.6.4"

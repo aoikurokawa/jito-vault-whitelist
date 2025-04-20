@@ -2,6 +2,7 @@ use borsh::BorshDeserialize;
 use initialize_config::process_initialize_config;
 use initialize_whitelist::process_initialize_whitelist;
 use jito_vault_whitelist_sdk::instruction::VaultWhitelistInstruction;
+use mint::process_mint;
 use set_meta_merkle_root::process_set_meta_merkle_root;
 use set_mint_burn_admin::process_set_mint_burn_admin;
 use solana_program::{
@@ -50,6 +51,15 @@ pub fn process_instruction(
         VaultWhitelistInstruction::SetMetaMerkleRoot { meta_merkle_root } => {
             msg!("Instruction: SetMetaMerkleRoot");
             process_set_meta_merkle_root(program_id, accounts, &meta_merkle_root)
+        }
+
+        VaultWhitelistInstruction::Mint {
+            proof,
+            amount_in,
+            min_amount_out,
+        } => {
+            msg!("Instruction: Mint");
+            process_mint(program_id, accounts, &proof, amount_in, min_amount_out)
         }
     }
 }

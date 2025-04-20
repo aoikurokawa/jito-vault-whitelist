@@ -9,7 +9,7 @@ use crate::generated_merkle_tree::GeneratedMerkleTree;
 /// Represents the information for activating a tip distribution account.
 #[derive(Debug, Clone, Eq, Hash, PartialEq, Serialize, Deserialize)]
 pub struct TreeNode {
-    // Pubkey of the user account for setting the merkle root
+    /// Pubkey of the user account for setting the merkle root
     pub user_account: Pubkey,
 
     /// Claimant's proof of inclusion in the Merkle Tree
@@ -43,7 +43,7 @@ impl TreeNode {
 
     pub fn hash(&self) -> Hash {
         hashv(&[
-            &self.user_account.to_bytes(),
+            // &self.user_account.to_bytes(),
             // &self.validator_merkle_root,
             // &self.max_total_claim.to_le_bytes(),
             &self.max_num_nodes.to_le_bytes(),

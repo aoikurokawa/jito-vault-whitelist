@@ -41,5 +41,9 @@ pub enum VaultWhitelistInstruction {
     #[account(9, writable, name = "whitelist")]
     #[account(10, name = "jito_vault_program")]
     #[account(11, name = "token_program")]
-    Mint { meta_merkle_root: [u8; 32] },
+    Mint {
+        proof: Vec<[u8; 32]>,
+        amount_in: u64,
+        min_amount_out: u64,
+    },
 }

@@ -2740,7 +2740,6 @@ dependencies = [
  "spl-associated-token-account 6.0.0",
  "spl-token 7.0.0",
  "thiserror 1.0.69",
- "tokio",
  "uriparse",
 ]
 

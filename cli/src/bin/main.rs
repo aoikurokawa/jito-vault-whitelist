@@ -82,8 +82,7 @@ pub fn get_cli_config(args: &Cli) -> Result<CliConfig, anyhow::Error> {
     Ok(cli_config)
 }
 
-#[tokio::main]
-async fn main() -> Result<(), anyhow::Error> {
+fn main() -> Result<(), anyhow::Error> {
     env_logger::Builder::from_env(Env::default().default_filter_or("info")).init();
 
     let args: Cli = Cli::parse();
@@ -124,8 +123,7 @@ async fn main() -> Result<(), anyhow::Error> {
                 vault_program_id,
                 args.print_tx,
             )
-            .handle(action)
-            .await?;
+            .handle(action)?;
         }
     }
 

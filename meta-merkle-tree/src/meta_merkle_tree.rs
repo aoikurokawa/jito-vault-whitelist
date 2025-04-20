@@ -11,7 +11,6 @@ use solana_program::{hash::hashv, pubkey::Pubkey};
 
 use crate::{
     error::MerkleTreeError::{self, MerkleValidationError},
-    // generated_merkle_tree_collection::GeneratedMerkleTreeCollection,
     merkle_tree::MerkleTree,
     tree_node::TreeNode,
     utils::get_proof,
@@ -72,26 +71,6 @@ impl MetaMerkleTree {
         Ok(tree)
     }
 
-    // TODO replace this with the GeneratedMerkleTreeCollection from the Operator module once that's created
-    // pub fn new_from_generated_merkle_tree_collection(
-    //     generated_merkle_tree_collection: GeneratedMerkleTreeCollection,
-    // ) -> Result<Self> {
-    //     let tree_nodes = generated_merkle_tree_collection
-    //         .generated_merkle_trees
-    //         .into_iter()
-    //         .map(TreeNode::from)
-    //         .collect();
-    //     Self::new(tree_nodes)
-    // }
-    // TODO if we need to load this from a file (for operator?)
-    // Load a merkle tree from a csv path
-    // pub fn new_from_csv(path: &PathBuf) -> Result<Self> {
-    //     let csv_entries = CsvEntry::new_from_file(path)?;
-    //     let tree_nodes: Vec<TreeNode> = csv_entries.into_iter().map(TreeNode::from).collect();
-    //     let tree = Self::new(tree_nodes)?;
-    //     Ok(tree)
-    // }
-
     /// Load a serialized merkle tree from file path
     pub fn new_from_file(path: &PathBuf) -> Result<Self> {
         let file = File::open(path)?;
@@ -108,6 +87,7 @@ impl MetaMerkleTree {
         file.write_all(serialized.as_bytes()).unwrap();
     }
 
+    /// Get node
     pub fn get_node(&self, tip_distribution_account: &Pubkey) -> TreeNode {
         for i in self.tree_nodes.iter() {
             if i.user_account == *tip_distribution_account {
@@ -118,6 +98,7 @@ impl MetaMerkleTree {
         panic!("Claimant not found in tree");
     }
 
+    /// Validate
     fn validate(&self) -> Result<()> {
         // The Merkle tree can be at most height 32, implying a max node count of 2^32 - 1
         let max_nodes = 2u64
@@ -190,7 +171,7 @@ impl MetaMerkleTree {
         Ok(())
     }
 
-    // Converts Merkle Tree to a map for faster key access
+    /// Converts Merkle Tree to a map for faster key access
     pub fn convert_to_hashmap(&self) -> HashMap<Pubkey, TreeNode> {
         self.tree_nodes
             .iter()

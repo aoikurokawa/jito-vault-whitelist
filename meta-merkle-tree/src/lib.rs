@@ -1,13 +1,11 @@
 pub mod delegation;
 pub mod error;
 pub mod generated_merkle_tree;
-pub mod generated_merkle_tree_collection;
 pub mod merkle_tree;
 pub mod meta_merkle_tree;
 pub mod pubkey_string_conversion;
 pub mod tree_node;
 pub mod utils;
 pub mod vault_whitelist_meta;
-pub mod vault_whitelist_meta_collection;
 pub mod vault_whitelist_meta_tree_node;
 pub mod verify;

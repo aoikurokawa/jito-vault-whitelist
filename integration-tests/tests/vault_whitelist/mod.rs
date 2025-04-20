@@ -1,3 +1,4 @@
+mod close_whitelist;
 mod initialize_config;
 mod initialize_whitelist;
 mod mint;

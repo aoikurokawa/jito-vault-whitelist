@@ -28,4 +28,18 @@ pub enum VaultWhitelistInstruction {
     #[account(2, writable, name = "whitelist")]
     #[account(3, signer, name = "vault_admin")]
     SetMetaMerkleRoot { meta_merkle_root: [u8; 32] },
+
+    #[account(0, name = "config")]
+    #[account(1, name = "vault_config")]
+    #[account(2, writable, name = "vault")]
+    #[account(3, writable, name = "vrt_mint")]
+    #[account(4, writable, signer, name = "depositor")]
+    #[account(5, writable, name = "depositor_token_account")]
+    #[account(6, writable, name = "vault_token_account")]
+    #[account(7, writable, name = "depositor_vrt_token_account")]
+    #[account(8, writable, name = "vault_fee_token_account")]
+    #[account(9, writable, name = "whitelist")]
+    #[account(10, name = "jito_vault_program")]
+    #[account(11, name = "token_program")]
+    Mint { meta_merkle_root: [u8; 32] },
 }

@@ -1,5 +1,6 @@
 use crate::merkle_tree::MerkleTree;
 
+/// Get proof
 pub fn get_proof(merkle_tree: &MerkleTree, index: usize) -> Vec<[u8; 32]> {
     let mut proof = Vec::new();
     let path = merkle_tree.find_path(index).expect("path to index");

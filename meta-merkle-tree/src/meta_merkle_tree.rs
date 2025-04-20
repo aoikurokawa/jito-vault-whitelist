@@ -11,7 +11,6 @@ use solana_program::{hash::hashv, pubkey::Pubkey};
 
 use crate::{
     error::MerkleTreeError::{self, MerkleValidationError},
-    // generated_merkle_tree_collection::GeneratedMerkleTreeCollection,
     merkle_tree::MerkleTree,
     tree_node::TreeNode,
     utils::get_proof,
@@ -190,7 +189,7 @@ impl MetaMerkleTree {
         Ok(())
     }
 
-    // Converts Merkle Tree to a map for faster key access
+    /// Converts Merkle Tree to a map for faster key access
     pub fn convert_to_hashmap(&self) -> HashMap<Pubkey, TreeNode> {
         self.tree_nodes
             .iter()

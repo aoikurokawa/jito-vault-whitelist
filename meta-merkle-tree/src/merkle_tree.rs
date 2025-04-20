@@ -2,9 +2,9 @@
 // https://github.com/jito-foundation/jito-solana/blob/v1.16.19-jito/merkle-tree/src/merkle_tree.rs
 use solana_program::hash::{hashv, Hash};
 
-// We need to discern between leaf and intermediate nodes to prevent trivial second
-// pre-image attacks.
-// https://flawed.net.nz/2018/02/21/attacking-merkle-trees-with-a-second-preimage-attack
+/// We need to discern between leaf and intermediate nodes to prevent trivial second
+/// pre-image attacks.
+/// https://flawed.net.nz/2018/02/21/attacking-merkle-trees-with-a-second-preimage-attack
 const LEAF_PREFIX: &[u8] = &[0];
 const INTERMEDIATE_PREFIX: &[u8] = &[1];
 

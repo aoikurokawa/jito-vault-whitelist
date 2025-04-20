@@ -28,6 +28,11 @@ impl Whitelist {
         }
     }
 
+    /// Set new meta merkle root
+    pub fn set_meta_merkle_root(&mut self, meta_merkle_root: &[u8; 32]) {
+        self.meta_merkle_root = *meta_merkle_root;
+    }
+
     /// Seeds of Whitelist Account
     pub fn seeds(vault: &Pubkey) -> Vec<Vec<u8>> {
         vec![b"whitelist".to_vec(), vault.to_bytes().to_vec()]

@@ -1,3 +1,4 @@
+use jito_bytemuck::AccountDeserialize;
 use jito_jsm_core::loader::load_signer;
 use jito_vault_core::{config::Config as VaultConfig, vault::Vault};
 use jito_vault_sdk::{instruction::VaultAdminRole, sdk::set_secondary_admin};
@@ -18,11 +19,18 @@ pub fn process_set_mint_burn_admin(program_id: &Pubkey, accounts: &[AccountInfo]
     Config::load(program_id, config_info, false)?;
     VaultConfig::load(&jito_vault_program::id(), vault_config_info, false)?;
     Whitelist::load(program_id, whitelist_info, vault_info.key, false)?;
+
     Vault::load(&jito_vault_program::id(), vault_info, true)?;
+    let mut vault_data = vault_info.data.borrow();
+    let vault = Vault::try_from_slice_unchecked(&mut vault_data)?;
+
+    vault.check_admin(vault_admin_info.key)?;
 
     load_signer(vault_admin_info, false)?;
 
     msg!("Setting MintBurnAdmin for Vault {}", vault_info.key);
+
+    drop(vault_data);
 
     invoke(
         &set_secondary_admin(

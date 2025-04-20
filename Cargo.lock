@@ -2310,6 +2310,7 @@ dependencies = [
  "jito-vault-whitelist-core",
  "jito-vault-whitelist-program",
  "jito-vault-whitelist-sdk",
+ "meta-merkle-tree",
  "shank",
  "solana-program",
  "solana-program-test",
@@ -2537,6 +2538,7 @@ dependencies = [
  "jito-vault-sdk",
  "jito-vault-whitelist-core",
  "jito-vault-whitelist-sdk",
+ "meta-merkle-tree",
  "solana-program",
 ]
 
@@ -2791,7 +2793,6 @@ dependencies = [
  "serde",
  "serde_json",
  "solana-program",
- "solana-sdk",
  "thiserror 1.0.69",
 ]
 

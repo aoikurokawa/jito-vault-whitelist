@@ -148,6 +148,28 @@ impl VaultProgramClient {
         Ok(())
     }
 
+    pub async fn configure_depositor(
+        &mut self,
+        vault_root: &VaultRoot,
+        depositor: &Pubkey,
+        amount_to_mint: u64,
+    ) -> Result<(), BanksClientError> {
+        self.airdrop(depositor, 100.0).await.unwrap();
+        let vault = self.get_vault(&vault_root.vault_pubkey).await.unwrap();
+        self.create_ata(&vault.supported_mint, depositor)
+            .await
+            .unwrap();
+        self.create_ata(&vault.vrt_mint, depositor).await.unwrap();
+        self.create_ata(&vault.vrt_mint, &vault.fee_wallet)
+            .await
+            .unwrap();
+        self.mint_spl_to(&vault.supported_mint, depositor, amount_to_mint)
+            .await
+            .unwrap();
+
+        Ok(())
+    }
+
     pub async fn mint_spl_to(
         &mut self,
         mint: &Pubkey,

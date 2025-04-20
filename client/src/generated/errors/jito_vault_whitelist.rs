@@ -19,6 +19,9 @@ pub enum JitoVaultWhitelistError {
     /// 3002 - DivisionByZero
     #[error("DivisionByZero")]
     DivisionByZero = 0xBBA,
+    /// 3003 - InvalidProof
+    #[error("InvalidProof")]
+    InvalidProof = 0xBBB,
 }
 
 impl solana_program::program_error::PrintProgramError for JitoVaultWhitelistError {

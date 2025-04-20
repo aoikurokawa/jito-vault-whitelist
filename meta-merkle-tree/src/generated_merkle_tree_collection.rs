@@ -2,8 +2,9 @@
 //
 // use crate::{
 //     error::MerkleRootGeneratorError, generated_merkle_tree::GeneratedMerkleTree,
-//     merkle_tree::MerkleTree, stake_meta_collection::StakeMetaCollection,
-//     stake_meta_tree_node::StakeMetaTreeNode, utils::get_proof,
+//     merkle_tree::MerkleTree, utils::get_proof,
+//     vault_whitelist_meta_collection::VaultWhitelistMetaCollection,
+//     vault_whitelist_meta_tree_node::VaultWhitelistMetaTreeNode,
 // };
 //
 // #[derive(Clone, Deserialize, Serialize, Debug)]
@@ -16,27 +17,18 @@
 //
 // impl GeneratedMerkleTreeCollection {
 //     pub fn new_from_stake_meta_collection(
-//         stake_meta_coll: StakeMetaCollection,
+//         vault_whitelist_meta_coll: VaultWhitelistMetaCollection,
 //     ) -> Result<Self, MerkleRootGeneratorError> {
-//         let generated_merkle_trees = stake_meta_coll
-//             .stake_metas
+//         let generated_merkle_trees = vault_whitelist_meta_coll
+//             .vault_whitelist_metas
 //             .into_iter()
 //             // .filter(|stake_meta| stake_meta.maybe_tip_distribution_meta.is_some())
-//             .filter_map(|stake_meta| {
-//                 let mut tree_nodes = match StakeMetaTreeNode::vec_from_stake_meta(&stake_meta) {
-//                     Err(e) => return Some(Err(e)),
-//                     Ok(maybe_tree_nodes) => maybe_tree_nodes,
-//                 }?;
-//
-//                 // if let Some(rpc_client) = &maybe_rpc_client {
-//                 //     if let Some(tda) = stake_meta.maybe_tip_distribution_meta.as_ref() {
-//                 // emit_inconsistent_tree_node_amount_dp(
-//                 //     &tree_nodes[..],
-//                 //     &tda.tip_distribution_pubkey,
-//                 //     rpc_client,
-//                 // );
-//                 //     }
-//                 // }
+//             .filter_map(|vault_whitelist_meta| {
+//                 let mut tree_nodes =
+//                     match VaultWhitelistMetaTreeNode::vec_from_stake_meta(&vault_whitelist_meta) {
+//                         Ok(maybe_tree_nodes) => maybe_tree_nodes,
+//                         Err(e) => return Some(Err(e)),
+//                     };
 //
 //                 let hashed_nodes: Vec<[u8; 32]> =
 //                     tree_nodes.iter().map(|n| n.hash().to_bytes()).collect();
@@ -52,9 +44,10 @@
 //
 //                 Some(Ok(GeneratedMerkleTree {
 //                     max_num_nodes,
+//                     user_account: vault_whitelist_meta.depositor_pubkey,
 //                     // tip_distribution_account: tip_distribution_meta.tip_distribution_pubkey,
-//                     merkle_root_upload_authority: tip_distribution_meta
-//                         .merkle_root_upload_authority,
+//                     // merkle_root_upload_authority: tip_distribution_meta
+//                     //     .merkle_root_upload_authority,
 //                     merkle_root: *merkle_tree.get_root().unwrap(),
 //                     tree_nodes,
 //                     // max_total_claim: tip_distribution_meta.total_tips,

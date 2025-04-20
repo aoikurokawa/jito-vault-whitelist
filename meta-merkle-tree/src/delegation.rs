@@ -1,7 +1,7 @@
 use std::{fs::File, io::BufReader, path::PathBuf};
 
 use serde::{de::DeserializeOwned, Deserialize, Serialize};
-use solana_sdk::pubkey::Pubkey;
+use solana_program::pubkey::Pubkey;
 
 use crate::pubkey_string_conversion;
 

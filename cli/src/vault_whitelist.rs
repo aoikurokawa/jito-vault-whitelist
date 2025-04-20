@@ -31,4 +31,7 @@ pub enum VaultWhitelistActions {
         whitelist_file_path: PathBuf,
         vault: Pubkey,
     },
+
+    /// Set mint burn admin
+    SetMintBurnAdmin { vault: Pubkey },
 }

@@ -1,18 +1,8 @@
-use std::{fs::File, path::PathBuf};
+use std::path::PathBuf;
 
-use anyhow::{anyhow, Result};
 use borsh::BorshDeserialize;
-use jito_bytemuck::AccountDeserialize;
-use jito_jsm_core::get_epoch;
-use jito_vault_core::{
-    burn_vault::BurnVault, config::Config, vault::Vault, vault_ncn_ticket::VaultNcnTicket,
-    vault_operator_delegation::VaultOperatorDelegation,
-    vault_staker_withdrawal_ticket::VaultStakerWithdrawalTicket,
-    vault_update_state_tracker::VaultUpdateStateTracker,
-};
-use jito_vault_sdk::inline_mpl_token_metadata;
 use jito_vault_whitelist_client::{
-    instructions::{InitializeConfigBuilder, InitializeWhitelistBuilder},
+    instructions::{InitializeConfigBuilder, InitializeWhitelistBuilder, SetMintBurnAdminBuilder},
     pretty_display::PrettyDisplay,
 };
 use log::{debug, info};
@@ -21,19 +11,10 @@ use meta_merkle_tree::{
     vault_whitelist_meta::VaultWhitelistMeta,
 };
 use solana_program::pubkey::Pubkey;
-use solana_rpc_client::rpc_client::SerializableTransaction;
-use solana_sdk::{
-    signature::{read_keypair_file, Keypair, Signer},
-    transaction::Transaction,
-};
-use spl_associated_token_account::{
-    get_associated_token_address, instruction::create_associated_token_account_idempotent,
-};
-use spl_token::instruction::transfer;
+use solana_sdk::signer::Signer;
 
 use crate::{
     cli_config::CliConfig,
-    cli_signer::CliSigner,
     vault_whitelist::{ConfigActions, VaultWhitelistActions, VaultWhitelistCommands},
     CliHandler,
 };
@@ -79,7 +60,7 @@ impl VaultWhitelistCliHandler {
     }
 
     #[allow(clippy::future_not_send)]
-    pub async fn handle(&self, action: VaultWhitelistCommands) -> Result<()> {
+    pub async fn handle(&self, action: VaultWhitelistCommands) -> anyhow::Result<()> {
         match action {
             VaultWhitelistCommands::Config {
                 action: ConfigActions::Initialize,
@@ -94,6 +75,9 @@ impl VaultWhitelistCliHandler {
                         vault,
                     },
             } => self.initialize_whitelist(whitelist_file_path, vault).await,
+            VaultWhitelistCommands::VaultWhitelist {
+                action: VaultWhitelistActions::SetMintBurnAdmin { vault },
+            } => self.set_mint_burn_admin(vault).await,
         }
     }
 }
@@ -101,12 +85,8 @@ impl VaultWhitelistCliHandler {
 /// Handle Vault Whitelist Config
 impl VaultWhitelistCliHandler {
     #[allow(clippy::future_not_send)]
-    pub async fn initialize_config(&self) -> Result<()> {
-        let signer = self
-            .cli_config
-            .signer
-            .as_ref()
-            .ok_or_else(|| anyhow!("No Signer"))?;
+    pub async fn initialize_config(&self) -> anyhow::Result<()> {
+        let signer = self.signer()?;
 
         let mut ix_builder = InitializeConfigBuilder::new();
         let config_address = jito_vault_whitelist_core::config::Config::find_program_address(
@@ -133,7 +113,7 @@ impl VaultWhitelistCliHandler {
     }
 
     #[allow(clippy::future_not_send)]
-    async fn get_config(&self) -> Result<()> {
+    async fn get_config(&self) -> anyhow::Result<()> {
         let rpc_client = self.get_rpc_client();
 
         let config_address = jito_vault_whitelist_core::config::Config::find_program_address(
@@ -158,18 +138,13 @@ impl VaultWhitelistCliHandler {
 
 /// Handle Vault Whitelist Whitelist
 impl VaultWhitelistCliHandler {
-    #[allow(clippy::too_many_arguments, clippy::future_not_send)]
+    #[allow(clippy::future_not_send)]
     pub async fn initialize_whitelist(
         &self,
         whitelist_file_path: PathBuf,
         vault: Pubkey,
-    ) -> Result<()> {
-        let signer = self
-            .cli_config
-            .signer
-            .as_ref()
-            .ok_or_else(|| anyhow!("No Signer"))?;
-
+    ) -> anyhow::Result<()> {
+        let signer = self.signer()?;
         let admin = signer.pubkey();
 
         let whitelist = jito_vault_whitelist_core::whitelist::Whitelist::find_program_address(
@@ -199,6 +174,52 @@ impl VaultWhitelistCliHandler {
         ix.program_id = self.vault_whitelist_program_id;
 
         info!("Initializing Whitelist at address: {}", whitelist);
+
+        let ixs = [ix];
+        self.process_transaction(&ixs, &signer.pubkey(), &[signer])
+            .await?;
+
+        if !self.print_tx {
+            let account = self
+                .get_account::<jito_vault_whitelist_client::accounts::Whitelist>(&whitelist)
+                .await?;
+            info!("{}", account.pretty_display());
+        }
+
+        Ok(())
+    }
+
+    #[allow(clippy::future_not_send)]
+    pub async fn set_mint_burn_admin(&self, vault: Pubkey) -> anyhow::Result<()> {
+        let signer = self.signer()?;
+        let admin = signer.pubkey();
+
+        let whitelist = jito_vault_whitelist_core::whitelist::Whitelist::find_program_address(
+            &self.vault_whitelist_program_id,
+            &vault,
+        )
+        .0;
+
+        let mut ix_builder = SetMintBurnAdminBuilder::new();
+        ix_builder
+            .config(
+                jito_vault_whitelist_core::config::Config::find_program_address(
+                    &self.vault_whitelist_program_id,
+                )
+                .0,
+            )
+            .vault_config(
+                jito_vault_core::config::Config::find_program_address(&self.vault_program_id).0,
+            )
+            .whitelist(whitelist)
+            .vault(vault)
+            .vault_admin(admin)
+            .jito_vault_program(self.vault_program_id);
+
+        let mut ix = ix_builder.instruction();
+        ix.program_id = self.vault_whitelist_program_id;
+
+        info!("Setting Mint Burn Admin");
 
         let ixs = [ix];
         self.process_transaction(&ixs, &signer.pubkey(), &[signer])

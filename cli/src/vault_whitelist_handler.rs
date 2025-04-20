@@ -59,25 +59,24 @@ impl VaultWhitelistCliHandler {
         }
     }
 
-    #[allow(clippy::future_not_send)]
-    pub async fn handle(&self, action: VaultWhitelistCommands) -> anyhow::Result<()> {
+    pub fn handle(&self, action: VaultWhitelistCommands) -> anyhow::Result<()> {
         match action {
             VaultWhitelistCommands::Config {
                 action: ConfigActions::Initialize,
-            } => self.initialize_config().await,
+            } => self.initialize_config(),
             VaultWhitelistCommands::Config {
                 action: ConfigActions::Get,
-            } => self.get_config().await,
+            } => self.get_config(),
             VaultWhitelistCommands::VaultWhitelist {
                 action:
                     VaultWhitelistActions::Initialize {
                         whitelist_file_path,
                         vault,
                     },
-            } => self.initialize_whitelist(whitelist_file_path, vault).await,
+            } => self.initialize_whitelist(whitelist_file_path, vault),
             VaultWhitelistCommands::VaultWhitelist {
                 action: VaultWhitelistActions::SetMintBurnAdmin { vault },
-            } => self.set_mint_burn_admin(vault).await,
+            } => self.set_mint_burn_admin(vault),
         }
     }
 }
@@ -85,7 +84,7 @@ impl VaultWhitelistCliHandler {
 /// Handle Vault Whitelist Config
 impl VaultWhitelistCliHandler {
     #[allow(clippy::future_not_send)]
-    pub async fn initialize_config(&self) -> anyhow::Result<()> {
+    pub fn initialize_config(&self) -> anyhow::Result<()> {
         let signer = self.signer()?;
 
         let mut ix_builder = InitializeConfigBuilder::new();
@@ -99,13 +98,11 @@ impl VaultWhitelistCliHandler {
 
         info!("Initializing vault config parameters: {:?}", ix_builder);
 
-        self.process_transaction(&[ix], &signer.pubkey(), &[signer])
-            .await?;
+        self.process_transaction(&[ix], &signer.pubkey(), &[signer])?;
 
         if !self.print_tx {
-            let account = self
-                .get_account::<jito_vault_whitelist_client::accounts::Config>(&config_address)
-                .await?;
+            let account =
+                self.get_account::<jito_vault_whitelist_client::accounts::Config>(&config_address)?;
             info!("{}", account.pretty_display());
         }
 
@@ -113,7 +110,7 @@ impl VaultWhitelistCliHandler {
     }
 
     #[allow(clippy::future_not_send)]
-    async fn get_config(&self) -> anyhow::Result<()> {
+    fn get_config(&self) -> anyhow::Result<()> {
         let rpc_client = self.get_rpc_client();
 
         let config_address = jito_vault_whitelist_core::config::Config::find_program_address(
@@ -126,7 +123,7 @@ impl VaultWhitelistCliHandler {
             config_address
         );
 
-        let account = rpc_client.get_account(&config_address).await?;
+        let account = rpc_client.get_account(&config_address)?;
         let config = jito_vault_whitelist_client::accounts::Config::deserialize(
             &mut account.data.as_slice(),
         )?;
@@ -139,7 +136,7 @@ impl VaultWhitelistCliHandler {
 /// Handle Vault Whitelist Whitelist
 impl VaultWhitelistCliHandler {
     #[allow(clippy::future_not_send)]
-    pub async fn initialize_whitelist(
+    pub fn initialize_whitelist(
         &self,
         whitelist_file_path: PathBuf,
         vault: Pubkey,
@@ -176,21 +173,18 @@ impl VaultWhitelistCliHandler {
         info!("Initializing Whitelist at address: {}", whitelist);
 
         let ixs = [ix];
-        self.process_transaction(&ixs, &signer.pubkey(), &[signer])
-            .await?;
+        self.process_transaction(&ixs, &signer.pubkey(), &[signer])?;
 
         if !self.print_tx {
-            let account = self
-                .get_account::<jito_vault_whitelist_client::accounts::Whitelist>(&whitelist)
-                .await?;
+            let account =
+                self.get_account::<jito_vault_whitelist_client::accounts::Whitelist>(&whitelist)?;
             info!("{}", account.pretty_display());
         }
 
         Ok(())
     }
 
-    #[allow(clippy::future_not_send)]
-    pub async fn set_mint_burn_admin(&self, vault: Pubkey) -> anyhow::Result<()> {
+    pub fn set_mint_burn_admin(&self, vault: Pubkey) -> anyhow::Result<()> {
         let signer = self.signer()?;
         let admin = signer.pubkey();
 
@@ -222,13 +216,11 @@ impl VaultWhitelistCliHandler {
         info!("Setting Mint Burn Admin");
 
         let ixs = [ix];
-        self.process_transaction(&ixs, &signer.pubkey(), &[signer])
-            .await?;
+        self.process_transaction(&ixs, &signer.pubkey(), &[signer])?;
 
         if !self.print_tx {
-            let account = self
-                .get_account::<jito_vault_whitelist_client::accounts::Whitelist>(&whitelist)
-                .await?;
+            let account =
+                self.get_account::<jito_vault_whitelist_client::accounts::Whitelist>(&whitelist)?;
             info!("{}", account.pretty_display());
         }
 

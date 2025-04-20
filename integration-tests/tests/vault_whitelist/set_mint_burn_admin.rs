@@ -23,5 +23,10 @@ mod tests {
             .do_initialize_whitelist(vault_root.vault_pubkey, &meta_merkle_root)
             .await
             .unwrap();
+
+        vault_whitelist_client
+            .do_set_mint_burn_admin(&vault_root)
+            .await
+            .unwrap();
     }
 }

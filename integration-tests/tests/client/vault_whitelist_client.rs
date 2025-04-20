@@ -1,6 +1,6 @@
 use anchor_lang::AccountDeserialize;
 use jito_vault_whitelist_client::instructions::{
-    InitializeConfigBuilder, InitializeWhitelistBuilder,
+    InitializeConfigBuilder, InitializeWhitelistBuilder, SetMintBurnAdminBuilder,
 };
 use jito_vault_whitelist_core::{config::Config, whitelist::Whitelist};
 use solana_program_test::BanksClient;
@@ -10,6 +10,8 @@ use solana_sdk::{
 };
 
 use crate::fixtures::TestResult;
+
+use super::vault_client::VaultRoot;
 
 pub struct VaultWhitelistClient {
     banks_client: BanksClient,
@@ -133,31 +135,29 @@ impl VaultWhitelistClient {
         .await
     }
 
-    pub async fn do_set_mint_burn_admin(
-        &mut self,
-        vault: Pubkey,
-        meta_merkle_root: &[u8; 32],
-    ) -> TestResult<()> {
-        self.set_mint_burn_admin(vault, meta_merkle_root).await?;
+    pub async fn do_set_mint_burn_admin(&mut self, vault_root: &VaultRoot) -> TestResult<()> {
+        self.set_mint_burn_admin(vault_root).await?;
 
         Ok(())
     }
 
-    pub async fn set_mint_burn_admin(
-        &mut self,
-        vault: Pubkey,
-        meta_merkle_root: &[u8; 32],
-    ) -> TestResult<()> {
+    pub async fn set_mint_burn_admin(&mut self, vault_root: &VaultRoot) -> TestResult<()> {
         let config = Config::find_program_address(&jito_vault_whitelist_program::id()).0;
-        let whitelist =
-            Whitelist::find_program_address(&jito_vault_whitelist_program::id(), &vault).0;
+        let whitelist = Whitelist::find_program_address(
+            &jito_vault_whitelist_program::id(),
+            &vault_root.vault_pubkey,
+        )
+        .0;
 
-        let mut ix = InitializeWhitelistBuilder::new()
+        let mut ix = SetMintBurnAdminBuilder::new()
             .config(config)
+            .vault_config(
+                jito_vault_core::config::Config::find_program_address(&jito_vault_program::id()).0,
+            )
             .whitelist(whitelist)
-            .vault(vault)
-            .vault_admin(self.payer.pubkey())
-            .meta_merkle_root(*meta_merkle_root)
+            .vault(vault_root.vault_pubkey)
+            .vault_admin(vault_root.vault_admin.pubkey())
+            .jito_vault_program(jito_vault_program::id())
             .instruction();
         ix.program_id = jito_vault_whitelist_program::id();
 
@@ -165,8 +165,8 @@ impl VaultWhitelistClient {
 
         self.process_transaction(&Transaction::new_signed_with_payer(
             &[ix],
-            Some(&self.payer.pubkey()),
-            &[&self.payer],
+            Some(&vault_root.vault_admin.pubkey()),
+            &[&vault_root.vault_admin],
             blockhash,
         ))
         .await

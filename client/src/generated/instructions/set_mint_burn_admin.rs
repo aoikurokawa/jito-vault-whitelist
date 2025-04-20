@@ -19,6 +19,8 @@ pub struct SetMintBurnAdmin {
     pub vault: solana_program::pubkey::Pubkey,
 
     pub vault_admin: solana_program::pubkey::Pubkey,
+
+    pub jito_vault_program: solana_program::pubkey::Pubkey,
 }
 
 impl SetMintBurnAdmin {
@@ -30,7 +32,7 @@ impl SetMintBurnAdmin {
         &self,
         remaining_accounts: &[solana_program::instruction::AccountMeta],
     ) -> solana_program::instruction::Instruction {
-        let mut accounts = Vec::with_capacity(5 + remaining_accounts.len());
+        let mut accounts = Vec::with_capacity(6 + remaining_accounts.len());
         accounts.push(solana_program::instruction::AccountMeta::new_readonly(
             self.config,
             false,
@@ -43,12 +45,16 @@ impl SetMintBurnAdmin {
             self.whitelist,
             false,
         ));
-        accounts.push(solana_program::instruction::AccountMeta::new_readonly(
+        accounts.push(solana_program::instruction::AccountMeta::new(
             self.vault, false,
         ));
         accounts.push(solana_program::instruction::AccountMeta::new_readonly(
             self.vault_admin,
             true,
+        ));
+        accounts.push(solana_program::instruction::AccountMeta::new_readonly(
+            self.jito_vault_program,
+            false,
         ));
         accounts.extend_from_slice(remaining_accounts);
         let data = SetMintBurnAdminInstructionData::new().try_to_vec().unwrap();
@@ -85,8 +91,9 @@ impl Default for SetMintBurnAdminInstructionData {
 ///   0. `[]` config
 ///   1. `[]` vault_config
 ///   2. `[]` whitelist
-///   3. `[]` vault
+///   3. `[writable]` vault
 ///   4. `[signer]` vault_admin
+///   5. `[]` jito_vault_program
 #[derive(Clone, Debug, Default)]
 pub struct SetMintBurnAdminBuilder {
     config: Option<solana_program::pubkey::Pubkey>,
@@ -94,6 +101,7 @@ pub struct SetMintBurnAdminBuilder {
     whitelist: Option<solana_program::pubkey::Pubkey>,
     vault: Option<solana_program::pubkey::Pubkey>,
     vault_admin: Option<solana_program::pubkey::Pubkey>,
+    jito_vault_program: Option<solana_program::pubkey::Pubkey>,
     __remaining_accounts: Vec<solana_program::instruction::AccountMeta>,
 }
 
@@ -126,6 +134,14 @@ impl SetMintBurnAdminBuilder {
         self.vault_admin = Some(vault_admin);
         self
     }
+    #[inline(always)]
+    pub fn jito_vault_program(
+        &mut self,
+        jito_vault_program: solana_program::pubkey::Pubkey,
+    ) -> &mut Self {
+        self.jito_vault_program = Some(jito_vault_program);
+        self
+    }
     /// Add an additional account to the instruction.
     #[inline(always)]
     pub fn add_remaining_account(
@@ -152,6 +168,9 @@ impl SetMintBurnAdminBuilder {
             whitelist: self.whitelist.expect("whitelist is not set"),
             vault: self.vault.expect("vault is not set"),
             vault_admin: self.vault_admin.expect("vault_admin is not set"),
+            jito_vault_program: self
+                .jito_vault_program
+                .expect("jito_vault_program is not set"),
         };
 
         accounts.instruction_with_remaining_accounts(&self.__remaining_accounts)
@@ -169,6 +188,8 @@ pub struct SetMintBurnAdminCpiAccounts<'a, 'b> {
     pub vault: &'b solana_program::account_info::AccountInfo<'a>,
 
     pub vault_admin: &'b solana_program::account_info::AccountInfo<'a>,
+
+    pub jito_vault_program: &'b solana_program::account_info::AccountInfo<'a>,
 }
 
 /// `set_mint_burn_admin` CPI instruction.
@@ -185,6 +206,8 @@ pub struct SetMintBurnAdminCpi<'a, 'b> {
     pub vault: &'b solana_program::account_info::AccountInfo<'a>,
 
     pub vault_admin: &'b solana_program::account_info::AccountInfo<'a>,
+
+    pub jito_vault_program: &'b solana_program::account_info::AccountInfo<'a>,
 }
 
 impl<'a, 'b> SetMintBurnAdminCpi<'a, 'b> {
@@ -199,6 +222,7 @@ impl<'a, 'b> SetMintBurnAdminCpi<'a, 'b> {
             whitelist: accounts.whitelist,
             vault: accounts.vault,
             vault_admin: accounts.vault_admin,
+            jito_vault_program: accounts.jito_vault_program,
         }
     }
     #[inline(always)]
@@ -234,7 +258,7 @@ impl<'a, 'b> SetMintBurnAdminCpi<'a, 'b> {
             bool,
         )],
     ) -> solana_program::entrypoint::ProgramResult {
-        let mut accounts = Vec::with_capacity(5 + remaining_accounts.len());
+        let mut accounts = Vec::with_capacity(6 + remaining_accounts.len());
         accounts.push(solana_program::instruction::AccountMeta::new_readonly(
             *self.config.key,
             false,
@@ -247,13 +271,17 @@ impl<'a, 'b> SetMintBurnAdminCpi<'a, 'b> {
             *self.whitelist.key,
             false,
         ));
-        accounts.push(solana_program::instruction::AccountMeta::new_readonly(
+        accounts.push(solana_program::instruction::AccountMeta::new(
             *self.vault.key,
             false,
         ));
         accounts.push(solana_program::instruction::AccountMeta::new_readonly(
             *self.vault_admin.key,
             true,
+        ));
+        accounts.push(solana_program::instruction::AccountMeta::new_readonly(
+            *self.jito_vault_program.key,
+            false,
         ));
         remaining_accounts.iter().for_each(|remaining_account| {
             accounts.push(solana_program::instruction::AccountMeta {
@@ -269,13 +297,14 @@ impl<'a, 'b> SetMintBurnAdminCpi<'a, 'b> {
             accounts,
             data,
         };
-        let mut account_infos = Vec::with_capacity(5 + 1 + remaining_accounts.len());
+        let mut account_infos = Vec::with_capacity(6 + 1 + remaining_accounts.len());
         account_infos.push(self.__program.clone());
         account_infos.push(self.config.clone());
         account_infos.push(self.vault_config.clone());
         account_infos.push(self.whitelist.clone());
         account_infos.push(self.vault.clone());
         account_infos.push(self.vault_admin.clone());
+        account_infos.push(self.jito_vault_program.clone());
         remaining_accounts
             .iter()
             .for_each(|remaining_account| account_infos.push(remaining_account.0.clone()));
@@ -295,8 +324,9 @@ impl<'a, 'b> SetMintBurnAdminCpi<'a, 'b> {
 ///   0. `[]` config
 ///   1. `[]` vault_config
 ///   2. `[]` whitelist
-///   3. `[]` vault
+///   3. `[writable]` vault
 ///   4. `[signer]` vault_admin
+///   5. `[]` jito_vault_program
 #[derive(Clone, Debug)]
 pub struct SetMintBurnAdminCpiBuilder<'a, 'b> {
     instruction: Box<SetMintBurnAdminCpiBuilderInstruction<'a, 'b>>,
@@ -311,6 +341,7 @@ impl<'a, 'b> SetMintBurnAdminCpiBuilder<'a, 'b> {
             whitelist: None,
             vault: None,
             vault_admin: None,
+            jito_vault_program: None,
             __remaining_accounts: Vec::new(),
         });
         Self { instruction }
@@ -350,6 +381,14 @@ impl<'a, 'b> SetMintBurnAdminCpiBuilder<'a, 'b> {
         vault_admin: &'b solana_program::account_info::AccountInfo<'a>,
     ) -> &mut Self {
         self.instruction.vault_admin = Some(vault_admin);
+        self
+    }
+    #[inline(always)]
+    pub fn jito_vault_program(
+        &mut self,
+        jito_vault_program: &'b solana_program::account_info::AccountInfo<'a>,
+    ) -> &mut Self {
+        self.instruction.jito_vault_program = Some(jito_vault_program);
         self
     }
     /// Add an additional account to the instruction.
@@ -411,6 +450,11 @@ impl<'a, 'b> SetMintBurnAdminCpiBuilder<'a, 'b> {
                 .instruction
                 .vault_admin
                 .expect("vault_admin is not set"),
+
+            jito_vault_program: self
+                .instruction
+                .jito_vault_program
+                .expect("jito_vault_program is not set"),
         };
         instruction.invoke_signed_with_remaining_accounts(
             signers_seeds,
@@ -427,6 +471,7 @@ struct SetMintBurnAdminCpiBuilderInstruction<'a, 'b> {
     whitelist: Option<&'b solana_program::account_info::AccountInfo<'a>>,
     vault: Option<&'b solana_program::account_info::AccountInfo<'a>>,
     vault_admin: Option<&'b solana_program::account_info::AccountInfo<'a>>,
+    jito_vault_program: Option<&'b solana_program::account_info::AccountInfo<'a>>,
     /// Additional instruction accounts `(AccountInfo, is_writable, is_signer)`.
     __remaining_accounts: Vec<(
         &'b solana_program::account_info::AccountInfo<'a>,

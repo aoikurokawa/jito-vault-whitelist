@@ -92,13 +92,18 @@
         },
         {
           "name": "vault",
-          "isMut": false,
+          "isMut": true,
           "isSigner": false
         },
         {
           "name": "vaultAdmin",
           "isMut": false,
           "isSigner": true
+        },
+        {
+          "name": "jitoVaultProgram",
+          "isMut": false,
+          "isSigner": false
         }
       ],
       "args": [],

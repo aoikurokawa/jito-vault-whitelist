@@ -1,6 +1,7 @@
 use anchor_lang::AccountDeserialize;
+use jito_vault_core::vault::Vault;
 use jito_vault_whitelist_client::instructions::{
-    InitializeConfigBuilder, InitializeWhitelistBuilder, SetMetaMerkleRootBuilder,
+    InitializeConfigBuilder, InitializeWhitelistBuilder, MintBuilder, SetMetaMerkleRootBuilder,
     SetMintBurnAdminBuilder,
 };
 use jito_vault_whitelist_core::{config::Config, whitelist::Whitelist};
@@ -9,6 +10,7 @@ use solana_sdk::{
     commitment_config::CommitmentLevel, native_token::sol_to_lamports, pubkey::Pubkey,
     signature::Keypair, signer::Signer, system_instruction::transfer, transaction::Transaction,
 };
+use spl_associated_token_account::get_associated_token_address;
 
 use crate::fixtures::TestResult;
 
@@ -215,6 +217,82 @@ impl VaultWhitelistClient {
             &[ix],
             Some(&vault_root.vault_admin.pubkey()),
             &[&vault_root.vault_admin],
+            blockhash,
+        ))
+        .await
+    }
+
+    pub async fn do_mint(
+        &mut self,
+        vault_root: &VaultRoot,
+        vault: &Vault,
+        depositor: &Keypair,
+        proof: &[[u8; 32]],
+        amount_in: u64,
+        min_amount_out: u64,
+    ) -> TestResult<()> {
+        self.mint(
+            &vault_root.vault_pubkey,
+            &vault_root.mint.pubkey(),
+            depositor,
+            &get_associated_token_address(&depositor.pubkey(), &vault.supported_mint),
+            &get_associated_token_address(&vault_root.vault_pubkey, &vault.supported_mint),
+            &get_associated_token_address(&depositor.pubkey(), &vault.vrt_mint),
+            &get_associated_token_address(&vault.fee_wallet, &vault.vrt_mint),
+            proof,
+            amount_in,
+            min_amount_out,
+        )
+        .await?;
+
+        Ok(())
+    }
+
+    pub async fn mint(
+        &mut self,
+        vault_pubkey: &Pubkey,
+        vrt_mint: &Pubkey,
+        depositor: &Keypair,
+        depositor_token_account: &Pubkey,
+        vault_token_account: &Pubkey,
+        depositor_vrt_token_account: &Pubkey,
+        vault_fee_token_account: &Pubkey,
+        proof: &[[u8; 32]],
+        amount_in: u64,
+        min_amount_out: u64,
+    ) -> TestResult<()> {
+        let config = Config::find_program_address(&jito_vault_whitelist_program::id()).0;
+        let mut signers = vec![depositor];
+        let whitelist =
+            Whitelist::find_program_address(&jito_vault_whitelist_program::id(), &vault_pubkey).0;
+
+        let mut ix = MintBuilder::new()
+            .config(config)
+            .vault_config(
+                jito_vault_core::config::Config::find_program_address(&jito_vault_program::id()).0,
+            )
+            .vault(*vault_pubkey)
+            .vrt_mint(*vrt_mint)
+            .depositor(self.payer.pubkey())
+            .depositor_token_account(*depositor_token_account)
+            .vault_token_account(*vault_token_account)
+            .depositor_vrt_token_account(*depositor_vrt_token_account)
+            .vault_fee_token_account(*vault_fee_token_account)
+            .whitelist(whitelist)
+            .jito_vault_program(jito_vault_program::id())
+            .token_program(spl_token::id())
+            .proof(proof.to_vec())
+            .amount_in(amount_in)
+            .min_amount_out(min_amount_out)
+            .instruction();
+        ix.program_id = jito_vault_whitelist_program::id();
+
+        let blockhash = self.banks_client.get_latest_blockhash().await?;
+
+        self.process_transaction(&Transaction::new_signed_with_payer(
+            &[ix],
+            Some(&depositor.pubkey()),
+            &[&depositor],
             blockhash,
         ))
         .await

@@ -2310,6 +2310,7 @@ dependencies = [
  "jito-vault-whitelist-core",
  "jito-vault-whitelist-program",
  "jito-vault-whitelist-sdk",
+ "meta-merkle-tree",
  "shank",
  "solana-program",
  "solana-program-test",

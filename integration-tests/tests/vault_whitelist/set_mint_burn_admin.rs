@@ -1,5 +1,6 @@
 #[cfg(test)]
 mod tests {
+    use jito_vault_whitelist_core::whitelist::Whitelist;
     use solana_sdk::pubkey::Pubkey;
 
     use crate::fixtures::fixture::TestBuilder;
@@ -28,5 +29,18 @@ mod tests {
             .do_set_mint_burn_admin(&vault_root)
             .await
             .unwrap();
+
+        let vault = vault_program_client
+            .get_vault(&vault_root.vault_pubkey)
+            .await
+            .unwrap();
+
+        let whitelist = Whitelist::find_program_address(
+            &jito_vault_whitelist_program::id(),
+            &vault_root.vault_pubkey,
+        )
+        .0;
+
+        assert_eq!(vault.mint_burn_admin, whitelist);
     }
 }

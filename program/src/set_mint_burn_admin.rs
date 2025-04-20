@@ -24,10 +24,6 @@ pub fn process_set_mint_burn_admin(program_id: &Pubkey, accounts: &[AccountInfo]
 
     msg!("Setting MintBurnAdmin for Vault {}", vault_info.key);
 
-    let (_, bump, mut whitelist_seeds) =
-        Whitelist::find_program_address(program_id, vault_info.key);
-    whitelist_seeds.push(vec![bump]);
-
     invoke(
         &set_secondary_admin(
             jito_vault_program_info.key,

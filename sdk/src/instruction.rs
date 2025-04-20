@@ -46,4 +46,12 @@ pub enum VaultWhitelistInstruction {
         amount_in: u64,
         min_amount_out: u64,
     },
+
+    #[account(0, name = "config")]
+    #[account(1, name = "vault_config")]
+    #[account(2, name = "whitelist")]
+    #[account(3, writable, name = "vault")]
+    #[account(4, signer, name = "vault_admin")]
+    #[account(5, name = "jito_vault_program")]
+    CloseWhitelist,
 }

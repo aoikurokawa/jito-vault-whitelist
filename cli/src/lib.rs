@@ -1,10 +1,10 @@
 use ::log::info;
 use anyhow::anyhow;
+use jito_restaking_client_common::log::PrettyDisplay;
 // use base64::{engine::general_purpose, Engine};
 use borsh::BorshDeserialize;
 use cli_config::CliConfig;
 use cli_signer::CliSigner;
-use jito_vault_whitelist_client::pretty_display::PrettyDisplay;
 use log::print_base58_tx;
 use solana_rpc_client::rpc_client::RpcClient;
 // use solana_account_decoder::{UiAccountEncoding, UiDataSliceConfig};

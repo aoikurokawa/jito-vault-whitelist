@@ -34,4 +34,12 @@ pub enum VaultWhitelistActions {
 
     /// Set mint burn admin
     SetMintBurnAdmin { vault: Pubkey },
+
+    /// Mint
+    Mint {
+        whitelist_file_path: PathBuf,
+        vault: Pubkey,
+        amount_in: u64,
+        min_amount_out: u64,
+    },
 }

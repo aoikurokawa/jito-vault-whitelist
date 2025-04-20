@@ -1,7 +1,6 @@
-use crate::{
-    accounts::Whitelist,
-    pretty_display::{account_header, field, section_header, PrettyDisplay},
-};
+use jito_restaking_client_common::log::{account_header, field, section_header, PrettyDisplay};
+
+use crate::accounts::Whitelist;
 
 impl PrettyDisplay for Whitelist {
     fn pretty_display(&self) -> String {

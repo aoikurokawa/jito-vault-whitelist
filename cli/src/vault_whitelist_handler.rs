@@ -164,7 +164,7 @@ impl VaultWhitelistCliHandler {
 
 /// Handle Vault Whitelist Whitelist
 impl VaultWhitelistCliHandler {
-    /// Initialze Whitelist
+    /// Initialize Whitelist
     pub fn initialize_whitelist(
         &self,
         whitelist_file_path: PathBuf,

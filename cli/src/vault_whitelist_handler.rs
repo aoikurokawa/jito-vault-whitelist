@@ -4,8 +4,8 @@ use anyhow::anyhow;
 use borsh::BorshDeserialize;
 use jito_restaking_client_common::log::PrettyDisplay;
 use jito_vault_whitelist_client::instructions::{
-    InitializeConfigBuilder, InitializeWhitelistBuilder, MintBuilder, SetMetaMerkleRootBuilder,
-    SetMintBurnAdminBuilder,
+    CloseWhitelistBuilder, InitializeConfigBuilder, InitializeWhitelistBuilder, MintBuilder,
+    SetMetaMerkleRootBuilder, SetMintBurnAdminBuilder,
 };
 use log::{debug, info};
 use meta_merkle_tree::{
@@ -408,6 +408,44 @@ impl VaultWhitelistCliHandler {
                 self.get_account::<jito_vault_whitelist_client::accounts::Whitelist>(&whitelist)?;
             info!("{}", account.pretty_display());
         }
+
+        Ok(())
+    }
+
+    /// Close whitelist
+    pub fn close_whitelist(&self, vault: Pubkey) -> anyhow::Result<()> {
+        let signer = self.signer()?;
+        let admin = signer.pubkey();
+
+        let whitelist = jito_vault_whitelist_core::whitelist::Whitelist::find_program_address(
+            &self.vault_whitelist_program_id,
+            &vault,
+        )
+        .0;
+
+        let mut ix_builder = CloseWhitelistBuilder::new();
+        ix_builder
+            .config(
+                jito_vault_whitelist_core::config::Config::find_program_address(
+                    &self.vault_whitelist_program_id,
+                )
+                .0,
+            )
+            .vault_config(
+                jito_vault_core::config::Config::find_program_address(&self.vault_program_id).0,
+            )
+            .whitelist(whitelist)
+            .vault(vault)
+            .vault_admin(admin)
+            .jito_vault_program(self.vault_program_id);
+
+        let mut ix = ix_builder.instruction();
+        ix.program_id = self.vault_whitelist_program_id;
+
+        info!("Close whitelist: {}", whitelist);
+
+        let ixs = [ix];
+        self.process_transaction(&ixs, &signer.pubkey(), &[signer])?;
 
         Ok(())
     }

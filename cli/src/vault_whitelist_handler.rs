@@ -335,7 +335,7 @@ impl VaultWhitelistCliHandler {
         let mut ix = ix_builder.instruction();
         ix.program_id = self.vault_whitelist_program_id;
 
-        info!("Setting Mint Burn Admin");
+        info!("Minting tokens");
 
         let ixs = [
             depositor_ata_ix,

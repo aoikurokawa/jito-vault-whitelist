@@ -8,4 +8,4 @@
 use solana_program::{pubkey, pubkey::Pubkey};
 
 /// `jito_vault_whitelist` program ID.
-pub const JITO_VAULT_WHITELIST_ID: Pubkey = pubkey!("ncncd27gXkYMV56EfwntDmYhH5Wzo896yTnrBbEq9xW");
+pub const JITO_VAULT_WHITELIST_ID: Pubkey = pubkey!("7BHULFc6NKwtc7f2ap6y7ty1cRfTN5MBMfJQj1rxEUhP");

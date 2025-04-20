@@ -257,7 +257,7 @@ impl VaultWhitelistCliHandler {
         min_amount_out: u64,
     ) -> anyhow::Result<()> {
         let signer_keypair = read_keypair_file(signer_keypair_path)
-            .map_err(|e| anyhow!("Failed to read old admin keypair: {}", e))?;
+            .map_err(|e| anyhow!("Failed to read signer keypair: {}", e))?;
         let signer = CliSigner::new(Some(signer_keypair), None);
 
         let whitelist = jito_vault_whitelist_core::whitelist::Whitelist::find_program_address(

@@ -1,8 +1,8 @@
 use anchor_lang::AccountDeserialize;
 use jito_vault_core::vault::Vault;
 use jito_vault_whitelist_client::instructions::{
-    InitializeConfigBuilder, InitializeWhitelistBuilder, MintBuilder, SetMetaMerkleRootBuilder,
-    SetMintBurnAdminBuilder,
+    CloseWhitelistBuilder, InitializeConfigBuilder, InitializeWhitelistBuilder, MintBuilder,
+    SetMetaMerkleRootBuilder, SetMintBurnAdminBuilder,
 };
 use jito_vault_whitelist_core::{config::Config, whitelist::Whitelist};
 use jito_vault_whitelist_sdk::error::VaultWhitelistError;
@@ -300,6 +300,43 @@ impl VaultWhitelistClient {
             &[ix],
             Some(&depositor.pubkey()),
             &signers,
+            blockhash,
+        ))
+        .await
+    }
+
+    pub async fn do_close_whitelist(&mut self, vault_root: &VaultRoot) -> TestResult<()> {
+        self.close_whitelist(vault_root).await?;
+
+        Ok(())
+    }
+
+    pub async fn close_whitelist(&mut self, vault_root: &VaultRoot) -> TestResult<()> {
+        let config = Config::find_program_address(&jito_vault_whitelist_program::id()).0;
+        let whitelist = Whitelist::find_program_address(
+            &jito_vault_whitelist_program::id(),
+            &vault_root.vault_pubkey,
+        )
+        .0;
+
+        let mut ix = CloseWhitelistBuilder::new()
+            .config(config)
+            .vault_config(
+                jito_vault_core::config::Config::find_program_address(&jito_vault_program::id()).0,
+            )
+            .whitelist(whitelist)
+            .vault(vault_root.vault_pubkey)
+            .vault_admin(vault_root.vault_admin.pubkey())
+            .jito_vault_program(jito_vault_program::id())
+            .instruction();
+        ix.program_id = jito_vault_whitelist_program::id();
+
+        let blockhash = self.banks_client.get_latest_blockhash().await?;
+
+        self.process_transaction(&Transaction::new_signed_with_payer(
+            &[ix],
+            Some(&vault_root.vault_admin.pubkey()),
+            &[&vault_root.vault_admin],
             blockhash,
         ))
         .await

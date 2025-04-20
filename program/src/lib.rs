@@ -1,4 +1,5 @@
 use borsh::BorshDeserialize;
+use close_whitelist::process_close_whitelist;
 use initialize_config::process_initialize_config;
 use initialize_whitelist::process_initialize_whitelist;
 use jito_vault_whitelist_sdk::instruction::VaultWhitelistInstruction;
@@ -10,6 +11,7 @@ use solana_program::{
     program_error::ProgramError, pubkey::Pubkey,
 };
 
+mod close_whitelist;
 mod initialize_config;
 mod initialize_whitelist;
 mod mint;
@@ -60,6 +62,11 @@ pub fn process_instruction(
         } => {
             msg!("Instruction: Mint");
             process_mint(program_id, accounts, &proof, amount_in, min_amount_out)
+        }
+
+        VaultWhitelistInstruction::CloseWhitelist => {
+            msg!("Instruction: CloseWhitelist");
+            process_close_whitelist(program_id, accounts)
         }
     }
 }

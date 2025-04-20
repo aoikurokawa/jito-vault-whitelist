@@ -23,13 +23,6 @@ pub fn process_mint(
         return Err(ProgramError::NotEnoughAccountKeys);
     };
 
-    msg!("Config Pubkey: {}", config_info.key);
-    msg!("Vault Config Pubkey: {}", vault_config_info.key);
-    msg!("Vault Pubkey: {}", vault_info.key);
-    msg!("VRT Pubkey: {}", vrt_mint.key);
-    msg!("Depositor Pubkey: {}", depositor.key);
-    msg!("Whitelist Pubkey: {}", whitelist_info.key);
-
     Config::load(program_id, config_info, false)?;
 
     Vault::load(&jito_vault_program::id(), vault_info, true)?;
@@ -73,6 +66,8 @@ pub fn process_mint(
     );
 
     drop(whitelist_data);
+
+    msg!("Mint To");
 
     invoke_signed(
         &ix,

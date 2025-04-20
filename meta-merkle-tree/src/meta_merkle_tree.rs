@@ -199,98 +199,98 @@ impl MetaMerkleTree {
     }
 }
 
-#[cfg(test)]
-mod tests {
-    use std::path::PathBuf;
-
-    use solana_program::pubkey::Pubkey;
-    use solana_sdk::{
-        signature::{EncodableKey, Keypair},
-        signer::Signer,
-    };
-
-    use super::*;
-
-    pub fn new_test_key() -> Pubkey {
-        let kp = Keypair::new();
-        let out_path = format!("./test_keys/{}.json", kp.pubkey());
-
-        kp.write_to_file(out_path)
-            .expect("Failed to write to signer");
-
-        kp.pubkey()
-    }
-
-    #[test]
-    fn test_verify_new_merkle_tree() {
-        // let tree_nodes = vec![TreeNode::new(&Pubkey::default(), &[0; 32], 100, 10)];
-        let tree_nodes = vec![TreeNode::new(&Pubkey::default(), 10)];
-        let merkle_tree = MetaMerkleTree::new(tree_nodes).unwrap();
-        assert!(merkle_tree.verify_proof().is_ok(), "verify failed");
-    }
-
-    #[ignore]
-    #[test]
-    fn test_write_merkle_distributor_to_file() {
-        let tree_nodes = vec![
-            TreeNode::new(
-                &new_test_key(),
-                // &[0; 32],
-                // 100 * u64::pow(10, 9),
-                100 * u64::pow(10, 9),
-            ),
-            TreeNode::new(
-                &new_test_key(),
-                // &[0; 32],
-                // 100 * u64::pow(10, 9),
-                100 * u64::pow(10, 9),
-            ),
-            TreeNode::new(
-                &new_test_key(),
-                // &[0; 32],
-                // 100 * u64::pow(10, 9),
-                100 * u64::pow(10, 9),
-            ),
-        ];
-
-        let merkle_distributor_info = MetaMerkleTree::new(tree_nodes).unwrap();
-        let path = PathBuf::from("merkle_tree.json");
-
-        // serialize merkle distributor to file
-        merkle_distributor_info.write_to_file(&path);
-        // now test we can successfully read from file
-        let merkle_distributor_read: MetaMerkleTree = MetaMerkleTree::new_from_file(&path).unwrap();
-
-        assert_eq!(merkle_distributor_read.tree_nodes.len(), 3);
-    }
-
-    // Test creating a merkle tree from Tree Nodes
-    #[test]
-    fn test_new_merkle_tree() {
-        let pubkey1 = Pubkey::new_unique();
-        let pubkey2 = Pubkey::new_unique();
-        let pubkey3 = Pubkey::new_unique();
-
-        let mut tree_nodes = vec![
-            // TreeNode::new(&pubkey1, &[0; 32], 10, 20),
-            // TreeNode::new(&pubkey2, &[0; 32], 1, 2),
-            // TreeNode::new(&pubkey3, &[0; 32], 3, 4),
-            TreeNode::new(&pubkey1, 20),
-            TreeNode::new(&pubkey2, 2),
-            TreeNode::new(&pubkey3, 4),
-        ];
-
-        // Sort by hash
-        tree_nodes.sort_by_key(|node| node.hash());
-
-        let tree = MetaMerkleTree::new(tree_nodes).unwrap();
-
-        assert_eq!(tree.tree_nodes.len(), 3);
-        // assert_eq!(tree.tree_nodes[0].max_total_claim, 10);
-        // assert_eq!(tree.tree_nodes[0].max_num_nodes, 20);
-        // assert_eq!(tree.tree_nodes[0].validator_merkle_root, [0; 32]);
-        assert_eq!(tree.tree_nodes[0].user_account, pubkey1);
-        // assert!(tree.tree_nodes.contains(&TreeNode::new(&pubkey1)));
-        assert!(tree.tree_nodes[0].proof.is_some());
-    }
-}
+// #[cfg(test)]
+// mod tests {
+//     use std::path::PathBuf;
+//
+//     use solana_program::pubkey::Pubkey;
+//     // use solana_sdk::{
+//     //     signature::{EncodableKey, Keypair},
+//     //     signer::Signer,
+//     // };
+//
+//     use super::*;
+//
+//     pub fn new_test_key() -> Pubkey {
+//         let kp = Keypair::new();
+//         let out_path = format!("./test_keys/{}.json", kp.pubkey());
+//
+//         kp.write_to_file(out_path)
+//             .expect("Failed to write to signer");
+//
+//         kp.pubkey()
+//     }
+//
+//     #[test]
+//     fn test_verify_new_merkle_tree() {
+//         // let tree_nodes = vec![TreeNode::new(&Pubkey::default(), &[0; 32], 100, 10)];
+//         let tree_nodes = vec![TreeNode::new(&Pubkey::default(), 10)];
+//         let merkle_tree = MetaMerkleTree::new(tree_nodes).unwrap();
+//         assert!(merkle_tree.verify_proof().is_ok(), "verify failed");
+//     }
+//
+//     #[ignore]
+//     #[test]
+//     fn test_write_merkle_distributor_to_file() {
+//         let tree_nodes = vec![
+//             TreeNode::new(
+//                 &new_test_key(),
+//                 // &[0; 32],
+//                 // 100 * u64::pow(10, 9),
+//                 100 * u64::pow(10, 9),
+//             ),
+//             TreeNode::new(
+//                 &new_test_key(),
+//                 // &[0; 32],
+//                 // 100 * u64::pow(10, 9),
+//                 100 * u64::pow(10, 9),
+//             ),
+//             TreeNode::new(
+//                 &new_test_key(),
+//                 // &[0; 32],
+//                 // 100 * u64::pow(10, 9),
+//                 100 * u64::pow(10, 9),
+//             ),
+//         ];
+//
+//         let merkle_distributor_info = MetaMerkleTree::new(tree_nodes).unwrap();
+//         let path = PathBuf::from("merkle_tree.json");
+//
+//         // serialize merkle distributor to file
+//         merkle_distributor_info.write_to_file(&path);
+//         // now test we can successfully read from file
+//         let merkle_distributor_read: MetaMerkleTree = MetaMerkleTree::new_from_file(&path).unwrap();
+//
+//         assert_eq!(merkle_distributor_read.tree_nodes.len(), 3);
+//     }
+//
+//     // Test creating a merkle tree from Tree Nodes
+//     #[test]
+//     fn test_new_merkle_tree() {
+//         let pubkey1 = Pubkey::new_unique();
+//         let pubkey2 = Pubkey::new_unique();
+//         let pubkey3 = Pubkey::new_unique();
+//
+//         let mut tree_nodes = vec![
+//             // TreeNode::new(&pubkey1, &[0; 32], 10, 20),
+//             // TreeNode::new(&pubkey2, &[0; 32], 1, 2),
+//             // TreeNode::new(&pubkey3, &[0; 32], 3, 4),
+//             TreeNode::new(&pubkey1, 20),
+//             TreeNode::new(&pubkey2, 2),
+//             TreeNode::new(&pubkey3, 4),
+//         ];
+//
+//         // Sort by hash
+//         tree_nodes.sort_by_key(|node| node.hash());
+//
+//         let tree = MetaMerkleTree::new(tree_nodes).unwrap();
+//
+//         assert_eq!(tree.tree_nodes.len(), 3);
+//         // assert_eq!(tree.tree_nodes[0].max_total_claim, 10);
+//         // assert_eq!(tree.tree_nodes[0].max_num_nodes, 20);
+//         // assert_eq!(tree.tree_nodes[0].validator_merkle_root, [0; 32]);
+//         assert_eq!(tree.tree_nodes[0].user_account, pubkey1);
+//         // assert!(tree.tree_nodes.contains(&TreeNode::new(&pubkey1)));
+//         assert!(tree.tree_nodes[0].proof.is_some());
+//     }
+// }

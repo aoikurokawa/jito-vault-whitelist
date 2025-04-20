@@ -53,7 +53,7 @@ impl Mint {
             self.config,
             false,
         ));
-        accounts.push(solana_program::instruction::AccountMeta::new_readonly(
+        accounts.push(solana_program::instruction::AccountMeta::new(
             self.vault_config,
             false,
         ));
@@ -139,7 +139,7 @@ pub struct MintInstructionArgs {
 /// ### Accounts:
 ///
 ///   0. `[]` config
-///   1. `[]` vault_config
+///   1. `[writable]` vault_config
 ///   2. `[writable]` vault
 ///   3. `[writable]` vrt_mint
 ///   4. `[writable, signer]` depositor
@@ -444,7 +444,7 @@ impl<'a, 'b> MintCpi<'a, 'b> {
             *self.config.key,
             false,
         ));
-        accounts.push(solana_program::instruction::AccountMeta::new_readonly(
+        accounts.push(solana_program::instruction::AccountMeta::new(
             *self.vault_config.key,
             false,
         ));
@@ -535,7 +535,7 @@ impl<'a, 'b> MintCpi<'a, 'b> {
 /// ### Accounts:
 ///
 ///   0. `[]` config
-///   1. `[]` vault_config
+///   1. `[writable]` vault_config
 ///   2. `[writable]` vault
 ///   3. `[writable]` vrt_mint
 ///   4. `[writable, signer]` depositor

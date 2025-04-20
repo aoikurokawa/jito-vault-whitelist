@@ -1,5 +1,4 @@
 use serde::{Deserialize, Serialize};
-use solana_sdk::pubkey::Pubkey;
 
 use crate::{pubkey_string_conversion, vault_whitelist_meta::VaultWhitelistMeta};
 

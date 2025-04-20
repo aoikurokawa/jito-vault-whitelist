@@ -30,7 +30,7 @@ pub enum VaultWhitelistInstruction {
     SetMetaMerkleRoot { meta_merkle_root: [u8; 32] },
 
     #[account(0, name = "config")]
-    #[account(1, name = "vault_config")]
+    #[account(1, writable, name = "vault_config")]
     #[account(2, writable, name = "vault")]
     #[account(3, writable, name = "vrt_mint")]
     #[account(4, writable, signer, name = "depositor")]

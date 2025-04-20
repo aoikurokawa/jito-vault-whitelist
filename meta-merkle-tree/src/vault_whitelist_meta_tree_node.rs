@@ -1,6 +1,8 @@
 use serde::{Deserialize, Serialize};
-use solana_program::hash::{Hash, Hasher};
-use solana_sdk::pubkey::Pubkey;
+use solana_program::{
+    hash::{Hash, Hasher},
+    pubkey::Pubkey,
+};
 
 use crate::{
     error::MerkleRootGeneratorError, pubkey_string_conversion,
@@ -112,9 +114,6 @@ impl VaultWhitelistMetaTreeNode {
         // );
 
         Ok(tree_nodes)
-        // } else {
-        //     Ok(None)
-        // }
     }
 
     pub(crate) fn hash(&self) -> Hash {

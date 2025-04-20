@@ -5,14 +5,21 @@ use jito_vault_whitelist_client::instructions::{
     SetMintBurnAdminBuilder,
 };
 use jito_vault_whitelist_core::{config::Config, whitelist::Whitelist};
+use jito_vault_whitelist_sdk::error::VaultWhitelistError;
 use solana_program_test::BanksClient;
 use solana_sdk::{
-    commitment_config::CommitmentLevel, native_token::sol_to_lamports, pubkey::Pubkey,
-    signature::Keypair, signer::Signer, system_instruction::transfer, transaction::Transaction,
+    commitment_config::CommitmentLevel,
+    instruction::InstructionError,
+    native_token::sol_to_lamports,
+    pubkey::Pubkey,
+    signature::Keypair,
+    signer::Signer,
+    system_instruction::transfer,
+    transaction::{Transaction, TransactionError},
 };
 use spl_associated_token_account::get_associated_token_address;
 
-use crate::fixtures::TestResult;
+use crate::fixtures::{TestError, TestResult};
 
 use super::vault_client::VaultRoot;
 
@@ -233,7 +240,7 @@ impl VaultWhitelistClient {
     ) -> TestResult<()> {
         self.mint(
             &vault_root.vault_pubkey,
-            &vault_root.mint.pubkey(),
+            &vault.vrt_mint,
             depositor,
             &get_associated_token_address(&depositor.pubkey(), &vault.supported_mint),
             &get_associated_token_address(&vault_root.vault_pubkey, &vault.supported_mint),
@@ -262,7 +269,7 @@ impl VaultWhitelistClient {
         min_amount_out: u64,
     ) -> TestResult<()> {
         let config = Config::find_program_address(&jito_vault_whitelist_program::id()).0;
-        let mut signers = vec![depositor];
+        let signers = vec![depositor];
         let whitelist =
             Whitelist::find_program_address(&jito_vault_whitelist_program::id(), &vault_pubkey).0;
 
@@ -273,7 +280,7 @@ impl VaultWhitelistClient {
             )
             .vault(*vault_pubkey)
             .vrt_mint(*vrt_mint)
-            .depositor(self.payer.pubkey())
+            .depositor(depositor.pubkey())
             .depositor_token_account(*depositor_token_account)
             .vault_token_account(*vault_token_account)
             .depositor_vrt_token_account(*depositor_vrt_token_account)
@@ -292,9 +299,25 @@ impl VaultWhitelistClient {
         self.process_transaction(&Transaction::new_signed_with_payer(
             &[ix],
             Some(&depositor.pubkey()),
-            &[&depositor],
+            &signers,
             blockhash,
         ))
         .await
     }
+}
+
+#[inline(always)]
+#[track_caller]
+pub fn assert_vault_whitelist_error<T>(
+    test_error: Result<T, TestError>,
+    vault_whitelist_error: VaultWhitelistError,
+) {
+    assert!(test_error.is_err());
+    assert_eq!(
+        test_error.err().unwrap().to_transaction_error().unwrap(),
+        TransactionError::InstructionError(
+            0,
+            InstructionError::Custom(vault_whitelist_error as u32)
+        )
+    );
 }

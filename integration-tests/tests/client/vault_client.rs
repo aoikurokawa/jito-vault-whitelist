@@ -160,6 +160,9 @@ impl VaultProgramClient {
             .await
             .unwrap();
         self.create_ata(&vault.vrt_mint, depositor).await.unwrap();
+        self.create_ata(&vault.vrt_mint, &vault.fee_wallet)
+            .await
+            .unwrap();
         self.mint_spl_to(&vault.supported_mint, depositor, amount_to_mint)
             .await
             .unwrap();

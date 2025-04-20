@@ -5,7 +5,7 @@ use jito_vault_sdk::sdk::mint_to;
 use jito_vault_whitelist_core::{config::Config, whitelist::Whitelist};
 use jito_vault_whitelist_sdk::error::VaultWhitelistError;
 use solana_program::{
-    account_info::AccountInfo, entrypoint::ProgramResult, program::invoke_signed,
+    account_info::AccountInfo, entrypoint::ProgramResult, msg, program::invoke_signed,
     program_error::ProgramError, pubkey::Pubkey,
 };
 
@@ -23,20 +23,26 @@ pub fn process_mint(
         return Err(ProgramError::NotEnoughAccountKeys);
     };
 
+    msg!("Config Pubkey: {}", config_info.key);
+    msg!("Vault Config Pubkey: {}", vault_config_info.key);
+    msg!("Vault Pubkey: {}", vault_info.key);
+    msg!("VRT Pubkey: {}", vrt_mint.key);
+    msg!("Depositor Pubkey: {}", depositor.key);
+    msg!("Whitelist Pubkey: {}", whitelist_info.key);
+
     Config::load(program_id, config_info, false)?;
 
-    Vault::load(&jito_vault_program::id(), vault_info, false)?;
+    Vault::load(&jito_vault_program::id(), vault_info, true)?;
     Whitelist::load(program_id, whitelist_info, vault_info.key, true)?;
-    let mut whitelist_data = whitelist_info.data.borrow_mut();
-    let whitelist = Whitelist::try_from_slice_unchecked_mut(&mut whitelist_data)?;
+    let whitelist_data = whitelist_info.data.borrow();
+    let whitelist = Whitelist::try_from_slice_unchecked(&whitelist_data)?;
 
-    load_signer(depositor, false)?;
+    load_signer(depositor, true)?;
 
     // Verify the merkle proof.
     let node = &solana_program::hash::hashv(&[
         &[0u8],
-        &solana_program::hash::hashv(&[&depositor.key.to_bytes(), &amount_in.to_le_bytes()])
-            .to_bytes(),
+        &solana_program::hash::hashv(&[&depositor.key.to_bytes()]).to_bytes(),
     ]);
 
     if !meta_merkle_tree::verify::verify(
@@ -66,6 +72,8 @@ pub fn process_mint(
         min_amount_out,
     );
 
+    drop(whitelist_data);
+
     invoke_signed(
         &ix,
         &[
@@ -77,8 +85,9 @@ pub fn process_mint(
             vault_token_account.clone(),
             depositor_vrt_token_account.clone(),
             vault_fee_token_account.clone(),
-            jito_vault_program_info.clone(),
             token_program_info.clone(),
+            whitelist_info.clone(),
+            jito_vault_program_info.clone(),
         ],
         &[whitelist_seeds
             .iter()

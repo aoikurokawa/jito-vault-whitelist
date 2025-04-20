@@ -2793,7 +2793,6 @@ dependencies = [
  "serde",
  "serde_json",
  "solana-program",
- "solana-sdk",
  "thiserror 1.0.69",
 ]
 

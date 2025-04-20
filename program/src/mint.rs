@@ -67,6 +67,8 @@ pub fn process_mint(
 
     drop(whitelist_data);
 
+    msg!("Mint To");
+
     invoke_signed(
         &ix,
         &[

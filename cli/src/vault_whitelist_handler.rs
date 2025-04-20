@@ -1,5 +1,6 @@
 use std::path::PathBuf;
 
+use anyhow::anyhow;
 use borsh::BorshDeserialize;
 use jito_restaking_client_common::log::PrettyDisplay;
 use jito_vault_whitelist_client::instructions::{
@@ -11,13 +12,14 @@ use meta_merkle_tree::{
     vault_whitelist_meta::VaultWhitelistMeta,
 };
 use solana_program::pubkey::Pubkey;
-use solana_sdk::signer::Signer;
+use solana_sdk::{signature::read_keypair_file, signer::Signer};
 use spl_associated_token_account::{
     get_associated_token_address, instruction::create_associated_token_account_idempotent,
 };
 
 use crate::{
     cli_config::CliConfig,
+    cli_signer::CliSigner,
     vault_whitelist::{ConfigActions, VaultWhitelistActions, VaultWhitelistCommands},
     CliHandler,
 };
@@ -84,11 +86,18 @@ impl VaultWhitelistCliHandler {
                 action:
                     VaultWhitelistActions::Mint {
                         whitelist_file_path,
+                        signer_keypair_path,
                         vault,
                         amount_in,
                         min_amount_out,
                     },
-            } => self.mint(whitelist_file_path, vault, amount_in, min_amount_out),
+            } => self.mint(
+                whitelist_file_path,
+                signer_keypair_path,
+                vault,
+                amount_in,
+                min_amount_out,
+            ),
         }
     }
 }
@@ -242,11 +251,14 @@ impl VaultWhitelistCliHandler {
     pub fn mint(
         &self,
         whitelist_file_path: PathBuf,
+        signer_keypair_path: PathBuf,
         vault_pubkey: Pubkey,
         amount_in: u64,
         min_amount_out: u64,
     ) -> anyhow::Result<()> {
-        let signer = self.signer()?;
+        let signer_keypair = read_keypair_file(signer_keypair_path)
+            .map_err(|e| anyhow!("Failed to read old admin keypair: {}", e))?;
+        let signer = CliSigner::new(Some(signer_keypair), None);
 
         let whitelist = jito_vault_whitelist_core::whitelist::Whitelist::find_program_address(
             &self.vault_whitelist_program_id,

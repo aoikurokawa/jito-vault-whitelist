@@ -20,8 +20,8 @@ pub fn process_set_meta_merkle_root(
     Config::load(program_id, config_info, false)?;
 
     Vault::load(&jito_vault_program::id(), vault_info, false)?;
-    let mut vault_data = vault_info.data.borrow();
-    let vault = Vault::try_from_slice_unchecked(&mut vault_data)?;
+    let vault_data = vault_info.data.borrow();
+    let vault = Vault::try_from_slice_unchecked(&vault_data)?;
 
     vault.check_admin(vault_admin_info.key)?;
 

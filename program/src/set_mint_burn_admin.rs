@@ -21,8 +21,8 @@ pub fn process_set_mint_burn_admin(program_id: &Pubkey, accounts: &[AccountInfo]
     Whitelist::load(program_id, whitelist_info, vault_info.key, false)?;
 
     Vault::load(&jito_vault_program::id(), vault_info, true)?;
-    let mut vault_data = vault_info.data.borrow();
-    let vault = Vault::try_from_slice_unchecked(&mut vault_data)?;
+    let vault_data = vault_info.data.borrow();
+    let vault = Vault::try_from_slice_unchecked(&vault_data)?;
 
     vault.check_admin(vault_admin_info.key)?;
 

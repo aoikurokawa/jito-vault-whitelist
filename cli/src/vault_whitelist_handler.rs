@@ -4,7 +4,8 @@ use anyhow::anyhow;
 use borsh::BorshDeserialize;
 use jito_restaking_client_common::log::PrettyDisplay;
 use jito_vault_whitelist_client::instructions::{
-    InitializeConfigBuilder, InitializeWhitelistBuilder, MintBuilder, SetMintBurnAdminBuilder,
+    InitializeConfigBuilder, InitializeWhitelistBuilder, MintBuilder, SetMetaMerkleRootBuilder,
+    SetMintBurnAdminBuilder,
 };
 use log::{debug, info};
 use meta_merkle_tree::{
@@ -84,6 +85,13 @@ impl VaultWhitelistCliHandler {
             } => self.set_mint_burn_admin(vault),
             VaultWhitelistCommands::VaultWhitelist {
                 action:
+                    VaultWhitelistActions::SetMetaMerkleRoot {
+                        whitelist_file_path,
+                        vault,
+                    },
+            } => self.set_meta_merkle_root(whitelist_file_path, vault),
+            VaultWhitelistCommands::VaultWhitelist {
+                action:
                     VaultWhitelistActions::Mint {
                         whitelist_file_path,
                         signer_keypair_path,
@@ -156,7 +164,7 @@ impl VaultWhitelistCliHandler {
 
 /// Handle Vault Whitelist Whitelist
 impl VaultWhitelistCliHandler {
-    #[allow(clippy::future_not_send)]
+    /// Initialze Whitelist
     pub fn initialize_whitelist(
         &self,
         whitelist_file_path: PathBuf,
@@ -235,6 +243,55 @@ impl VaultWhitelistCliHandler {
         ix.program_id = self.vault_whitelist_program_id;
 
         info!("Setting Mint Burn Admin");
+
+        let ixs = [ix];
+        self.process_transaction(&ixs, &signer.pubkey(), &[signer])?;
+
+        if !self.print_tx {
+            let account =
+                self.get_account::<jito_vault_whitelist_client::accounts::Whitelist>(&whitelist)?;
+            info!("{}", account.pretty_display());
+        }
+
+        Ok(())
+    }
+
+    /// Set meta merkle root
+    pub fn set_meta_merkle_root(
+        &self,
+        whitelist_file_path: PathBuf,
+        vault: Pubkey,
+    ) -> anyhow::Result<()> {
+        let signer = self.signer()?;
+        let admin = signer.pubkey();
+
+        let whitelist = jito_vault_whitelist_core::whitelist::Whitelist::find_program_address(
+            &self.vault_whitelist_program_id,
+            &vault,
+        )
+        .0;
+
+        let vault_whitelist_metas =
+            read_json_from_file::<Vec<VaultWhitelistMeta>>(&whitelist_file_path)?;
+        let merkle_tree = GeneratedMerkleTree::new(&signer.pubkey(), &vault_whitelist_metas);
+
+        let mut ix_builder = SetMetaMerkleRootBuilder::new();
+        ix_builder
+            .config(
+                jito_vault_whitelist_core::config::Config::find_program_address(
+                    &self.vault_whitelist_program_id,
+                )
+                .0,
+            )
+            .whitelist(whitelist)
+            .vault(vault)
+            .vault_admin(admin)
+            .meta_merkle_root(merkle_tree.merkle_root.to_bytes());
+
+        let mut ix = ix_builder.instruction();
+        ix.program_id = self.vault_whitelist_program_id;
+
+        info!("Setting meta merkle root");
 
         let ixs = [ix];
         self.process_transaction(&ixs, &signer.pubkey(), &[signer])?;

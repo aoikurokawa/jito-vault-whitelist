@@ -124,7 +124,10 @@ impl VaultWhitelistCliHandler {
             &self.vault_whitelist_program_id,
         )
         .0;
-        let ix_builder = ix_builder.config(config_address).admin(signer.pubkey());
+        let ix_builder = ix_builder
+            .config(config_address)
+            .admin(signer.pubkey())
+            .jito_vault_program(self.vault_program_id);
         let mut ix = ix_builder.instruction();
         ix.program_id = self.vault_whitelist_program_id;
 

@@ -12,7 +12,7 @@ use solana_program::{
 
 /// Process initializing Config
 pub fn process_initialize_config(program_id: &Pubkey, accounts: &[AccountInfo]) -> ProgramResult {
-    let [config_info, admin_info, system_program_info] = accounts else {
+    let [config_info, admin_info, jito_vault_program_info, system_program_info] = accounts else {
         return Err(ProgramError::NotEnoughAccountKeys);
     };
 
@@ -44,7 +44,7 @@ pub fn process_initialize_config(program_id: &Pubkey, accounts: &[AccountInfo]) 
     let mut config_data = config_info.try_borrow_mut_data()?;
     config_data[0] = Config::DISCRIMINATOR;
     let config_acc = Config::try_from_slice_unchecked_mut(&mut config_data)?;
-    *config_acc = Config::new(*admin_info.key);
+    *config_acc = Config::new(*admin_info.key, *jito_vault_program_info.key, config_bump);
 
     Ok(())
 }

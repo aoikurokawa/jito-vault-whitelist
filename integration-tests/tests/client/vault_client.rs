@@ -206,6 +206,7 @@ impl VaultProgramClient {
             .await
     }
 
+    #[allow(dead_code)]
     pub async fn get_config(&mut self, account: &Pubkey) -> Result<Config, TestError> {
         let account = self.banks_client.get_account(*account).await?.unwrap();
         Ok(*Config::try_from_slice_unchecked(account.data.as_slice())?)

@@ -76,6 +76,7 @@ impl VaultWhitelistClient {
         Ok(config)
     }
 
+    #[allow(dead_code)]
     pub async fn get_whitelist(
         &mut self,
         account: &Pubkey,

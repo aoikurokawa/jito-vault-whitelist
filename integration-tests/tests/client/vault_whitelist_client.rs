@@ -105,6 +105,7 @@ impl VaultWhitelistClient {
         let mut ix = InitializeConfigBuilder::new()
             .config(config)
             .admin(self.payer.pubkey())
+            .jito_vault_program(jito_vault_program::id())
             .instruction();
         ix.program_id = jito_vault_whitelist_program::id();
 

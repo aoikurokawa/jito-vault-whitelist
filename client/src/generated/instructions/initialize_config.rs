@@ -14,6 +14,8 @@ pub struct InitializeConfig {
 
     pub admin: solana_program::pubkey::Pubkey,
 
+    pub jito_vault_program: solana_program::pubkey::Pubkey,
+
     pub system_program: solana_program::pubkey::Pubkey,
 }
 
@@ -26,13 +28,17 @@ impl InitializeConfig {
         &self,
         remaining_accounts: &[solana_program::instruction::AccountMeta],
     ) -> solana_program::instruction::Instruction {
-        let mut accounts = Vec::with_capacity(3 + remaining_accounts.len());
+        let mut accounts = Vec::with_capacity(4 + remaining_accounts.len());
         accounts.push(solana_program::instruction::AccountMeta::new(
             self.config,
             false,
         ));
         accounts.push(solana_program::instruction::AccountMeta::new(
             self.admin, true,
+        ));
+        accounts.push(solana_program::instruction::AccountMeta::new_readonly(
+            self.jito_vault_program,
+            false,
         ));
         accounts.push(solana_program::instruction::AccountMeta::new_readonly(
             self.system_program,
@@ -72,11 +78,13 @@ impl Default for InitializeConfigInstructionData {
 ///
 ///   0. `[writable]` config
 ///   1. `[writable, signer]` admin
-///   2. `[optional]` system_program (default to `11111111111111111111111111111111`)
+///   2. `[]` jito_vault_program
+///   3. `[optional]` system_program (default to `11111111111111111111111111111111`)
 #[derive(Clone, Debug, Default)]
 pub struct InitializeConfigBuilder {
     config: Option<solana_program::pubkey::Pubkey>,
     admin: Option<solana_program::pubkey::Pubkey>,
+    jito_vault_program: Option<solana_program::pubkey::Pubkey>,
     system_program: Option<solana_program::pubkey::Pubkey>,
     __remaining_accounts: Vec<solana_program::instruction::AccountMeta>,
 }
@@ -93,6 +101,14 @@ impl InitializeConfigBuilder {
     #[inline(always)]
     pub fn admin(&mut self, admin: solana_program::pubkey::Pubkey) -> &mut Self {
         self.admin = Some(admin);
+        self
+    }
+    #[inline(always)]
+    pub fn jito_vault_program(
+        &mut self,
+        jito_vault_program: solana_program::pubkey::Pubkey,
+    ) -> &mut Self {
+        self.jito_vault_program = Some(jito_vault_program);
         self
     }
     /// `[optional account, default to '11111111111111111111111111111111']`
@@ -124,6 +140,9 @@ impl InitializeConfigBuilder {
         let accounts = InitializeConfig {
             config: self.config.expect("config is not set"),
             admin: self.admin.expect("admin is not set"),
+            jito_vault_program: self
+                .jito_vault_program
+                .expect("jito_vault_program is not set"),
             system_program: self
                 .system_program
                 .unwrap_or(solana_program::pubkey!("11111111111111111111111111111111")),
@@ -139,6 +158,8 @@ pub struct InitializeConfigCpiAccounts<'a, 'b> {
 
     pub admin: &'b solana_program::account_info::AccountInfo<'a>,
 
+    pub jito_vault_program: &'b solana_program::account_info::AccountInfo<'a>,
+
     pub system_program: &'b solana_program::account_info::AccountInfo<'a>,
 }
 
@@ -150,6 +171,8 @@ pub struct InitializeConfigCpi<'a, 'b> {
     pub config: &'b solana_program::account_info::AccountInfo<'a>,
 
     pub admin: &'b solana_program::account_info::AccountInfo<'a>,
+
+    pub jito_vault_program: &'b solana_program::account_info::AccountInfo<'a>,
 
     pub system_program: &'b solana_program::account_info::AccountInfo<'a>,
 }
@@ -163,6 +186,7 @@ impl<'a, 'b> InitializeConfigCpi<'a, 'b> {
             __program: program,
             config: accounts.config,
             admin: accounts.admin,
+            jito_vault_program: accounts.jito_vault_program,
             system_program: accounts.system_program,
         }
     }
@@ -199,7 +223,7 @@ impl<'a, 'b> InitializeConfigCpi<'a, 'b> {
             bool,
         )],
     ) -> solana_program::entrypoint::ProgramResult {
-        let mut accounts = Vec::with_capacity(3 + remaining_accounts.len());
+        let mut accounts = Vec::with_capacity(4 + remaining_accounts.len());
         accounts.push(solana_program::instruction::AccountMeta::new(
             *self.config.key,
             false,
@@ -207,6 +231,10 @@ impl<'a, 'b> InitializeConfigCpi<'a, 'b> {
         accounts.push(solana_program::instruction::AccountMeta::new(
             *self.admin.key,
             true,
+        ));
+        accounts.push(solana_program::instruction::AccountMeta::new_readonly(
+            *self.jito_vault_program.key,
+            false,
         ));
         accounts.push(solana_program::instruction::AccountMeta::new_readonly(
             *self.system_program.key,
@@ -226,10 +254,11 @@ impl<'a, 'b> InitializeConfigCpi<'a, 'b> {
             accounts,
             data,
         };
-        let mut account_infos = Vec::with_capacity(3 + 1 + remaining_accounts.len());
+        let mut account_infos = Vec::with_capacity(4 + 1 + remaining_accounts.len());
         account_infos.push(self.__program.clone());
         account_infos.push(self.config.clone());
         account_infos.push(self.admin.clone());
+        account_infos.push(self.jito_vault_program.clone());
         account_infos.push(self.system_program.clone());
         remaining_accounts
             .iter()
@@ -249,7 +278,8 @@ impl<'a, 'b> InitializeConfigCpi<'a, 'b> {
 ///
 ///   0. `[writable]` config
 ///   1. `[writable, signer]` admin
-///   2. `[]` system_program
+///   2. `[]` jito_vault_program
+///   3. `[]` system_program
 #[derive(Clone, Debug)]
 pub struct InitializeConfigCpiBuilder<'a, 'b> {
     instruction: Box<InitializeConfigCpiBuilderInstruction<'a, 'b>>,
@@ -261,6 +291,7 @@ impl<'a, 'b> InitializeConfigCpiBuilder<'a, 'b> {
             __program: program,
             config: None,
             admin: None,
+            jito_vault_program: None,
             system_program: None,
             __remaining_accounts: Vec::new(),
         });
@@ -277,6 +308,14 @@ impl<'a, 'b> InitializeConfigCpiBuilder<'a, 'b> {
     #[inline(always)]
     pub fn admin(&mut self, admin: &'b solana_program::account_info::AccountInfo<'a>) -> &mut Self {
         self.instruction.admin = Some(admin);
+        self
+    }
+    #[inline(always)]
+    pub fn jito_vault_program(
+        &mut self,
+        jito_vault_program: &'b solana_program::account_info::AccountInfo<'a>,
+    ) -> &mut Self {
+        self.instruction.jito_vault_program = Some(jito_vault_program);
         self
     }
     #[inline(always)]
@@ -335,6 +374,11 @@ impl<'a, 'b> InitializeConfigCpiBuilder<'a, 'b> {
 
             admin: self.instruction.admin.expect("admin is not set"),
 
+            jito_vault_program: self
+                .instruction
+                .jito_vault_program
+                .expect("jito_vault_program is not set"),
+
             system_program: self
                 .instruction
                 .system_program
@@ -352,6 +396,7 @@ struct InitializeConfigCpiBuilderInstruction<'a, 'b> {
     __program: &'b solana_program::account_info::AccountInfo<'a>,
     config: Option<&'b solana_program::account_info::AccountInfo<'a>>,
     admin: Option<&'b solana_program::account_info::AccountInfo<'a>>,
+    jito_vault_program: Option<&'b solana_program::account_info::AccountInfo<'a>>,
     system_program: Option<&'b solana_program::account_info::AccountInfo<'a>>,
     /// Additional instruction accounts `(AccountInfo, is_writable, is_signer)`.
     __remaining_accounts: Vec<(

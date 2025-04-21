@@ -5,7 +5,8 @@ use shank::ShankInstruction;
 pub enum VaultWhitelistInstruction {
     #[account(0, writable, name = "config")]
     #[account(1, writable, signer, name = "admin")]
-    #[account(2, name = "system_program")]
+    #[account(2, name = "jito_vault_program")]
+    #[account(3, name = "system_program")]
     InitializeConfig,
 
     #[account(0, name = "config")]

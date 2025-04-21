@@ -18,10 +18,18 @@ pub struct Config {
         serde(with = "serde_with::As::<serde_with::DisplayFromStr>")
     )]
     pub admin: Pubkey,
+    #[cfg_attr(
+        feature = "serde",
+        serde(with = "serde_with::As::<serde_with::DisplayFromStr>")
+    )]
+    pub vault_program: Pubkey,
+    pub bump: u8,
+    #[cfg_attr(feature = "serde", serde(with = "serde_with::As::<serde_with::Bytes>"))]
+    pub reserved: [u8; 263],
 }
 
 impl Config {
-    pub const LEN: usize = 32;
+    pub const LEN: usize = 328;
 
     #[inline(always)]
     pub fn from_bytes(data: &[u8]) -> Result<Self, std::io::Error> {

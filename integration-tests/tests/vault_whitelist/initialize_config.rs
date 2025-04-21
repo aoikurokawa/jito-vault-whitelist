@@ -1,5 +1,7 @@
 #[cfg(test)]
 mod tests {
+    use solana_sdk::signer::Signer;
+
     use crate::fixtures::fixture::TestBuilder;
 
     #[tokio::test]
@@ -11,5 +13,9 @@ mod tests {
         vault_program_client.do_initialize_config().await.unwrap();
 
         vault_whitelist_client.do_initialize_config().await.unwrap();
+
+        let config = vault_whitelist_client.get_config().await.unwrap();
+
+        assert_eq!(config.admin, vault_whitelist_client.payer.pubkey())
     }
 }

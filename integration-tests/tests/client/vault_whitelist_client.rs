@@ -24,9 +24,9 @@ use crate::fixtures::{TestError, TestResult};
 use super::vault_client::VaultRoot;
 
 pub struct VaultWhitelistClient {
-    banks_client: BanksClient,
+    pub banks_client: BanksClient,
 
-    payer: Keypair,
+    pub payer: Keypair,
 }
 
 impl VaultWhitelistClient {
@@ -63,6 +63,19 @@ impl VaultWhitelistClient {
         Ok(())
     }
 
+    pub async fn get_config(
+        &mut self,
+    ) -> TestResult<jito_vault_whitelist_client::accounts::Config> {
+        let config_pubkey = Config::find_program_address(&jito_vault_whitelist_program::id()).0;
+        let account = self.banks_client.get_account(config_pubkey).await?.unwrap();
+        let config = jito_vault_whitelist_client::accounts::Config::try_deserialize(
+            &mut account.data.as_slice(),
+        )
+        .unwrap();
+
+        Ok(config)
+    }
+
     #[allow(dead_code)]
     pub async fn get_whitelist(
         &mut self,
@@ -93,6 +106,7 @@ impl VaultWhitelistClient {
         let mut ix = InitializeConfigBuilder::new()
             .config(config)
             .admin(self.payer.pubkey())
+            .jito_vault_program(jito_vault_program::id())
             .instruction();
         ix.program_id = jito_vault_whitelist_program::id();
 

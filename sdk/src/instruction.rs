@@ -48,6 +48,22 @@ pub enum VaultWhitelistInstruction {
         min_amount_out: u64,
     },
 
+    /// Enqueues a withdrawal of VRT tokens
+    /// Used when there aren't enough idle assets in the vault to cover a withdrawal
+    #[account(0, name = "vault_config")]
+    #[account(1, writable, name = "vault")]
+    #[account(2, writable, name = "vault_staker_withdrawal_ticket")]
+    #[account(3, writable, name = "vault_staker_withdrawal_ticket_token_account")]
+    #[account(4, writable, signer, name = "staker")]
+    #[account(5, writable, name = "staker_vrt_token_account")]
+    #[account(6, signer, name = "base")]
+    #[account(7, name = "token_program")]
+    #[account(8, name = "system_program")]
+    #[account(9, name = "config")]
+    #[account(10, writable, name = "whitelist")]
+    #[account(11, name = "jito_vault_program")]
+    EnqueueWithdrawal { proof: Vec<[u8; 32]>, amount: u64 },
+
     #[account(0, name = "config")]
     #[account(1, name = "vault_config")]
     #[account(2, writable, name = "whitelist")]

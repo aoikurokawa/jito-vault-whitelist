@@ -1,4 +1,5 @@
 use borsh::BorshDeserialize;
+use burn_withdrawal_ticket::process_burn_withdrawal_ticket;
 use close_whitelist::process_close_whitelist;
 use enqueue_withdrawal::process_enqueue_withdrawal;
 use initialize_config::process_initialize_config;
@@ -12,6 +13,7 @@ use solana_program::{
     program_error::ProgramError, pubkey::Pubkey,
 };
 
+mod burn_withdrawal_ticket;
 mod close_whitelist;
 mod enqueue_withdrawal;
 mod initialize_config;
@@ -69,6 +71,11 @@ pub fn process_instruction(
         VaultWhitelistInstruction::EnqueueWithdrawal { proof, amount } => {
             msg!("Instruction: EnqueueWithdrawal");
             process_enqueue_withdrawal(program_id, accounts, &proof, amount)
+        }
+
+        VaultWhitelistInstruction::BurnWithdrawalTicket { proof } => {
+            msg!("Instruction: BurnWithdrawalTicket");
+            process_burn_withdrawal_ticket(program_id, accounts, &proof)
         }
 
         VaultWhitelistInstruction::CloseWhitelist => {

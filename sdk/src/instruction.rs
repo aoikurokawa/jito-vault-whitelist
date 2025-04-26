@@ -64,6 +64,25 @@ pub enum VaultWhitelistInstruction {
     #[account(11, name = "jito_vault_program")]
     EnqueueWithdrawal { proof: Vec<[u8; 32]>, amount: u64 },
 
+    /// Burns the withdrawal ticket, returning funds to the staker. Withdraw tickets can be burned
+    /// after one full epoch of being enqueued.
+    #[account(0, name = "vault_config")]
+    #[account(1, writable, name = "vault")]
+    #[account(2, writable, name = "vault_token_account")]
+    #[account(3, writable, name = "vrt_mint")]
+    #[account(4, writable, name = "staker")]
+    #[account(5, writable, name = "staker_token_account")]
+    #[account(6, writable, name = "vault_staker_withdrawal_ticket")]
+    #[account(7, writable, name = "vault_staker_withdrawal_ticket_token_account")]
+    #[account(8, writable, name = "vault_fee_token_account")]
+    #[account(9, writable, name = "program_fee_token_account")]
+    #[account(10, name = "token_program")]
+    #[account(11, name = "system_program")]
+    #[account(12, name = "config")]
+    #[account(13, writable, name = "whitelist")]
+    #[account(14, name = "jito_vault_program")]
+    BurnWithdrawalTicket { proof: Vec<[u8; 32]> },
+
     #[account(0, name = "config")]
     #[account(1, name = "vault_config")]
     #[account(2, writable, name = "whitelist")]

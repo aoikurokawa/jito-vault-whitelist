@@ -334,6 +334,103 @@
       }
     },
     {
+      "name": "BurnWithdrawalTicket",
+      "accounts": [
+        {
+          "name": "vaultConfig",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "vault",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "vaultTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "vrtMint",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "staker",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "stakerTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "vaultStakerWithdrawalTicket",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "vaultStakerWithdrawalTicketTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "vaultFeeTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "programFeeTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "config",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "whitelist",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "jitoVaultProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "proof",
+          "type": {
+            "vec": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          }
+        }
+      ],
+      "discriminant": {
+        "type": "u8",
+        "value": 6
+      }
+    },
+    {
       "name": "CloseWhitelist",
       "accounts": [
         {
@@ -375,74 +472,11 @@
       "args": [],
       "discriminant": {
         "type": "u8",
-        "value": 6
+        "value": 7
       }
     }
   ],
   "accounts": [
-    {
-      "name": "Config",
-      "type": {
-        "kind": "struct",
-        "fields": [
-          {
-            "name": "admin",
-            "type": "publicKey"
-          },
-          {
-            "name": "vaultProgram",
-            "type": "publicKey"
-          },
-          {
-            "name": "bump",
-            "type": "u8"
-          },
-          {
-            "name": "reserved",
-            "type": {
-              "array": [
-                "u8",
-                263
-              ]
-            }
-          }
-        ]
-      }
-    },
-    {
-      "name": "Whitelist",
-      "type": {
-        "kind": "struct",
-        "fields": [
-          {
-            "name": "vault",
-            "type": "publicKey"
-          },
-          {
-            "name": "metaMerkleRoot",
-            "type": {
-              "array": [
-                "u8",
-                32
-              ]
-            }
-          },
-          {
-            "name": "bump",
-            "type": "u8"
-          },
-          {
-            "name": "reserved",
-            "type": {
-              "array": [
-                "u8",
-                263
-              ]
-            }
-          }
-        ]
-      }
-    },
     {
       "name": "Config",
       "type": {

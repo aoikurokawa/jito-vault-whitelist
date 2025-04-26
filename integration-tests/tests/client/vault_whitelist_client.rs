@@ -1,8 +1,8 @@
 use anchor_lang::AccountDeserialize;
-use jito_vault_core::vault::Vault;
+use jito_vault_core::{vault::Vault, vault_staker_withdrawal_ticket::VaultStakerWithdrawalTicket};
 use jito_vault_whitelist_client::instructions::{
-    CloseWhitelistBuilder, InitializeConfigBuilder, InitializeWhitelistBuilder, MintBuilder,
-    SetMetaMerkleRootBuilder, SetMintBurnAdminBuilder,
+    CloseWhitelistBuilder, EnqueueWithdrawalBuilder, InitializeConfigBuilder,
+    InitializeWhitelistBuilder, MintBuilder, SetMetaMerkleRootBuilder, SetMintBurnAdminBuilder,
 };
 use jito_vault_whitelist_core::{config::Config, whitelist::Whitelist};
 use jito_vault_whitelist_sdk::error::VaultWhitelistError;
@@ -17,11 +17,13 @@ use solana_sdk::{
     system_instruction::transfer,
     transaction::{Transaction, TransactionError},
 };
-use spl_associated_token_account::get_associated_token_address;
+use spl_associated_token_account::{
+    get_associated_token_address, instruction::create_associated_token_account_idempotent,
+};
 
 use crate::fixtures::{TestError, TestResult};
 
-use super::vault_client::VaultRoot;
+use super::vault_client::{VaultRoot, VaultStakerWithdrawalTicketRoot};
 
 pub struct VaultWhitelistClient {
     pub banks_client: BanksClient,
@@ -35,6 +37,27 @@ impl VaultWhitelistClient {
             banks_client,
             payer,
         }
+    }
+
+    pub async fn create_ata(&mut self, mint: &Pubkey, owner: &Pubkey) -> Result<(), TestError> {
+        let blockhash = self.banks_client.get_latest_blockhash().await?;
+        self.banks_client
+            .process_transaction_with_preflight_and_commitment(
+                Transaction::new_signed_with_payer(
+                    &[create_associated_token_account_idempotent(
+                        &self.payer.pubkey(),
+                        owner,
+                        mint,
+                        &spl_token::id(),
+                    )],
+                    Some(&self.payer.pubkey()),
+                    &[&self.payer],
+                    blockhash,
+                ),
+                CommitmentLevel::Processed,
+            )
+            .await?;
+        Ok(())
     }
 
     pub async fn process_transaction(&mut self, tx: &Transaction) -> TestResult<()> {
@@ -313,6 +336,99 @@ impl VaultWhitelistClient {
         self.process_transaction(&Transaction::new_signed_with_payer(
             &[ix],
             Some(&depositor.pubkey()),
+            &signers,
+            blockhash,
+        ))
+        .await
+    }
+
+    pub async fn do_enqueue_withdrawal(
+        &mut self,
+        vault_root: &VaultRoot,
+        vault: &Vault,
+        depositor: &Keypair,
+        proof: &[[u8; 32]],
+        amount: u64,
+    ) -> TestResult<VaultStakerWithdrawalTicketRoot> {
+        let depositor_vrt_token_account =
+            get_associated_token_address(&depositor.pubkey(), &vault.vrt_mint);
+
+        let base = Keypair::new();
+        let vault_staker_withdrawal_ticket = VaultStakerWithdrawalTicket::find_program_address(
+            &jito_vault_program::id(),
+            &vault_root.vault_pubkey,
+            &base.pubkey(),
+        )
+        .0;
+        let vault_staker_withdrawal_ticket_token_account =
+            get_associated_token_address(&vault_staker_withdrawal_ticket, &vault.vrt_mint);
+
+        self.create_ata(&vault.vrt_mint, &vault_staker_withdrawal_ticket)
+            .await?;
+
+        self.enqueue_withdrawal(
+            &Config::find_program_address(&jito_vault_program::id()).0,
+            &vault_root.vault_pubkey,
+            &vault_staker_withdrawal_ticket,
+            &vault_staker_withdrawal_ticket_token_account,
+            depositor,
+            &depositor_vrt_token_account,
+            &base,
+            amount,
+            proof,
+        )
+        .await?;
+
+        Ok(VaultStakerWithdrawalTicketRoot {
+            base: base.pubkey(),
+        })
+    }
+
+    #[allow(dead_code)]
+    pub async fn enqueue_withdrawal(
+        &mut self,
+        _config: &Pubkey,
+        vault: &Pubkey,
+        vault_staker_withdrawal_ticket: &Pubkey,
+        vault_staker_withdrawal_ticket_token_account: &Pubkey,
+        staker: &Keypair,
+        staker_vrt_token_account: &Pubkey,
+        base: &Keypair,
+        amount: u64,
+        proof: &[[u8; 32]],
+    ) -> TestResult<()> {
+        let config = Config::find_program_address(&jito_vault_whitelist_program::id()).0;
+        let signers = vec![staker, base];
+        let whitelist =
+            Whitelist::find_program_address(&jito_vault_whitelist_program::id(), &vault).0;
+
+        let mut ix = EnqueueWithdrawalBuilder::new()
+            .config(config)
+            .vault_config(
+                jito_vault_core::config::Config::find_program_address(&jito_vault_program::id()).0,
+            )
+            .vault(*vault)
+            .vault_staker_withdrawal_ticket(*vault_staker_withdrawal_ticket)
+            .vault_staker_withdrawal_ticket_token_account(
+                *vault_staker_withdrawal_ticket_token_account,
+            )
+            .staker(staker.pubkey())
+            .staker_vrt_token_account(*staker_vrt_token_account)
+            .base(base.pubkey())
+            .config(config)
+            .whitelist(whitelist)
+            .jito_vault_program(jito_vault_program::id())
+            .token_program(spl_token::id())
+            .amount(amount)
+            .proof(proof.to_vec())
+            .instruction();
+        ix.program_id = jito_vault_whitelist_program::id();
+
+        let blockhash = self.banks_client.get_latest_blockhash().await?;
+
+        self.process_transaction(&Transaction::new_signed_with_payer(
+            &[ix],
+            Some(&staker.pubkey()),
             &signers,
             blockhash,
         ))

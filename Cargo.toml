@@ -38,12 +38,14 @@ hex = "0.4.3"
 jito-account-traits-derive = { package = "jito-account-traits-derive", git = "https://github.com/jito-foundation/restaking", rev = "fd0a42a60ce701691facc7c6cdf2c858bc639931" }
 jito-bytemuck = { package = "jito-bytemuck", git = "https://github.com/jito-foundation/restaking", rev = "fd0a42a60ce701691facc7c6cdf2c858bc639931" }
 jito-jsm-core = { package = "jito-jsm-core", git = "https://github.com/jito-foundation/restaking", rev = "fd0a42a60ce701691facc7c6cdf2c858bc639931" }
+jito-restaking-core = { package = "jito-restaking-core", git = "https://github.com/jito-foundation/restaking", rev = "fd0a42a60ce701691facc7c6cdf2c858bc639931" }
 jito-restaking-program = { package = "jito-restaking-program", git = "https://github.com/jito-foundation/restaking", rev = "fd0a42a60ce701691facc7c6cdf2c858bc639931", features = ["no-entrypoint"] }
+jito-restaking-sdk = { package = "jito-restaking-sdk", git = "https://github.com/jito-foundation/restaking", rev = "fd0a42a60ce701691facc7c6cdf2c858bc639931" }
 jito-restaking-client-common = { package = "jito-restaking-client-common", git = "https://github.com/jito-foundation/restaking", rev = "12fa363618696f2ed4d538c8c6a1c5604bea471b" }
 jito-vault-core = { package = "jito-vault-core", git = "https://github.com/jito-foundation/restaking", rev = "fd0a42a60ce701691facc7c6cdf2c858bc639931" }
 jito-vault-client = { package = "jito-vault-client", git = "https://github.com/jito-foundation/restaking", rev = "12fa363618696f2ed4d538c8c6a1c5604bea471b" }
 jito-vault-program = { package = "jito-vault-program", git = "https://github.com/jito-foundation/restaking", rev = "fd0a42a60ce701691facc7c6cdf2c858bc639931", features = ["no-entrypoint"] }
-jito-vault-sdk = { package = "jito-vault-sdk", git = "https://github.com/jito-foundation/restaking", rev = "fd0a42a60ce701691facc7c6cdf2c858bc639931" }
+jito-vault-sdk = { package = "jito-vault-sdk", git = "https://github.com/jito-foundation/restaking", rev = "6af1a30062504548da609b6bf9ad164da1627f76" }
 jito-vault-whitelist-client = { path = "./client" }
 jito-vault-whitelist-core = { path = "./core" }
 jito-vault-whitelist-sdk = { path = "./sdk" }
@@ -69,6 +71,7 @@ solana-rpc-client = "2.1.18"
 solana-rpc-client-api = "2.1.18"
 spl-associated-token-account = { version = "6.0.0", features = ["no-entrypoint"] }
 spl-token = { version = "7.0.0", features = ["no-entrypoint"] }
+spl-token-2022 = { version = "7.0.0", features = ["no-entrypoint"] }
 thiserror = "1.0.57"
 tokio = { version = "1.42.0", features = ["full"] }
 tokio-tungstenite = "0.24.0"
@@ -76,3 +79,4 @@ tower-http = { version = "0.6.2", features = ["fs", "trace"] }
 tracing = "0.1.41"
 tracing-subscriber = { version = "0.3.19", features = ["env-filter"] }
 uriparse = "0.6.4"
+

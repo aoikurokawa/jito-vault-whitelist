@@ -5,6 +5,8 @@ use solana_program::msg;
 use solana_program::pubkey::Pubkey;
 use solana_program::{account_info::AccountInfo, program_error::ProgramError};
 
+const RESERVED_SPACE_LEN: usize = 263;
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Pod, Zeroable, AccountDeserialize, ShankAccount)]
 #[repr(C)]
 pub struct Whitelist {
@@ -16,6 +18,9 @@ pub struct Whitelist {
 
     /// Bump seed for the PDA
     bump: u8,
+
+    /// Reserved space
+    reserved: [u8; 263],
 }
 
 impl Whitelist {
@@ -25,6 +30,7 @@ impl Whitelist {
             vault,
             meta_merkle_root,
             bump,
+            reserved: [0; RESERVED_SPACE_LEN],
         }
     }
 
@@ -83,5 +89,20 @@ impl Whitelist {
         }
 
         Ok(())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_whitelist_no_padding() {
+        let whitelist = std::mem::size_of::<Whitelist>();
+        let sum_of_fields = size_of::<Pubkey>() + // vault
+            32 + // meta_merkle_root
+            size_of::<u8>() + // bump
+            RESERVED_SPACE_LEN; // reserved
+        assert_eq!(whitelist, sum_of_fields);
     }
 }

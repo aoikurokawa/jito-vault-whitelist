@@ -1,4 +1,5 @@
 mod close_whitelist;
+mod enqueue_withdrawal;
 mod initialize_config;
 mod initialize_whitelist;
 mod mint;

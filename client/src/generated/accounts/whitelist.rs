@@ -20,10 +20,12 @@ pub struct Whitelist {
     pub vault: Pubkey,
     pub meta_merkle_root: [u8; 32],
     pub bump: u8,
+    #[cfg_attr(feature = "serde", serde(with = "serde_with::As::<serde_with::Bytes>"))]
+    pub reserved: [u8; 263],
 }
 
 impl Whitelist {
-    pub const LEN: usize = 65;
+    pub const LEN: usize = 328;
 
     #[inline(always)]
     pub fn from_bytes(data: &[u8]) -> Result<Self, std::io::Error> {

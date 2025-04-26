@@ -1,5 +1,6 @@
 use borsh::BorshDeserialize;
 use close_whitelist::process_close_whitelist;
+use enqueue_withdrawal::process_enqueue_withdrawal;
 use initialize_config::process_initialize_config;
 use initialize_whitelist::process_initialize_whitelist;
 use jito_vault_whitelist_sdk::instruction::VaultWhitelistInstruction;
@@ -12,6 +13,7 @@ use solana_program::{
 };
 
 mod close_whitelist;
+mod enqueue_withdrawal;
 mod initialize_config;
 mod initialize_whitelist;
 mod mint;
@@ -62,6 +64,11 @@ pub fn process_instruction(
         } => {
             msg!("Instruction: Mint");
             process_mint(program_id, accounts, &proof, amount_in, min_amount_out)
+        }
+
+        VaultWhitelistInstruction::EnqueueWithdrawal { proof, amount } => {
+            msg!("Instruction: EnqueueWithdrawal");
+            process_enqueue_withdrawal(program_id, accounts, &proof, amount)
         }
 
         VaultWhitelistInstruction::CloseWhitelist => {

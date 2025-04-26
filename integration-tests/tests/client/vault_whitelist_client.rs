@@ -419,7 +419,6 @@ impl VaultWhitelistClient {
             .whitelist(whitelist)
             .jito_vault_program(jito_vault_program::id())
             .token_program(spl_token::id())
-            .proof(proof.to_vec())
             .amount(amount)
             .proof(proof.to_vec())
             .instruction();

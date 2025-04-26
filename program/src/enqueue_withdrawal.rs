@@ -58,6 +58,7 @@ pub fn process_enqueue_withdrawal(
         staker.key,
         staker_vrt_token_account.key,
         base.key,
+        Some(whitelist_info.key),
         vrt_amount,
     );
 

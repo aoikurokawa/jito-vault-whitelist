@@ -97,11 +97,10 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_config_no_padding() {
+    fn test_whitelist_no_padding() {
         let whitelist = std::mem::size_of::<Whitelist>();
         let sum_of_fields = size_of::<Pubkey>() + // vault
-            size_of::<Pubkey>() + // vault_program
-            size_of::<[u8; 32]>() + // meta merkle root
+            32 + // meta_merkle_root
             size_of::<u8>() + // bump
             RESERVED_SPACE_LEN; // reserved
         assert_eq!(whitelist, sum_of_fields);

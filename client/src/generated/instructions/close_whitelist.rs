@@ -80,7 +80,7 @@ pub struct CloseWhitelistInstructionData {
 
 impl CloseWhitelistInstructionData {
     pub fn new() -> Self {
-        Self { discriminator: 5 }
+        Self { discriminator: 6 }
     }
 }
 

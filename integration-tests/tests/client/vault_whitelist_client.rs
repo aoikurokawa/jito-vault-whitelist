@@ -384,9 +384,10 @@ impl VaultWhitelistClient {
         })
     }
 
+    #[allow(dead_code)]
     pub async fn enqueue_withdrawal(
         &mut self,
-        config: &Pubkey,
+        _config: &Pubkey,
         vault: &Pubkey,
         vault_staker_withdrawal_ticket: &Pubkey,
         vault_staker_withdrawal_ticket_token_account: &Pubkey,

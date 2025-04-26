@@ -1,27 +1,21 @@
 #[cfg(test)]
 mod tests {
-    use jito_vault_whitelist_sdk::error::VaultWhitelistError;
     use meta_merkle_tree::{
         generated_merkle_tree::GeneratedMerkleTree, vault_whitelist_meta::VaultWhitelistMeta,
     };
-    use solana_sdk::{pubkey::Pubkey, signature::Keypair, signer::Signer};
+    use solana_sdk::{signature::Keypair, signer::Signer};
 
     use crate::{
-        client::{
-            vault_client::VaultStakerWithdrawalTicketRoot,
-            vault_whitelist_client::assert_vault_whitelist_error,
-        },
+        client::vault_client::VaultStakerWithdrawalTicketRoot,
         fixtures::fixture::{ConfiguredVault, TestBuilder},
     };
-
-    const MINT_AMOUNT: u64 = 100_000;
 
     #[tokio::test]
     async fn test_enqueue_withdrawal() {
         const MINT_AMOUNT: u64 = 100_000;
         const DEPOSIT_FEE_BPS: u16 = 100;
         const WITHDRAWAL_FEE_BPS: u16 = 100;
-        let min_amount_out: u64 = MINT_AMOUNT * (10_000 - DEPOSIT_FEE_BPS) as u64 / 10_000;
+        // let min_amount_out: u64 = MINT_AMOUNT * (10_000 - DEPOSIT_FEE_BPS) as u64 / 10_000;
 
         let deposit_fee_bps = DEPOSIT_FEE_BPS;
         let withdrawal_fee_bps = WITHDRAWAL_FEE_BPS;
@@ -47,7 +41,6 @@ mod tests {
             .await
             .unwrap();
 
-        let mut vault_whitelist_client = fixture.vault_whitelist_program_client();
         vault_whitelist_client.do_initialize_config().await.unwrap();
 
         let meta_merkle_root = [0; 32];

@@ -10,7 +10,7 @@ use solana_sdk::{
 use crate::client::{
     restaking_clinet::{OperatorRoot, RestakingProgramClient},
     vault_client::{VaultProgramClient, VaultRoot},
-    vault_whitelist_client::{self, VaultWhitelistClient},
+    vault_whitelist_client::VaultWhitelistClient,
 };
 
 use super::TestResult;
@@ -23,6 +23,7 @@ pub struct ConfiguredVault {
 
     pub vault_whitelist_client: VaultWhitelistClient,
 
+    #[allow(dead_code)]
     pub vault_config_admin: Keypair,
 
     pub vault_root: VaultRoot,
@@ -122,7 +123,7 @@ impl TestBuilder {
     ) -> TestResult<ConfiguredVault> {
         let mut vault_program_client = self.vault_program_client();
         let mut restaking_program_client = self.restaking_program_client();
-        let mut vault_whitelist_client = self.vault_whitelist_program_client();
+        let vault_whitelist_client = self.vault_whitelist_program_client();
 
         let (vault_config_admin, vault_root) = vault_program_client
             .setup_config_and_vault(deposit_fee_bps, withdrawal_fee_bps, reward_fee_bps)

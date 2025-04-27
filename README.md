@@ -4,9 +4,12 @@
 
 - Initialize Config
 - Initialize Whitelist
-- Mint
-- Set Merkle Root
 - Set Mint Burn Admin
+- Set Merkle Root
+- Mint
+- Enqueue Withdrawal
+- Burn Withdrawal Ticket
+- Close Whitelist
 
 ## Setup
 

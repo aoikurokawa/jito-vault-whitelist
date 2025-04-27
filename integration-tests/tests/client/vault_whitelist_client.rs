@@ -1,8 +1,12 @@
 use anchor_lang::AccountDeserialize;
-use jito_vault_core::{vault::Vault, vault_staker_withdrawal_ticket::VaultStakerWithdrawalTicket};
+use jito_vault_core::{
+    config::Config as VaultConfig, vault::Vault,
+    vault_staker_withdrawal_ticket::VaultStakerWithdrawalTicket,
+};
 use jito_vault_whitelist_client::instructions::{
-    CloseWhitelistBuilder, EnqueueWithdrawalBuilder, InitializeConfigBuilder,
-    InitializeWhitelistBuilder, MintBuilder, SetMetaMerkleRootBuilder, SetMintBurnAdminBuilder,
+    BurnWithdrawalTicketBuilder, CloseWhitelistBuilder, EnqueueWithdrawalBuilder,
+    InitializeConfigBuilder, InitializeWhitelistBuilder, MintBuilder, SetMetaMerkleRootBuilder,
+    SetMintBurnAdminBuilder,
 };
 use jito_vault_whitelist_core::{config::Config, whitelist::Whitelist};
 use jito_vault_whitelist_sdk::error::VaultWhitelistError;
@@ -384,7 +388,6 @@ impl VaultWhitelistClient {
         })
     }
 
-    #[allow(dead_code)]
     pub async fn enqueue_withdrawal(
         &mut self,
         _config: &Pubkey,
@@ -420,6 +423,101 @@ impl VaultWhitelistClient {
             .jito_vault_program(jito_vault_program::id())
             .token_program(spl_token::id())
             .amount(amount)
+            .proof(proof.to_vec())
+            .instruction();
+        ix.program_id = jito_vault_whitelist_program::id();
+
+        let blockhash = self.banks_client.get_latest_blockhash().await?;
+
+        self.process_transaction(&Transaction::new_signed_with_payer(
+            &[ix],
+            Some(&staker.pubkey()),
+            &signers,
+            blockhash,
+        ))
+        .await
+    }
+
+    pub async fn do_burn_withdrawal_ticket(
+        &mut self,
+        config: &VaultConfig,
+        vault_root: &VaultRoot,
+        vault: &Vault,
+        depositor: &Keypair,
+        vault_staker_withdrawal_ticket_base: &Pubkey,
+        proof: &[[u8; 32]],
+    ) -> TestResult<VaultStakerWithdrawalTicketRoot> {
+        let base = Keypair::new();
+        let vault_staker_withdrawal_ticket = VaultStakerWithdrawalTicket::find_program_address(
+            &jito_vault_program::id(),
+            &vault_root.vault_pubkey,
+            vault_staker_withdrawal_ticket_base,
+        )
+        .0;
+        let vault_token_account =
+            get_associated_token_address(&vault_root.vault_pubkey, &vault.supported_mint);
+        let vault_staker_withdrawal_ticket_token_account =
+            get_associated_token_address(&vault_staker_withdrawal_ticket, &vault.vrt_mint);
+
+        self.create_ata(&vault.vrt_mint, &vault_staker_withdrawal_ticket)
+            .await?;
+
+        self.burn_withdrawal_ticket(
+            &Config::find_program_address(&jito_vault_program::id()).0,
+            &vault_root.vault_pubkey,
+            &vault_token_account,
+            &vault.vrt_mint,
+            depositor,
+            &get_associated_token_address(&depositor.pubkey(), &vault.supported_mint),
+            &vault_staker_withdrawal_ticket,
+            &vault_staker_withdrawal_ticket_token_account,
+            &get_associated_token_address(&vault.fee_wallet, &vault.vrt_mint),
+            &get_associated_token_address(&config.program_fee_wallet, &vault.vrt_mint),
+            proof,
+        )
+        .await?;
+
+        Ok(VaultStakerWithdrawalTicketRoot {
+            base: base.pubkey(),
+        })
+    }
+
+    pub async fn burn_withdrawal_ticket(
+        &mut self,
+        vault_config: &Pubkey,
+        vault: &Pubkey,
+        vault_token_account: &Pubkey,
+        vrt_mint: &Pubkey,
+        staker: &Keypair,
+        staker_token_account: &Pubkey,
+        vault_staker_withdrawal_ticket: &Pubkey,
+        vault_staker_withdrawal_ticket_token_account: &Pubkey,
+        vault_fee_token_account: &Pubkey,
+        program_fee_token_account: &Pubkey,
+        proof: &[[u8; 32]],
+    ) -> TestResult<()> {
+        let signers = vec![staker];
+        let whitelist =
+            Whitelist::find_program_address(&jito_vault_whitelist_program::id(), &vault).0;
+        let config = Config::find_program_address(&jito_vault_whitelist_program::id()).0;
+
+        let mut ix = BurnWithdrawalTicketBuilder::new()
+            .vault_config(*vault_config)
+            .vault(*vault)
+            .vault_token_account(*vault_token_account)
+            .vrt_mint(*vrt_mint)
+            .staker(staker.pubkey())
+            .staker_token_account(*staker_token_account)
+            .vault_staker_withdrawal_ticket(*vault_staker_withdrawal_ticket)
+            .vault_staker_withdrawal_ticket_token_account(
+                *vault_staker_withdrawal_ticket_token_account,
+            )
+            .vault_fee_token_account(*vault_fee_token_account)
+            .program_fee_token_account(*program_fee_token_account)
+            .token_program(spl_token::id())
+            .config(config)
+            .whitelist(whitelist)
+            .jito_vault_program(jito_vault_program::id())
             .proof(proof.to_vec())
             .instruction();
         ix.program_id = jito_vault_whitelist_program::id();

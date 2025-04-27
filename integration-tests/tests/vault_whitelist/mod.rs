@@ -1,3 +1,4 @@
+mod burn_withdrawal_ticket;
 mod close_whitelist;
 mod enqueue_withdrawal;
 mod initialize_config;

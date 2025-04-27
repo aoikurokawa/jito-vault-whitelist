@@ -151,29 +151,30 @@ jobs:
           name: jito_vault_whitelist_program.so
           path: target/deploy/jito_vault_whitelist_program.so
 
-  # coverage:
-  #   name: coverage
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - uses: actions-rust-lang/setup-rust-toolchain@v1
-  #       with:
-  #         components: rustfmt, clippy
-  #         toolchain: nightly-2024-07-25
-  #     - name: Install cargo-llvm-cov
-  #       uses: taiki-e/install-action@cargo-llvm-cov
-  #     - name: Generate code coverage
-  #       run: cargo llvm-cov --all-features --workspace --lcov --output-path lcov.info
-  #       env:
-  #         RESTAKING_PROGRAM_ID: RestkWeAVL8fRGgzhfeoqFhsqKRchg6aa1XrcH96z4Q
-  #         VAULT_PROGRAM_ID: Vau1t6sLNxnzB7ZDsef8TLbPLfyZMYXH8WTNqUdm9g8
-  #     - name: Upload coverage to Codecov
-  #       uses: codecov/codecov-action@v4.5.0
-  #       with:
-  #         token: ${{ secrets.CODECOV_TOKEN }}
-  #         slug: jito-foundation/restaking
-  #         fail_ci_if_error: true
-  #         codecov_yml_path: codecov.yaml
+  coverage:
+    name: coverage
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          components: rustfmt, clippy
+          toolchain: nightly-2024-07-25
+      - name: Install cargo-llvm-cov
+        uses: taiki-e/install-action@cargo-llvm-cov
+      - name: Install system dependencies
+        run: sudo apt-get update && sudo apt-get install -y libudev-dev
+      - name: Generate code coverage
+        run: cargo llvm-cov --all-features --workspace --lcov --output-path lcov.info
+        env:
+          VAULT_WHITELIST_PROGRAM_ID: 7BHULFc6NKwtc7f2ap6y7ty1cRfTN5MBMfJQj1rxEUhP
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4.5.0
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          slug: aoikurokawa/jito-vault-whitelist
+          fail_ci_if_error: true
+          codecov_yml_path: codecov.yaml
 
   test_sbf:
     name: cargo test

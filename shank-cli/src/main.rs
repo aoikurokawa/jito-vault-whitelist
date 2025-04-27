@@ -24,7 +24,7 @@ fn main() -> Result<()> {
     let idl_configs = vec![IdlConfiguration {
         program_id: vault_whitelist_program_id,
         name: "jito_vault_whitelist",
-        paths: vec!["sdk", "core", "program", "core"],
+        paths: vec!["sdk", "core", "program"],
     }];
 
     let crate_root = std::env::current_dir().unwrap();

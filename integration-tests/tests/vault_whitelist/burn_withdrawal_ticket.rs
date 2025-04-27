@@ -94,31 +94,6 @@ mod tests {
             .await
             .unwrap();
 
-        // let vault_vrt_account = fixture
-        //     .get_token_account(&get_associated_token_address(
-        //         &depositor.pubkey(),
-        //         &vault.vrt_mint,
-        //     ))
-        //     .await
-        //     .unwrap();
-        // assert_eq!(
-        //     vault_vrt_account.amount,
-        //     MINT_AMOUNT * (10_000 - DEPOSIT_FEE_BPS) as u64 / 10_000
-        // );
-
-        // let vault_fee_account = fixture
-        //     .get_token_account(&get_associated_token_address(
-        //         &vault.fee_wallet,
-        //         &vault.vrt_mint,
-        //     ))
-        //     .await
-        //     .unwrap();
-        // assert_eq!(
-        //     vault_fee_account.amount,
-        //     MINT_AMOUNT * DEPOSIT_FEE_BPS as u64 / 10_000
-        // );
-
-        // let vault operator ticket warmup
         let config = vault_program_client
             .get_config(
                 &jito_vault_core::config::Config::find_program_address(&jito_vault_program::id()).0,

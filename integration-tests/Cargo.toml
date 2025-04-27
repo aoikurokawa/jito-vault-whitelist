@@ -4,6 +4,8 @@ version = { workspace = true }
 edition = { workspace = true }
 
 [dependencies]
+
+[dev-dependencies]
 anchor-lang = { workspace = true }
 borsh = { workspace = true }
 jito-bytemuck = { workspace = true }
@@ -24,8 +26,6 @@ spl-associated-token-account = { workspace = true }
 spl-token = { workspace = true }
 thiserror = { workspace = true }
 tokio = { workspace = true }
-
-[dev-dependencies]
 jito-restaking-core = { workspace = true }
 jito-restaking-program = { workspace = true }
 jito-restaking-sdk = { workspace = true }

@@ -13,20 +13,20 @@
 
 ## Setup
 
-### Generate IDL
+### Generate IDL and Clients
 
 ```bash
-cargo r -p shank-cli
+make generate-code
 ```
 
-### Generate Clients
+### Check Lint
 
 ```bash
-pnpm generate-clients
+make lint
 ```
 
 ### Test
 
 ```bash
-cargo-build-sbf && SBF_OUT_DIR=$(pwd)/target/sbf-solana-solana/release cargo nextest run
+make test
 ```

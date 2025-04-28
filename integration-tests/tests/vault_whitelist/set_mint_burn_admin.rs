@@ -46,7 +46,7 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn test_set_meta_merkle_root_invalid_vault_admin_fails() {
+    async fn test_set_mint_burn_admin_invalid_vault_admin_fails() {
         let fixture = TestBuilder::new().await;
         let mut vault_program_client = fixture.vault_program_client();
         vault_program_client.do_initialize_config().await.unwrap();

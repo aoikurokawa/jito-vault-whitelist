@@ -16,6 +16,7 @@ mod tests {
 
         let config = vault_whitelist_client.get_config().await.unwrap();
 
-        assert_eq!(config.admin, vault_whitelist_client.payer.pubkey())
+        assert_eq!(config.admin, vault_whitelist_client.payer.pubkey());
+        assert_eq!(config.vault_program, jito_vault_program::id());
     }
 }

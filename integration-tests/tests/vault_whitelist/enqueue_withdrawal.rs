@@ -159,7 +159,6 @@ mod tests {
         const MINT_AMOUNT: u64 = 100_000;
         const DEPOSIT_FEE_BPS: u16 = 100;
         const WITHDRAWAL_FEE_BPS: u16 = 100;
-        // let min_amount_out: u64 = MINT_AMOUNT * (10_000 - DEPOSIT_FEE_BPS) as u64 / 10_000;
 
         let deposit_fee_bps = DEPOSIT_FEE_BPS;
         let withdrawal_fee_bps = WITHDRAWAL_FEE_BPS;

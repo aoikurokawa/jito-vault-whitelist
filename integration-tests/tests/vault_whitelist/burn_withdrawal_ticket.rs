@@ -70,7 +70,7 @@ mod tests {
             .unwrap();
 
         let vault_whitelist_metas = vec![VaultWhitelistMeta {
-            depositor_pubkey: depositor.pubkey(),
+            user: depositor.pubkey(),
         }];
 
         let merkle_tree =
@@ -142,7 +142,7 @@ mod tests {
             .unwrap();
 
         let vault_whitelist_metas = vec![VaultWhitelistMeta {
-            depositor_pubkey: depositor.pubkey(),
+            user: depositor.pubkey(),
         }];
 
         let proof = GeneratedMerkleTree::get_proof(&vault_whitelist_metas, &depositor.pubkey());
@@ -242,7 +242,7 @@ mod tests {
             .unwrap();
 
         let vault_whitelist_metas = vec![VaultWhitelistMeta {
-            depositor_pubkey: depositor.pubkey(),
+            user: depositor.pubkey(),
         }];
 
         let merkle_tree =
@@ -314,7 +314,7 @@ mod tests {
             .unwrap();
 
         let vault_whitelist_metas = vec![VaultWhitelistMeta {
-            depositor_pubkey: depositor.pubkey(),
+            user: depositor.pubkey(),
         }];
 
         let proof = GeneratedMerkleTree::get_proof(&vault_whitelist_metas, &depositor.pubkey());
@@ -353,7 +353,7 @@ mod tests {
             .unwrap();
 
         let vault_whitelist_metas = vec![VaultWhitelistMeta {
-            depositor_pubkey: Pubkey::new_unique(),
+            user: Pubkey::new_unique(),
         }];
 
         let merkle_tree =

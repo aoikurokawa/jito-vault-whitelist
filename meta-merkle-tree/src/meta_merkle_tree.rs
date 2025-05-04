@@ -204,7 +204,6 @@ mod tests {
 
     #[test]
     fn test_verify_new_merkle_tree() {
-        // let tree_nodes = vec![TreeNode::new(&Pubkey::default(), &[0; 32], 100, 10)];
         let tree_nodes = vec![TreeNode::new(&Pubkey::default(), 10)];
         let merkle_tree = MetaMerkleTree::new(tree_nodes).unwrap();
         assert!(merkle_tree.verify_proof().is_ok(), "verify failed");
@@ -214,24 +213,9 @@ mod tests {
     #[test]
     fn test_write_merkle_distributor_to_file() {
         let tree_nodes = vec![
-            TreeNode::new(
-                &new_test_key(),
-                // &[0; 32],
-                // 100 * u64::pow(10, 9),
-                100 * u64::pow(10, 9),
-            ),
-            TreeNode::new(
-                &new_test_key(),
-                // &[0; 32],
-                // 100 * u64::pow(10, 9),
-                100 * u64::pow(10, 9),
-            ),
-            TreeNode::new(
-                &new_test_key(),
-                // &[0; 32],
-                // 100 * u64::pow(10, 9),
-                100 * u64::pow(10, 9),
-            ),
+            TreeNode::new(&new_test_key(), 100 * u64::pow(10, 9)),
+            TreeNode::new(&new_test_key(), 100 * u64::pow(10, 9)),
+            TreeNode::new(&new_test_key(), 100 * u64::pow(10, 9)),
         ];
 
         let merkle_distributor_info = MetaMerkleTree::new(tree_nodes).unwrap();
@@ -253,9 +237,6 @@ mod tests {
         let pubkey3 = Pubkey::new_unique();
 
         let mut tree_nodes = vec![
-            // TreeNode::new(&pubkey1, &[0; 32], 10, 20),
-            // TreeNode::new(&pubkey2, &[0; 32], 1, 2),
-            // TreeNode::new(&pubkey3, &[0; 32], 3, 4),
             TreeNode::new(&pubkey1, 20),
             TreeNode::new(&pubkey2, 2),
             TreeNode::new(&pubkey3, 4),
@@ -267,11 +248,7 @@ mod tests {
         let tree = MetaMerkleTree::new(tree_nodes).unwrap();
 
         assert_eq!(tree.tree_nodes.len(), 3);
-        // assert_eq!(tree.tree_nodes[0].max_total_claim, 10);
-        // assert_eq!(tree.tree_nodes[0].max_num_nodes, 20);
-        // assert_eq!(tree.tree_nodes[0].validator_merkle_root, [0; 32]);
         assert_eq!(tree.tree_nodes[0].user_account, pubkey1);
-        // assert!(tree.tree_nodes.contains(&TreeNode::new(&pubkey1)));
         assert!(tree.tree_nodes[0].proof.is_some());
     }
 }

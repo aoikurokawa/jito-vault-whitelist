@@ -4,10 +4,7 @@ use solana_program::{
     pubkey::Pubkey,
 };
 
-use crate::{
-    error::MerkleRootGeneratorError, pubkey_string_conversion,
-    vault_whitelist_meta::VaultWhitelistMeta,
-};
+use crate::{pubkey_string_conversion, vault_whitelist_meta::VaultWhitelistMeta};
 
 #[derive(Clone, Eq, Debug, Hash, PartialEq, Deserialize, Serialize)]
 pub struct VaultWhitelistMetaTreeNode {
@@ -15,8 +12,6 @@ pub struct VaultWhitelistMetaTreeNode {
     #[serde(with = "pubkey_string_conversion")]
     pub depositor: Pubkey,
 
-    // The amount this account is entitled to.
-    // pub amount: u64,
     /// The proof associated with this TreeNode
     pub proof: Option<Vec<[u8; 32]>>,
 }
@@ -26,7 +21,7 @@ impl VaultWhitelistMetaTreeNode {
         let mut tree_nodes = Vec::new();
         for vault_whitelist_meta in vault_whitelist_metas {
             let tree_node = Self {
-                depositor: vault_whitelist_meta.depositor_pubkey,
+                depositor: vault_whitelist_meta.user,
                 proof: None,
             };
 
@@ -36,21 +31,9 @@ impl VaultWhitelistMetaTreeNode {
         tree_nodes
     }
 
-    pub fn vec_from_stake_meta(
-        vault_whitelist_meta: &VaultWhitelistMeta,
-    ) -> Result<Vec<Self>, MerkleRootGeneratorError> {
-        let tree_nodes = vec![Self {
-            depositor: vault_whitelist_meta.depositor_pubkey,
-            proof: None,
-        }];
-
-        Ok(tree_nodes)
-    }
-
     pub(crate) fn hash(&self) -> Hash {
         let mut hasher = Hasher::default();
         hasher.hash(self.depositor.as_ref());
-        // hasher.hash(self.amount.to_le_bytes().as_ref());
         hasher.result()
     }
 }

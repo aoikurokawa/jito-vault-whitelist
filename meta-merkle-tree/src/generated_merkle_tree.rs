@@ -1,5 +1,3 @@
-/// Mostly copied from modules in jito-solana/tip-distributor/src
-/// To be replaced by tip distributor code in this repo
 use serde::{Deserialize, Serialize};
 use solana_program::hash::Hash;
 use solana_program::pubkey::Pubkey;

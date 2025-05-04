@@ -50,7 +50,7 @@ mod tests {
             .unwrap();
 
         let vault_whitelist_metas = vec![VaultWhitelistMeta {
-            depositor_pubkey: depositor.pubkey(),
+            user: depositor.pubkey(),
         }];
 
         let merkle_tree =
@@ -115,7 +115,7 @@ mod tests {
             .unwrap();
 
         let vault_whitelist_metas = vec![VaultWhitelistMeta {
-            depositor_pubkey: depositor.pubkey(),
+            user: depositor.pubkey(),
         }];
 
         let merkle_tree =

@@ -19,9 +19,6 @@ pub struct Cli {
     #[arg(long, global = true, help = "Commitment level")]
     pub commitment: Option<String>,
 
-    #[arg(long, global = true, help = "Restaking program ID")]
-    pub restaking_program_id: Option<String>,
-
     #[arg(long, global = true, help = "Vault program ID")]
     pub vault_program_id: Option<String>,
 

@@ -2,7 +2,6 @@
 name = "jito-vault-whitelist-cli"
 version = { workspace = true }
 edition = { workspace = true }
-readme = { workspace = true }
 
 [[bin]]
 name = "jito-vault-whitelist-cli"

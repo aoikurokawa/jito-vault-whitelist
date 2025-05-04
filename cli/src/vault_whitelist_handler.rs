@@ -607,7 +607,7 @@ impl VaultWhitelistCliHandler {
         let mut ix = ix_builder.instruction();
         ix.program_id = self.vault_whitelist_program_id;
 
-        info!("Enqueueing withdrawal");
+        info!("Burning withdrawal ticket");
 
         let ixs = [program_fee_ata_ix, ix];
         self.process_transaction(&ixs, &signer.pubkey(), &[signer])?;

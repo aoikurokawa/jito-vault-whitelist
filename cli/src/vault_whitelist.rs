@@ -58,6 +58,13 @@ pub enum VaultWhitelistActions {
         amount: u64,
     },
 
+    /// Burn Withdrawal Ticket
+    BurnWithdrawalTicket {
+        whitelist_file_path: PathBuf,
+        signer_keypair_path: PathBuf,
+        vault: Pubkey,
+    },
+
     /// Close whitelist
     CloseWhitelist { vault: Pubkey },
 }

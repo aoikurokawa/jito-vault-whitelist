@@ -607,7 +607,10 @@ impl VaultWhitelistCliHandler {
         let mut ix = ix_builder.instruction();
         ix.program_id = self.vault_whitelist_program_id;
 
-        info!("Burning withdrawal ticket");
+        info!(
+            "Burning withdrawal ticket for vault: {}, staker: {}, staker token account: {}",
+            vault_pubkey, staker, staker_token_account
+        );
 
         let ixs = [program_fee_ata_ix, ix];
         self.process_transaction(&ixs, &signer.pubkey(), &[signer])?;

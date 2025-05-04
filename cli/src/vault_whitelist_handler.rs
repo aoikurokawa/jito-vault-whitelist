@@ -510,7 +510,7 @@ impl VaultWhitelistCliHandler {
         let mut ix = ix_builder.instruction();
         ix.program_id = self.vault_whitelist_program_id;
 
-        info!("Enqueueing withdrawal");
+        info!("Enqueueing withdrawal: amount = {}, vault_id = {}", amount, vault_pubkey);
 
         let ixs = [vault_staker_withdrawal_ticket_ata_ix, ix];
         self.process_transaction(&ixs, &signer.pubkey(), &[signer])?;

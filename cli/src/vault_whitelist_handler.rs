@@ -3,9 +3,10 @@ use std::path::PathBuf;
 use anyhow::anyhow;
 use borsh::BorshDeserialize;
 use jito_restaking_client_common::log::PrettyDisplay;
+use jito_vault_core::vault_staker_withdrawal_ticket::VaultStakerWithdrawalTicket;
 use jito_vault_whitelist_client::instructions::{
-    CloseWhitelistBuilder, InitializeConfigBuilder, InitializeWhitelistBuilder, MintBuilder,
-    SetMetaMerkleRootBuilder, SetMintBurnAdminBuilder,
+    CloseWhitelistBuilder, EnqueueWithdrawalBuilder, InitializeConfigBuilder,
+    InitializeWhitelistBuilder, MintBuilder, SetMetaMerkleRootBuilder, SetMintBurnAdminBuilder,
 };
 use log::{debug, info};
 use meta_merkle_tree::{
@@ -73,24 +74,24 @@ impl VaultWhitelistCliHandler {
             VaultWhitelistCommands::Config {
                 action: ConfigActions::Get,
             } => self.get_config(),
-            VaultWhitelistCommands::VaultWhitelist {
+            VaultWhitelistCommands::Whitelist {
                 action:
                     VaultWhitelistActions::Initialize {
                         whitelist_file_path,
                         vault,
                     },
             } => self.initialize_whitelist(whitelist_file_path, vault),
-            VaultWhitelistCommands::VaultWhitelist {
+            VaultWhitelistCommands::Whitelist {
                 action: VaultWhitelistActions::SetMintBurnAdmin { vault },
             } => self.set_mint_burn_admin(vault),
-            VaultWhitelistCommands::VaultWhitelist {
+            VaultWhitelistCommands::Whitelist {
                 action:
                     VaultWhitelistActions::SetMetaMerkleRoot {
                         whitelist_file_path,
                         vault,
                     },
             } => self.set_meta_merkle_root(whitelist_file_path, vault),
-            VaultWhitelistCommands::VaultWhitelist {
+            VaultWhitelistCommands::Whitelist {
                 action:
                     VaultWhitelistActions::Mint {
                         whitelist_file_path,
@@ -106,7 +107,16 @@ impl VaultWhitelistCliHandler {
                 amount_in,
                 min_amount_out,
             ),
-            VaultWhitelistCommands::VaultWhitelist {
+            VaultWhitelistCommands::Whitelist {
+                action:
+                    VaultWhitelistActions::EnqueueWithdrawal {
+                        whitelist_file_path,
+                        signer_keypair_path,
+                        vault,
+                        amount,
+                    },
+            } => self.enqueue_withdrawal(whitelist_file_path, signer_keypair_path, vault, amount),
+            VaultWhitelistCommands::Whitelist {
                 action: VaultWhitelistActions::CloseWhitelist { vault },
             } => self.close_whitelist(vault),
         }
@@ -407,6 +417,89 @@ impl VaultWhitelistCliHandler {
             vault_fee_ata_ix,
             ix,
         ];
+        self.process_transaction(&ixs, &signer.pubkey(), &[signer])?;
+
+        if !self.print_tx {
+            let account =
+                self.get_account::<jito_vault_whitelist_client::accounts::Whitelist>(&whitelist)?;
+            info!("{}", account.pretty_display());
+        }
+
+        Ok(())
+    }
+
+    pub fn enqueue_withdrawal(
+        &self,
+        whitelist_file_path: PathBuf,
+        signer_keypair_path: PathBuf,
+        vault_pubkey: Pubkey,
+        amount: u64,
+    ) -> anyhow::Result<()> {
+        let signer_keypair = read_keypair_file(signer_keypair_path)
+            .map_err(|e| anyhow!("Failed to read signer keypair: {}", e))?;
+        let signer = CliSigner::new(Some(signer_keypair), None);
+
+        let whitelist = jito_vault_whitelist_core::whitelist::Whitelist::find_program_address(
+            &self.vault_whitelist_program_id,
+            &vault_pubkey,
+        )
+        .0;
+
+        let vault = self.get_account::<jito_vault_client::accounts::Vault>(&vault_pubkey)?;
+
+        let vault_staker_withdrawal_ticket = VaultStakerWithdrawalTicket::find_program_address(
+            &self.vault_program_id,
+            &vault_pubkey,
+            &signer.pubkey(),
+        )
+        .0;
+
+        let vault_staker_withdrawal_ticket_token_account =
+            get_associated_token_address(&vault_staker_withdrawal_ticket, &vault.vrt_mint);
+
+        let staker_vrt_token_account =
+            get_associated_token_address(&vault_staker_withdrawal_ticket, &vault.vrt_mint);
+
+        let vault_staker_withdrawal_ticket_ata_ix = create_associated_token_account_idempotent(
+            &signer.pubkey(),
+            &vault_staker_withdrawal_ticket,
+            &vault.vrt_mint,
+            &spl_token::ID,
+        );
+
+        let vault_whitelist_metas =
+            read_json_from_file::<Vec<VaultWhitelistMeta>>(&whitelist_file_path)?;
+        let proof = GeneratedMerkleTree::get_proof(&vault_whitelist_metas, &signer.pubkey());
+
+        let mut ix_builder = EnqueueWithdrawalBuilder::new();
+        ix_builder
+            .vault_config(
+                jito_vault_core::config::Config::find_program_address(&self.vault_program_id).0,
+            )
+            .vault(vault_pubkey)
+            .config(
+                jito_vault_whitelist_core::config::Config::find_program_address(
+                    &self.vault_whitelist_program_id,
+                )
+                .0,
+            )
+            .vault_staker_withdrawal_ticket(vault_staker_withdrawal_ticket)
+            .vault_staker_withdrawal_ticket_token_account(
+                vault_staker_withdrawal_ticket_token_account,
+            )
+            .staker_vrt_token_account(staker_vrt_token_account)
+            .base(signer.pubkey())
+            .whitelist(whitelist)
+            .jito_vault_program(self.vault_program_id)
+            .amount(amount)
+            .proof(proof);
+
+        let mut ix = ix_builder.instruction();
+        ix.program_id = self.vault_whitelist_program_id;
+
+        info!("Enqueueing withdrawal");
+
+        let ixs = [vault_staker_withdrawal_ticket_ata_ix, ix];
         self.process_transaction(&ixs, &signer.pubkey(), &[signer])?;
 
         if !self.print_tx {

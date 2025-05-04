@@ -26,7 +26,7 @@ cargo r -p jito-vault-whitelist-cli -- vault-whitelist config initialize
 Vault Manger can initialize whitelist account through this command.
 
 ```bash
-cargo r -p jito-vault-whitelist-cli -- vault-whitelist vault-whitelist initialize <WHITELIST_DATA_PATH> <VAULT_ADDRESS>
+cargo r -p jito-vault-whitelist-cli -- vault-whitelist whitelist initialize <WHITELIST_DATA_PATH> <VAULT_ADDRESS>
 ```
 
 ### `set_mint_burn_admin`
@@ -34,7 +34,7 @@ cargo r -p jito-vault-whitelist-cli -- vault-whitelist vault-whitelist initializ
 Vault Manager can set `vault_mint_burn_admin` filed to whitelist pubkey.
 
 ```bash
-cargo r -p jito-vault-whitelist-cli -- vault-whitelist vault-whitelist set-mint-burn-admin <VAULT_ADDRESS>
+cargo r -p jito-vault-whitelist-cli -- vault-whitelist whitelist set-mint-burn-admin <VAULT_ADDRESS>
 ```
 
 ### `set_merkle_root`
@@ -42,7 +42,7 @@ cargo r -p jito-vault-whitelist-cli -- vault-whitelist vault-whitelist set-mint-
 Vault Manager can set new merkle root if whitelist user added or removed.
 
 ```bash
-cargo r -p jito-vault-whitelist-cli -- vault-whitelist vault-whitelist set-merkle-root <WHITELIST_DATA_PATH> <VAULT_ADDRESS>
+cargo r -p jito-vault-whitelist-cli -- vault-whitelist whitelist set-merkle-root <WHITELIST_DATA_PATH> <VAULT_ADDRESS>
 ```
 
 ### `mint`
@@ -50,7 +50,7 @@ cargo r -p jito-vault-whitelist-cli -- vault-whitelist vault-whitelist set-merkl
 Whitelist user can mint VRT:
 
 ```bash
-cargo r -p jito-vault-whitelist-cli -- vault-whitelist vault-whitelist mint <WHITELIST_DATA_PATH> <USER_KEYPAIR_PATH>  <VAULT_ADDRESS> <AMOUNT_IN> <MIN_AMOUNT_OUT>
+cargo r -p jito-vault-whitelist-cli -- vault-whitelist whitelist mint <WHITELIST_DATA_PATH> <USER_KEYPAIR_PATH>  <VAULT_ADDRESS> <AMOUNT_IN> <MIN_AMOUNT_OUT>
 ```
 
 ### `enqueue_withdrawal`

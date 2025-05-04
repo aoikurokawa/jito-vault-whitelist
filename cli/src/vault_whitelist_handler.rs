@@ -14,7 +14,7 @@ use jito_vault_whitelist_client::instructions::{
 };
 use log::{debug, info};
 use meta_merkle_tree::{
-    delegation::read_json_from_file, generated_merkle_tree::GeneratedMerkleTree,
+    generated_merkle_tree::GeneratedMerkleTree, read_json_from_file,
     vault_whitelist_meta::VaultWhitelistMeta,
 };
 use solana_program::pubkey::Pubkey;

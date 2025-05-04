@@ -58,5 +58,13 @@ cargo r -p jito-vault-whitelist-cli -- vault-whitelist whitelist mint <WHITELIST
 Whitelist user can initiate withdrawal:
 
 ```bash
+cargo r -p jito-vault-whitelist-cli -- vault-whitelist whitelist enqueue-withdrawal <WHITELIST_DATA_PATH> <USER_KEYPAIR_PATH> <VAULT_ADDRESS> <AMOUNT>
+```
 
+### `burn_withdrawal_ticket`
+
+Whitelist user can burn withdrawal ticket:
+
+```bash
+cargo r -p jito-vault-whitelist-cli -- vault-whitelist whitelist burn-withdrawal-ticket <WHITELIST_DATA_PATH> <USER_KEYPAIR_PATH> <VAULT_ADDRESS>
 ```

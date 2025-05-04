@@ -1,17 +1,11 @@
 use serde::{Deserialize, Serialize};
-use solana_program::{
-    hash::{hashv, Hash},
-    pubkey::Pubkey,
-};
+use solana_program::hash::{hashv, Hash};
 
 use crate::generated_merkle_tree::GeneratedMerkleTree;
 
 /// Represents the information for activating a tip distribution account.
 #[derive(Debug, Clone, Eq, Hash, PartialEq, Serialize, Deserialize)]
 pub struct TreeNode {
-    /// Pubkey of the user account for setting the merkle root
-    pub user_account: Pubkey,
-
     /// Claimant's proof of inclusion in the Merkle Tree
     pub proof: Option<Vec<[u8; 32]>>,
 
@@ -20,9 +14,8 @@ pub struct TreeNode {
 }
 
 impl TreeNode {
-    pub const fn new(user_account: &Pubkey, max_num_nodes: u64) -> Self {
+    pub const fn new(max_num_nodes: u64) -> Self {
         Self {
-            user_account: *user_account,
             proof: None,
             max_num_nodes,
         }
@@ -36,7 +29,6 @@ impl TreeNode {
 impl From<GeneratedMerkleTree> for TreeNode {
     fn from(generated_merkle_tree: GeneratedMerkleTree) -> Self {
         Self {
-            user_account: generated_merkle_tree.user_account,
             max_num_nodes: generated_merkle_tree.max_num_nodes,
             proof: None,
         }
@@ -50,7 +42,6 @@ mod tests {
     #[test]
     fn test_serialize_tree_node() {
         let tree_node = TreeNode {
-            user_account: Pubkey::default(),
             proof: None,
             max_num_nodes: 0,
         };

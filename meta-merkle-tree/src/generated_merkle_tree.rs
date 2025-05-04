@@ -3,17 +3,12 @@ use solana_program::hash::Hash;
 use solana_program::pubkey::Pubkey;
 
 use crate::merkle_tree::MerkleTree;
-use crate::pubkey_string_conversion;
 use crate::utils::get_proof;
 use crate::vault_whitelist_meta::VaultWhitelistMeta;
 use crate::vault_whitelist_meta_tree_node::VaultWhitelistMetaTreeNode;
 
 #[derive(Clone, Eq, Debug, Hash, PartialEq, Deserialize, Serialize)]
 pub struct GeneratedMerkleTree {
-    /// User account (wallet pubkey)
-    #[serde(with = "pubkey_string_conversion")]
-    pub user_account: Pubkey,
-
     /// Merkle root
     pub merkle_root: Hash,
 
@@ -25,7 +20,7 @@ pub struct GeneratedMerkleTree {
 }
 
 impl GeneratedMerkleTree {
-    pub fn new(user_account: &Pubkey, vault_whitelist_metas: &[VaultWhitelistMeta]) -> Self {
+    pub fn new(vault_whitelist_metas: &[VaultWhitelistMeta]) -> Self {
         let mut tree_nodes = VaultWhitelistMetaTreeNode::to_vec(vault_whitelist_metas);
 
         let hashed_nodes: Vec<[u8; 32]> = tree_nodes.iter().map(|n| n.hash().to_bytes()).collect();
@@ -39,7 +34,6 @@ impl GeneratedMerkleTree {
 
         Self {
             max_num_nodes,
-            user_account: *user_account,
             merkle_root: *merkle_tree.get_root().unwrap(),
             tree_nodes,
         }

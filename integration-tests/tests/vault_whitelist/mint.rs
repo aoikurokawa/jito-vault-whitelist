@@ -53,8 +53,7 @@ mod tests {
             user: depositor.pubkey(),
         }];
 
-        let merkle_tree =
-            GeneratedMerkleTree::new(&vault_root.vault_admin.pubkey(), &vault_whitelist_metas);
+        let merkle_tree = GeneratedMerkleTree::new(&vault_whitelist_metas);
 
         vault_whitelist_client
             .do_set_meta_merkle_root(&vault_root, &merkle_tree.merkle_root.to_bytes())
@@ -118,8 +117,7 @@ mod tests {
             user: depositor.pubkey(),
         }];
 
-        let merkle_tree =
-            GeneratedMerkleTree::new(&vault_root.vault_admin.pubkey(), &vault_whitelist_metas);
+        let merkle_tree = GeneratedMerkleTree::new(&vault_whitelist_metas);
 
         vault_whitelist_client
             .do_set_meta_merkle_root(&vault_root, &merkle_tree.merkle_root.to_bytes())

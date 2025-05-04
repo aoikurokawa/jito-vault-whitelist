@@ -209,7 +209,7 @@ impl VaultWhitelistCliHandler {
 
         let vault_whitelist_metas =
             read_json_from_file::<Vec<VaultWhitelistMeta>>(&whitelist_file_path)?;
-        let merkle_tree = GeneratedMerkleTree::new(&signer.pubkey(), &vault_whitelist_metas);
+        let merkle_tree = GeneratedMerkleTree::new(&vault_whitelist_metas);
 
         let mut ix_builder = InitializeWhitelistBuilder::new();
         ix_builder
@@ -301,7 +301,7 @@ impl VaultWhitelistCliHandler {
 
         let vault_whitelist_metas =
             read_json_from_file::<Vec<VaultWhitelistMeta>>(&whitelist_file_path)?;
-        let merkle_tree = GeneratedMerkleTree::new(&signer.pubkey(), &vault_whitelist_metas);
+        let merkle_tree = GeneratedMerkleTree::new(&vault_whitelist_metas);
 
         let mut ix_builder = SetMetaMerkleRootBuilder::new();
         ix_builder

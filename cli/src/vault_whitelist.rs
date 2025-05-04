@@ -9,7 +9,7 @@ pub enum VaultWhitelistCommands {
         #[command(subcommand)]
         action: ConfigActions,
     },
-    VaultWhitelist {
+    Whitelist {
         #[command(subcommand)]
         action: VaultWhitelistActions,
     },
@@ -48,6 +48,21 @@ pub enum VaultWhitelistActions {
         vault: Pubkey,
         amount_in: u64,
         min_amount_out: u64,
+    },
+
+    /// Enqueue Withdrawal
+    EnqueueWithdrawal {
+        whitelist_file_path: PathBuf,
+        signer_keypair_path: PathBuf,
+        vault: Pubkey,
+        amount: u64,
+    },
+
+    /// Burn Withdrawal Ticket
+    BurnWithdrawalTicket {
+        whitelist_file_path: PathBuf,
+        signer_keypair_path: PathBuf,
+        vault: Pubkey,
     },
 
     /// Close whitelist

@@ -10,7 +10,7 @@ use crate::{pubkey_string_conversion, vault_whitelist_meta::VaultWhitelistMeta};
 pub struct VaultWhitelistMetaTreeNode {
     /// The depositor
     #[serde(with = "pubkey_string_conversion")]
-    pub depositor: Pubkey,
+    pub user: Pubkey,
 
     /// The proof associated with this TreeNode
     pub proof: Option<Vec<[u8; 32]>>,
@@ -21,7 +21,7 @@ impl VaultWhitelistMetaTreeNode {
         let mut tree_nodes = Vec::new();
         for vault_whitelist_meta in vault_whitelist_metas {
             let tree_node = Self {
-                depositor: vault_whitelist_meta.user,
+                user: vault_whitelist_meta.user,
                 proof: None,
             };
 
@@ -33,7 +33,7 @@ impl VaultWhitelistMetaTreeNode {
 
     pub(crate) fn hash(&self) -> Hash {
         let mut hasher = Hasher::default();
-        hasher.hash(self.depositor.as_ref());
+        hasher.hash(self.user.as_ref());
         hasher.result()
     }
 }

@@ -51,7 +51,7 @@ impl GeneratedMerkleTree {
 
         let mut index = 0;
         for (node_index, tree_node) in tree_nodes.iter().enumerate() {
-            if tree_node.depositor.eq(depositor) {
+            if tree_node.user.eq(depositor) {
                 index = node_index;
             }
         }

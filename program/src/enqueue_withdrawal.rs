@@ -59,7 +59,7 @@ pub fn process_enqueue_withdrawal(
 
     drop(whitelist_data);
 
-    msg!("Enqueue Withdrawal");
+    msg!("Processing enqueue_withdrawal instruction on Jito Vault Program");
 
     invoke_signed(
         &ix,

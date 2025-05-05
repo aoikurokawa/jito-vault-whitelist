@@ -46,7 +46,7 @@ pub fn process_initialize_whitelist(
 
     msg!(
         "Initializing Vault Whitelist at address {}",
-        config_info.key
+        whitelist_info.key
     );
     create_account(
         vault_admin_info,

@@ -1,6 +1,5 @@
 use jito_bytemuck::AccountDeserialize;
 use jito_jsm_core::loader::load_signer;
-use jito_vault_core::vault::Vault;
 use jito_vault_sdk::sdk::burn_withdrawal_ticket;
 use jito_vault_whitelist_core::{config::Config, whitelist::Whitelist};
 use jito_vault_whitelist_sdk::error::VaultWhitelistError;
@@ -23,7 +22,6 @@ pub fn process_burn_withdrawal_ticket(
 
     Config::load(program_id, config_info, false)?;
 
-    Vault::load(&jito_vault_program::id(), vault_info, true)?;
     Whitelist::load(program_id, whitelist_info, vault_info.key, true)?;
     let whitelist_data = whitelist_info.data.borrow();
     let whitelist = Whitelist::try_from_slice_unchecked(&whitelist_data)?;
@@ -65,7 +63,7 @@ pub fn process_burn_withdrawal_ticket(
 
     drop(whitelist_data);
 
-    msg!("Burn Withdrawal Ticket");
+    msg!("Processing burn_withdrawal_ticket instruction on Jito Vault Program");
 
     invoke_signed(
         &ix,

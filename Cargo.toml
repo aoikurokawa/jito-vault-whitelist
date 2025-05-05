@@ -17,10 +17,8 @@ edition = "2021"
 readme = "README.md"
 
 [workspace.dependencies]
-anchor-lang = { git = "https://github.com/coral-xyz/anchor", rev = "96ed3b791c6fed9ab64cb138397795fe55991280", features = ["idl-build"] }
+anchor-lang = { version = "0.31.0", features = ["idl-build"] }
 anyhow = "1.0.94"
-axum = { version = "0.7.9", features = ["ws"] }
-axum-extra = { version = "0.9.6", features = ["typed-header"] }
 base64 = "0.22.1"
 borsh = { version = "0.10.3" }
 bytemuck = { version = "1.16.3", features = ["min_const_generics"] }

@@ -1,35 +1,59 @@
 #![allow(clippy::arithmetic_side_effects)]
-// https://github.com/jito-foundation/jito-solana/blob/v1.16.19-jito/merkle-tree/src/merkle_tree.rs
 use solana_program::hash::{hashv, Hash};
 
+/// Prefix byte for leaf nodes in the Merkle tree.
+///
 /// We need to discern between leaf and intermediate nodes to prevent trivial second
-/// pre-image attacks.
-/// https://flawed.net.nz/2018/02/21/attacking-merkle-trees-with-a-second-preimage-attack
+/// pre-image attacks. See: https://flawed.net.nz/2018/02/21/attacking-merkle-trees-with-a-second-preimage-attack
+///
+/// Using different prefixes for leaf and internal nodes ensures that an attacker cannot bypass
+/// parts of the tree structure by directly injecting intermediate hash values as input.
 const LEAF_PREFIX: &[u8] = &[0];
+
+/// Prefix byte for intermediate nodes in the Merkle tree.
+///
+/// This prefix is used for internal nodes to distinguish them from leaf nodes, preventing second
+/// pre-image attacks.
 const INTERMEDIATE_PREFIX: &[u8] = &[1];
 
+/// Macro to create a leaf hash with the proper prefix to prevent second pre-image attacks.
+///
+/// Prepends the LEAF_PREFIX (0x00) to the data before hashing.
 macro_rules! hash_leaf {
     {$d:ident} => {
         hashv(&[LEAF_PREFIX, $d])
     }
 }
 
+/// Macro to create an intermediate node hash with the proper prefix to prevent second pre-image
+/// attacks.
+///
+/// Prepends the INTERMEDIATE_PREFIX (0x01) to the concatenated child node hashes before hashing.
 macro_rules! hash_intermediate {
     {$l:ident, $r:ident} => {
         hashv(&[INTERMEDIATE_PREFIX, $l.as_ref(), $r.as_ref()])
     }
 }
 
+/// A Merkle tree implementation
+///
+/// This merkle tree implementation differentiates between leaf and internal nodes by using
+/// different prefix bytes when hashing.
 #[derive(Default, Debug, Eq, Hash, PartialEq)]
 pub struct MerkleTree {
     leaf_count: usize,
     nodes: Vec<Hash>,
 }
 
+/// A single entry in a Merkle proof.
+///
+/// Contains a target hash along with exactly one sibling (either left or right).
+/// Used to reconstruct and verify a path in the Merkle tree.
 #[derive(Debug, PartialEq, Eq)]
 pub struct ProofEntry<'a>(&'a Hash, Option<&'a Hash>, Option<&'a Hash>);
 
 impl<'a> ProofEntry<'a> {
+    /// Create a new proof entry with a target hash and either a left of right sibling.
     pub fn new(
         target: &'a Hash,
         left_sibling: Option<&'a Hash>,
@@ -39,23 +63,34 @@ impl<'a> ProofEntry<'a> {
         Self(target, left_sibling, right_sibling)
     }
 
+    /// Gets the left sibling hash, if any.
     pub const fn get_left_sibling(&self) -> Option<&'a Hash> {
         self.1
     }
 
+    /// Gets the right sibling hash, if any.
     pub const fn get_right_sibling(&self) -> Option<&'a Hash> {
         self.2
     }
 }
 
+/// A complete Merkle proof, consisting of a series of ProofEntries.
+///
+/// Used to verify that a specific leaf is part of a Merkle tree without
+/// requiring the entire tree.
 #[derive(Debug, Default, PartialEq, Eq)]
 pub struct Proof<'a>(Vec<ProofEntry<'a>>);
 
 impl<'a> Proof<'a> {
+    /// Adds a new entry to the proof.
     pub fn push(&mut self, entry: ProofEntry<'a>) {
         self.0.push(entry)
     }
 
+    /// Verifies that a candidate hash is included in the Merkle tree.
+    ///
+    /// This function checks if the provided hash corresponds to a leaf in the tree by
+    /// recalculating the root hash using the proof entries.
     pub fn verify(&self, candidate: Hash) -> bool {
         let result = self.0.iter().try_fold(candidate, |candidate, pe| {
             let lsib = pe.1.unwrap_or(&candidate);
@@ -71,44 +106,14 @@ impl<'a> Proof<'a> {
         result.is_some()
     }
 
+    /// Get all proof entries.
     pub fn get_proof_entries(self) -> Vec<ProofEntry<'a>> {
         self.0
     }
 }
 
 impl MerkleTree {
-    #[allow(clippy::integer_division)]
-    const fn next_level_len(level_len: usize) -> usize {
-        if level_len == 1 {
-            0
-        } else {
-            (level_len + 1) / 2
-        }
-    }
-
-    fn calculate_vec_capacity(leaf_count: usize) -> usize {
-        // the most nodes consuming case is when n-1 is full balanced binary tree
-        // then n will cause the previous tree add a left only path to the root
-        // this cause the total nodes number increased by tree height, we use this
-        // condition as the max nodes consuming case.
-        // n is current leaf nodes number
-        // assuming n-1 is a full balanced binary tree, n-1 tree nodes number will be
-        // 2(n-1) - 1, n tree height is closed to log2(n) + 1
-        // so the max nodes number is 2(n-1) - 1 + log2(n) + 1, finally we can use
-        // 2n + log2(n+1) as a safe capacity value.
-        // test results:
-        // 8192 leaf nodes(full balanced):
-        // computed cap is 16398, actually using is 16383
-        // 8193 leaf nodes:(full balanced plus 1 leaf):
-        // computed cap is 16400, actually using is 16398
-        // about performance: current used fast_math log2 code is constant algo time
-        if leaf_count > 0 {
-            fast_math::log2_raw(leaf_count as f32) as usize + 2 * leaf_count + 1
-        } else {
-            0
-        }
-    }
-
+    /// Creates a new Merkle tree from a list of items.
     pub fn new<T: AsRef<[u8]>>(items: &[T], sorted_hashes: bool) -> Self {
         let cap = Self::calculate_vec_capacity(items.len());
         let mut mt = Self {
@@ -137,7 +142,6 @@ impl MerkleTree {
                     &mt.nodes[prev_level_start + prev_level_idx]
                 };
 
-                // tip-distribution verification uses sorted hashing
                 if sorted_hashes {
                     if lsib <= rsib {
                         let hash = hash_intermediate!(lsib, rsib);
@@ -161,10 +165,49 @@ impl MerkleTree {
         mt
     }
 
+    /// Calculates the length of the next level in the tree.
+    #[allow(clippy::integer_division)]
+    const fn next_level_len(level_len: usize) -> usize {
+        if level_len == 1 {
+            0
+        } else {
+            (level_len + 1) / 2
+        }
+    }
+
+    /// Calculates the capacity needed for the nodes vector based on the number of leaves.
+    ///
+    /// This function computes an upper bound on the number of nodes in the tree to avoid
+    /// unnecessary reallocations during tree construction.
+    fn calculate_vec_capacity(leaf_count: usize) -> usize {
+        // the most nodes consuming case is when n-1 is full balanced binary tree
+        // then n will cause the previous tree add a left only path to the root
+        // this cause the total nodes number increased by tree height, we use this
+        // condition as the max nodes consuming case.
+        // n is current leaf nodes number
+        // assuming n-1 is a full balanced binary tree, n-1 tree nodes number will be
+        // 2(n-1) - 1, n tree height is closed to log2(n) + 1
+        // so the max nodes number is 2(n-1) - 1 + log2(n) + 1, finally we can use
+        // 2n + log2(n+1) as a safe capacity value.
+        // test results:
+        // 8192 leaf nodes(full balanced):
+        // computed cap is 16398, actually using is 16383
+        // 8193 leaf nodes:(full balanced plus 1 leaf):
+        // computed cap is 16400, actually using is 16398
+        // about performance: current used fast_math log2 code is constant algo time
+        if leaf_count > 0 {
+            fast_math::log2_raw(leaf_count as f32) as usize + 2 * leaf_count + 1
+        } else {
+            0
+        }
+    }
+
+    /// Gets the root hash of the Merkle tree.
     pub fn get_root(&self) -> Option<&Hash> {
         self.nodes.iter().last()
     }
 
+    /// Finds the proof path for a leaf at the given index.
     pub fn find_path(&self, index: usize) -> Option<Proof> {
         if index >= self.leaf_count {
             return None;

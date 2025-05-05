@@ -48,10 +48,10 @@ jito-vault-program = { package = "jito-vault-program", git = "https://github.com
 jito-vault-sdk = { package = "jito-vault-sdk", git = "https://github.com/jito-foundation/restaking", rev = "6af1a30062504548da609b6bf9ad164da1627f76" }
 jito-vault-whitelist-client = { path = "./client" }
 jito-vault-whitelist-core = { path = "./core" }
+jito-vault-whitelist-meta-merkle-tree = { path = "./meta-merkle-tree" }
 jito-vault-whitelist-sdk = { path = "./sdk" }
 jito-vault-whitelist-program = { path = "./program" }
 log = "0.4.22"
-meta-merkle-tree = { path = "./meta-merkle-tree" }
 num-derive = "0.4.2"
 num-traits = "0.2.19"
 reqwest = { version = "0.10.10", features = ["json"] }

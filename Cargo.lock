@@ -2491,9 +2491,9 @@ dependencies = [
  "jito-vault-sdk 0.0.5",
  "jito-vault-whitelist-client",
  "jito-vault-whitelist-core",
+ "jito-vault-whitelist-meta-merkle-tree",
  "jito-vault-whitelist-program",
  "jito-vault-whitelist-sdk",
- "meta-merkle-tree",
  "shank",
  "solana-program",
  "solana-program-test",
@@ -2745,8 +2745,8 @@ dependencies = [
  "jito-vault-sdk 0.0.5",
  "jito-vault-whitelist-client",
  "jito-vault-whitelist-core",
+ "jito-vault-whitelist-meta-merkle-tree",
  "log",
- "meta-merkle-tree",
  "solana-account-decoder",
  "solana-cli-config",
  "solana-program",
@@ -2788,6 +2788,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "jito-vault-whitelist-meta-merkle-tree"
+version = "0.0.1"
+dependencies = [
+ "fast-math",
+ "hex",
+ "serde",
+ "serde_json",
+ "solana-program",
+ "solana-sdk",
+ "thiserror 1.0.69",
+]
+
+[[package]]
 name = "jito-vault-whitelist-program"
 version = "0.0.1"
 dependencies = [
@@ -2798,8 +2811,8 @@ dependencies = [
  "jito-vault-program",
  "jito-vault-sdk 0.0.5",
  "jito-vault-whitelist-core",
+ "jito-vault-whitelist-meta-merkle-tree",
  "jito-vault-whitelist-sdk",
- "meta-merkle-tree",
  "solana-program",
 ]
 
@@ -3043,18 +3056,6 @@ dependencies = [
  "keccak",
  "rand_core 0.6.4",
  "zeroize",
-]
-
-[[package]]
-name = "meta-merkle-tree"
-version = "0.0.1"
-dependencies = [
- "fast-math",
- "hex",
- "serde",
- "serde_json",
- "solana-program",
- "thiserror 1.0.69",
 ]
 
 [[package]]

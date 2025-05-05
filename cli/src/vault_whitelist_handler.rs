@@ -12,11 +12,11 @@ use jito_vault_whitelist_client::instructions::{
     InitializeConfigBuilder, InitializeWhitelistBuilder, MintBuilder, SetMetaMerkleRootBuilder,
     SetMintBurnAdminBuilder,
 };
-use log::{debug, info};
-use meta_merkle_tree::{
-    delegation::read_json_from_file, generated_merkle_tree::GeneratedMerkleTree,
+use jito_vault_whitelist_meta_merkle_tree::{
+    generated_merkle_tree::GeneratedMerkleTree, read_json_from_file,
     vault_whitelist_meta::VaultWhitelistMeta,
 };
+use log::{debug, info};
 use solana_program::pubkey::Pubkey;
 use solana_sdk::{signature::read_keypair_file, signer::Signer};
 use spl_associated_token_account::{
@@ -209,7 +209,7 @@ impl VaultWhitelistCliHandler {
 
         let vault_whitelist_metas =
             read_json_from_file::<Vec<VaultWhitelistMeta>>(&whitelist_file_path)?;
-        let merkle_tree = GeneratedMerkleTree::new(&signer.pubkey(), &vault_whitelist_metas);
+        let merkle_tree = GeneratedMerkleTree::new(&vault_whitelist_metas)?;
 
         let mut ix_builder = InitializeWhitelistBuilder::new();
         ix_builder
@@ -301,7 +301,7 @@ impl VaultWhitelistCliHandler {
 
         let vault_whitelist_metas =
             read_json_from_file::<Vec<VaultWhitelistMeta>>(&whitelist_file_path)?;
-        let merkle_tree = GeneratedMerkleTree::new(&signer.pubkey(), &vault_whitelist_metas);
+        let merkle_tree = GeneratedMerkleTree::new(&vault_whitelist_metas)?;
 
         let mut ix_builder = SetMetaMerkleRootBuilder::new();
         ix_builder
@@ -391,7 +391,7 @@ impl VaultWhitelistCliHandler {
 
         let vault_whitelist_metas =
             read_json_from_file::<Vec<VaultWhitelistMeta>>(&whitelist_file_path)?;
-        let proof = GeneratedMerkleTree::get_proof(&vault_whitelist_metas, &depositor);
+        let proof = GeneratedMerkleTree::get_proof(&vault_whitelist_metas, &depositor)?;
 
         let mut ix_builder = MintBuilder::new();
         ix_builder
@@ -481,7 +481,7 @@ impl VaultWhitelistCliHandler {
 
         let vault_whitelist_metas =
             read_json_from_file::<Vec<VaultWhitelistMeta>>(&whitelist_file_path)?;
-        let proof = GeneratedMerkleTree::get_proof(&vault_whitelist_metas, &signer.pubkey());
+        let proof = GeneratedMerkleTree::get_proof(&vault_whitelist_metas, &signer.pubkey())?;
 
         let mut ix_builder = EnqueueWithdrawalBuilder::new();
         ix_builder
@@ -579,7 +579,7 @@ impl VaultWhitelistCliHandler {
 
         let vault_whitelist_metas =
             read_json_from_file::<Vec<VaultWhitelistMeta>>(&whitelist_file_path)?;
-        let proof = GeneratedMerkleTree::get_proof(&vault_whitelist_metas, &signer.pubkey());
+        let proof = GeneratedMerkleTree::get_proof(&vault_whitelist_metas, &signer.pubkey())?;
 
         let mut ix_builder = BurnWithdrawalTicketBuilder::new();
         ix_builder

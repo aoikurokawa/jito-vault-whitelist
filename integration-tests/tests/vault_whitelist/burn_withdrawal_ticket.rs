@@ -1,9 +1,9 @@
 #[cfg(test)]
 mod tests {
-    use jito_vault_whitelist_sdk::error::VaultWhitelistError;
-    use meta_merkle_tree::{
+    use jito_vault_whitelist_meta_merkle_tree::{
         generated_merkle_tree::GeneratedMerkleTree, vault_whitelist_meta::VaultWhitelistMeta,
     };
+    use jito_vault_whitelist_sdk::error::VaultWhitelistError;
     use solana_sdk::{pubkey::Pubkey, signature::Keypair, signer::Signer};
 
     use crate::{
@@ -69,19 +69,18 @@ mod tests {
             .await
             .unwrap();
 
-        let vault_whitelist_metas = vec![VaultWhitelistMeta {
-            depositor_pubkey: depositor.pubkey(),
-        }];
+        let meta = VaultWhitelistMeta::new(depositor.pubkey());
+        let vault_whitelist_metas = vec![meta];
 
-        let merkle_tree =
-            GeneratedMerkleTree::new(&vault_root.vault_admin.pubkey(), &vault_whitelist_metas);
+        let merkle_tree = GeneratedMerkleTree::new(&vault_whitelist_metas).unwrap();
 
         vault_whitelist_client
             .do_set_meta_merkle_root(&vault_root, &merkle_tree.merkle_root.to_bytes())
             .await
             .unwrap();
 
-        let proof = GeneratedMerkleTree::get_proof(&vault_whitelist_metas, &depositor.pubkey());
+        let proof =
+            GeneratedMerkleTree::get_proof(&vault_whitelist_metas, &depositor.pubkey()).unwrap();
 
         let min_amount_out: u64 = 90000;
 
@@ -142,10 +141,11 @@ mod tests {
             .unwrap();
 
         let vault_whitelist_metas = vec![VaultWhitelistMeta {
-            depositor_pubkey: depositor.pubkey(),
+            user: depositor.pubkey(),
         }];
 
-        let proof = GeneratedMerkleTree::get_proof(&vault_whitelist_metas, &depositor.pubkey());
+        let proof =
+            GeneratedMerkleTree::get_proof(&vault_whitelist_metas, &depositor.pubkey()).unwrap();
 
         let VaultStakerWithdrawalTicketRoot { base } = vault_whitelist_client
             .do_enqueue_withdrawal(&vault_root, &vault, &depositor, &proof, amount_to_dequeue)
@@ -241,19 +241,18 @@ mod tests {
             .await
             .unwrap();
 
-        let vault_whitelist_metas = vec![VaultWhitelistMeta {
-            depositor_pubkey: depositor.pubkey(),
-        }];
+        let meta = VaultWhitelistMeta::new(depositor.pubkey());
+        let vault_whitelist_metas = vec![meta];
 
-        let merkle_tree =
-            GeneratedMerkleTree::new(&vault_root.vault_admin.pubkey(), &vault_whitelist_metas);
+        let merkle_tree = GeneratedMerkleTree::new(&vault_whitelist_metas).unwrap();
 
         vault_whitelist_client
             .do_set_meta_merkle_root(&vault_root, &merkle_tree.merkle_root.to_bytes())
             .await
             .unwrap();
 
-        let proof = GeneratedMerkleTree::get_proof(&vault_whitelist_metas, &depositor.pubkey());
+        let proof =
+            GeneratedMerkleTree::get_proof(&vault_whitelist_metas, &depositor.pubkey()).unwrap();
 
         let min_amount_out: u64 = 90000;
 
@@ -314,10 +313,11 @@ mod tests {
             .unwrap();
 
         let vault_whitelist_metas = vec![VaultWhitelistMeta {
-            depositor_pubkey: depositor.pubkey(),
+            user: depositor.pubkey(),
         }];
 
-        let proof = GeneratedMerkleTree::get_proof(&vault_whitelist_metas, &depositor.pubkey());
+        let proof =
+            GeneratedMerkleTree::get_proof(&vault_whitelist_metas, &depositor.pubkey()).unwrap();
 
         let VaultStakerWithdrawalTicketRoot { base } = vault_whitelist_client
             .do_enqueue_withdrawal(&vault_root, &vault, &depositor, &proof, amount_to_dequeue)
@@ -353,11 +353,10 @@ mod tests {
             .unwrap();
 
         let vault_whitelist_metas = vec![VaultWhitelistMeta {
-            depositor_pubkey: Pubkey::new_unique(),
+            user: Pubkey::new_unique(),
         }];
 
-        let merkle_tree =
-            GeneratedMerkleTree::new(&vault_root.vault_admin.pubkey(), &vault_whitelist_metas);
+        let merkle_tree = GeneratedMerkleTree::new(&vault_whitelist_metas).unwrap();
 
         vault_whitelist_client
             .do_set_meta_merkle_root(&vault_root, &merkle_tree.merkle_root.to_bytes())

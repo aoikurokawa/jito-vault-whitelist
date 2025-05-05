@@ -24,8 +24,8 @@ jito-vault-core = { workspace = true }
 jito-vault-sdk = { workspace = true }
 jito-vault-whitelist-client = { workspace = true }
 jito-vault-whitelist-core = { workspace = true }
+jito-vault-whitelist-meta-merkle-tree = { workspace = true }
 log = { workspace = true }
-meta-merkle-tree = { workspace = true }
 solana-account-decoder = { workspace = true }
 solana-cli-config = { workspace = true }
 solana-program = { workspace = true }

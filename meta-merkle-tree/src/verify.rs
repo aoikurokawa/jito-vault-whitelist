@@ -1,13 +1,20 @@
 use solana_program::hash::hashv;
 
-/// Modified version of https://github.com/saber-hq/merkle-distributor/blob/ac937d1901033ecb7fa3b0db22f7b39569c8e052/programs/merkle-distributor/src/merkle_proof.rs#L8
+/// Verfies a Merkle proof against a know root hash.
 ///
-/// This function deals with verification of Merkle trees (hash trees).
+/// This function verifies that a leaf node is included in a Merkle tree by checking
+/// its proof against the tree's root hash. It protects against second preimage attacks
+/// by using a prefix byte (0x01) for intermediate nodes.
+///
+/// This is a modified version of the verification algorithm from the Saber Merkle Distributor:
+/// https://github.com/saber-hq/merkle-distributor/blob/ac937d1901033ecb7fa3b0db22f7b39569c8e052/programs/merkle-distributor/src/merkle_proof.rs#L8
+///
+/// Originally ported from OpenZeppelin's MerkleProof.sol:
 /// Direct port of https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v3.4.0/contracts/cryptography/MerkleProof.sol
-/// Returns true if a `leaf` can be proved to be a part of a Merkle tree
-/// defined by `root`. For this, a `proof` must be provided, containing
-/// sibling hashes on the branch from the leaf to the root of the tree. Each
-/// pair of leaves and each pair of pre-images are assumed to be sorted.
+///
+/// # Returns
+///
+/// `true` if a `leaf` can be proved to be a part of a Merkle tree, `false` otherwise
 pub fn verify(proof: Vec<[u8; 32]>, root: [u8; 32], leaf: [u8; 32]) -> bool {
     let mut computed_hash = leaf;
     for proof_element in proof.into_iter() {

@@ -1,5 +1,5 @@
 [package]
-name = "meta-merkle-tree"
+name = "jito-vault-whitelist-meta-merkle-tree"
 version = { workspace = true }
 edition = { workspace = true }
 

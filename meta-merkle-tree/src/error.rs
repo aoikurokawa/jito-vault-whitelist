@@ -17,12 +17,3 @@ pub enum MerkleTreeError {
     #[error("Arithmetic Overflow/Underflow")]
     ArithmeticOverflow,
 }
-
-#[derive(Error, Debug)]
-pub enum MerkleRootGeneratorError {
-    #[error(transparent)]
-    IoError(#[from] std::io::Error),
-
-    #[error(transparent)]
-    SerdeJsonError(#[from] serde_json::Error),
-}

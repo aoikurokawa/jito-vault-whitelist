@@ -38,7 +38,7 @@ pub fn process_mint(
         &solana_program::hash::hashv(&[&depositor.key.to_bytes()]).to_bytes(),
     ]);
 
-    if !meta_merkle_tree::verify::verify(
+    if !jito_vault_whitelist_meta_merkle_tree::verify::verify(
         proof.to_vec(),
         *whitelist.get_meta_merkle_root(),
         node.to_bytes(),

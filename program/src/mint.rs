@@ -67,7 +67,7 @@ pub fn process_mint(
 
     drop(whitelist_data);
 
-    msg!("Mint To");
+    msg!("Processing mint_to instruction on Jito Vault Program");
 
     invoke_signed(
         &ix,

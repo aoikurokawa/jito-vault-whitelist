@@ -65,7 +65,7 @@ pub fn process_burn_withdrawal_ticket(
 
     drop(whitelist_data);
 
-    msg!("Burn Withdrawal Ticket");
+    msg!("Processing burn_withdrawal_ticket instruction on Jito Vault Program");
 
     invoke_signed(
         &ix,

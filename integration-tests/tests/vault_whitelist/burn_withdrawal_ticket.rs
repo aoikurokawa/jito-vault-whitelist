@@ -69,9 +69,8 @@ mod tests {
             .await
             .unwrap();
 
-        let vault_whitelist_metas = vec![VaultWhitelistMeta {
-            user: depositor.pubkey(),
-        }];
+        let meta = VaultWhitelistMeta::new(depositor.pubkey());
+        let vault_whitelist_metas = vec![meta];
 
         let merkle_tree = GeneratedMerkleTree::new(&vault_whitelist_metas).unwrap();
 
@@ -242,9 +241,8 @@ mod tests {
             .await
             .unwrap();
 
-        let vault_whitelist_metas = vec![VaultWhitelistMeta {
-            user: depositor.pubkey(),
-        }];
+        let meta = VaultWhitelistMeta::new(depositor.pubkey());
+        let vault_whitelist_metas = vec![meta];
 
         let merkle_tree = GeneratedMerkleTree::new(&vault_whitelist_metas).unwrap();
 

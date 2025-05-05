@@ -17,7 +17,7 @@ pub struct VaultWhitelistMeta {
 
 impl VaultWhitelistMeta {
     /// Initiaze new vault whitelist meta.
-    pub fn new(user: Pubkey) -> Self {
+    pub const fn new(user: Pubkey) -> Self {
         Self { user }
     }
 }

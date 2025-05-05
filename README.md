@@ -43,3 +43,7 @@ make lint
 ```bash
 make test
 ```
+
+### References
+
+- [Jito Vault Program](https://github.com/jito-foundation/restaking)

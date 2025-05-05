@@ -12,11 +12,15 @@
   "license": "ISC",
   "packageManager": "pnpm@10.7.0",
   "dependencies": {
+    "@codama/nodes-from-anchor": "^1.1.13",
+    "@codama/renderers": "^1.0.21",
+    "@codama/renderers-rust": "^1.0.21",
     "@exo-tech-xyz/nodes-from-anchor": "0.21.3",
     "@exo-tech-xyz/renderers": "0.21.4",
     "@exo-tech-xyz/renderers-js-umi": "0.21.7",
     "@exo-tech-xyz/renderers-rust": "0.21.8",
     "@types/node": "^22.14.0",
+    "codama": "^1.2.13",
     "corepack": "^0.29.3",
     "kinobi": "^0.22.0",
     "path": "^0.12.7"

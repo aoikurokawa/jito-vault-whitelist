@@ -13,6 +13,18 @@ It ensures that only authorized users can interact with sensitive functions of t
 - Secured Token Operations: Protected mint VRT and withdraw functions
 - Administrative Controls: Restricted access to admin operations
 
+## Program Instructions
+
+The Jito Vault Whitelist Program supports the following instructions:
+
+- Initialize Config: Set up initial configuration
+- Initialize Whitelist: Create and configure the whitelist
+- Set Mint Burn Admin: Assign administrative privileges
+- Set Merkle Root: Update the Merkle root for verification
+- Mint: Mint new VRT tokens (whitelisted users only)
+- Enqueue Withdrawal: Request token withdrawal (whitelisted users only)
+- Burn Withdrawal Ticket: Process withdrawal request
+- Close Whitelist: Terminate whitelist functionality
 
 ## Program ID
 
@@ -51,7 +63,8 @@ make test
 
 ## CLI Tool
 
-The Jito Vault Whitelist CLI is a command-line tool that provides complete access to the Jito Vault Whitelist Program funcionality.
+A coomand-line interface is available for interacting with the Jito Vault Whitelist Program.
+For detailed usage instructions and commands, please refer to the [README.md](./cli/README.md)
 
 ### Build from source
 
@@ -66,19 +79,6 @@ All commands follow this basic structure:
 ```bash
 jito-vault-whitelist-cli vault-whitelist <SUBCOMMAND> [OPTIONS] [ARGS]
 ```
-
-## Program Instructions
-
-The Jito Vault Whitelist Program supports the following instructions:
-
-- Initialize Config: Set up initial configuration
-- Initialize Whitelist: Create and configure the whitelist
-- Set Mint Burn Admin: Assign administrative privileges
-- Set Merkle Root: Update the Merkle root for verification
-- Mint: Mint new VRT tokens (whitelisted users only)
-- Enqueue Withdrawal: Request token withdrawal (whitelisted users only)
-- Burn Withdrawal Ticket: Process withdrawal request
-- Close Whitelist: Terminate whitelist functionality
 
 
 ## References

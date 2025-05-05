@@ -142,7 +142,6 @@ impl MerkleTree {
                     &mt.nodes[prev_level_start + prev_level_idx]
                 };
 
-                // tip-distribution verification uses sorted hashing
                 if sorted_hashes {
                     if lsib <= rsib {
                         let hash = hash_intermediate!(lsib, rsib);

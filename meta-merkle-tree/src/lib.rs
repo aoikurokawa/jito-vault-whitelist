@@ -1,5 +1,6 @@
 use std::{fs::File, io::BufReader, path::PathBuf};
 
+use error::MerkleTreeError;
 use serde::de::DeserializeOwned;
 
 pub mod error;
@@ -11,11 +12,12 @@ pub mod vault_whitelist_meta;
 pub mod vault_whitelist_meta_tree_node;
 pub mod verify;
 
-pub fn read_json_from_file<T>(path: &PathBuf) -> serde_json::Result<T>
+pub fn read_json_from_file<T>(path: &PathBuf) -> Result<T, MerkleTreeError>
 where
     T: DeserializeOwned,
 {
-    let file = File::open(path).unwrap();
+    let file = File::open(path)?;
     let reader = BufReader::new(file);
-    serde_json::from_reader(reader)
+    let result = serde_json::from_reader(reader)?;
+    Ok(result)
 }

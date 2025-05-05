@@ -63,7 +63,7 @@ make test
 
 ## CLI Tool
 
-A coomand-line interface is available for interacting with the Jito Vault Whitelist Program.
+A command-line interface is available for interacting with the Jito Vault Whitelist Program.
 For detailed usage instructions and commands, please refer to the [README.md](./cli/README.md)
 
 ### Build from source

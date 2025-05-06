@@ -2,6 +2,11 @@
 
 A secure permissioned layer built on top of the Jito Vault program, allowing only whitelisted users to mint VRT tokens, withdraw supported tokens, and perform administrative operations.
 
+
+## Note
+- Jito Vault Whitelist is in active development so all APIs and protocols are subject to change.
+- The code hasn't been audited yet. Use at your own risk.
+
 ## Overview
 
 This program extends the functionality of Jito's Vault by implementing a whitelist mechanism that restricts access to critical vault operations.

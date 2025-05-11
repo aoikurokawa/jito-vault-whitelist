@@ -7,6 +7,7 @@ use initialize_config::process_initialize_config;
 use initialize_whitelist::process_initialize_whitelist;
 use jito_vault_whitelist_sdk::instruction::VaultWhitelistInstruction;
 use mint::process_mint;
+use remove_from_whitelist::process_remove_from_whitelist;
 use set_mint_burn_admin::process_set_mint_burn_admin;
 use solana_program::{
     account_info::AccountInfo, declare_id, entrypoint::ProgramResult, msg,
@@ -20,6 +21,7 @@ mod enqueue_withdrawal;
 mod initialize_config;
 mod initialize_whitelist;
 mod mint;
+mod remove_from_whitelist;
 mod set_mint_burn_admin;
 
 declare_id!(env!("VAULT_WHITELIST_PROGRAM_ID"));
@@ -57,6 +59,11 @@ pub fn process_instruction(
         VaultWhitelistInstruction::AddToWhitelist => {
             msg!("Instruction: AddToWhitelist");
             process_add_to_whitelist(program_id, accounts)
+        }
+
+        VaultWhitelistInstruction::RemoveFromWhitelist => {
+            msg!("Instruction: RemoveFromWhitelist");
+            process_remove_from_whitelist(program_id, accounts)
         }
 
         VaultWhitelistInstruction::Mint {

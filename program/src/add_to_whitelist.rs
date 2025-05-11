@@ -1,5 +1,8 @@
 use jito_bytemuck::{AccountDeserialize, Discriminator};
-use jito_jsm_core::{create_account, loader::load_signer};
+use jito_jsm_core::{
+    create_account,
+    loader::{load_signer, load_system_program},
+};
 use jito_vault_core::vault::Vault;
 use jito_vault_whitelist_core::{
     config::Config, whitelist::Whitelist, whitelist_user::WhitelistUser,
@@ -35,6 +38,7 @@ pub fn process_add_to_whitelist(program_id: &Pubkey, accounts: &[AccountInfo]) -
     }
 
     load_signer(vault_admin_info, true)?;
+    load_system_program(system_program_info)?;
 
     // The WhitelistUser account shall be at the canonical PDA
     let (whitelist_user_pubkey, whitelist_user_bump, mut whitelist_user_seeds) =

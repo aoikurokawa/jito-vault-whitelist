@@ -153,6 +153,51 @@
       }
     },
     {
+      "name": "RemoveFromWhitelist",
+      "accounts": [
+        {
+          "name": "config",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "vault",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "whitelist",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "whitelistUser",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "vaultAdmin",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "user",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [],
+      "discriminant": {
+        "type": "u8",
+        "value": 4
+      }
+    },
+    {
       "name": "Mint",
       "accounts": [
         {
@@ -233,7 +278,7 @@
       ],
       "discriminant": {
         "type": "u8",
-        "value": 4
+        "value": 5
       }
     },
     {
@@ -313,7 +358,7 @@
       ],
       "discriminant": {
         "type": "u8",
-        "value": 5
+        "value": 6
       }
     },
     {
@@ -403,7 +448,7 @@
       "args": [],
       "discriminant": {
         "type": "u8",
-        "value": 6
+        "value": 7
       }
     },
     {
@@ -448,7 +493,7 @@
       "args": [],
       "discriminant": {
         "type": "u8",
-        "value": 7
+        "value": 8
       }
     }
   ],

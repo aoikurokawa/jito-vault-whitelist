@@ -34,6 +34,15 @@ pub enum VaultWhitelistInstruction {
     AddToWhitelist,
 
     #[account(0, name = "config")]
+    #[account(1, name = "vault")]
+    #[account(2, name = "whitelist")]
+    #[account(3, writable, name = "whitelist_user")]
+    #[account(4, signer, name = "vault_admin")]
+    #[account(5, name = "user")]
+    #[account(6, name = "system_program")]
+    RemoveFromWhitelist,
+
+    #[account(0, name = "config")]
     #[account(1, writable, name = "vault_config")]
     #[account(2, writable, name = "vault")]
     #[account(3, writable, name = "vrt_mint")]

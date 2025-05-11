@@ -35,6 +35,9 @@ pub enum VaultWhitelistActions {
     /// Add to whitelist
     AddToWhitelist { vault: Pubkey, user: Pubkey },
 
+    /// Remove from whitelist
+    RemoveFromWhitelist { vault: Pubkey, user: Pubkey },
+
     /// Mint
     Mint {
         signer_keypair_path: PathBuf,

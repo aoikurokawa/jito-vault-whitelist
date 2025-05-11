@@ -10,7 +10,7 @@ use solana_program::{
     pubkey::Pubkey, rent::Rent, sysvar::Sysvar,
 };
 
-/// Process initializing Config
+/// Process initializing config
 pub fn process_initialize_config(program_id: &Pubkey, accounts: &[AccountInfo]) -> ProgramResult {
     let [config_info, admin_info, jito_vault_program_info, system_program_info] = accounts else {
         return Err(ProgramError::NotEnoughAccountKeys);

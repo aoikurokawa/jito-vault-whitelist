@@ -21,7 +21,7 @@ pub struct WhitelistUser {
 }
 
 impl WhitelistUser {
-    pub fn new(whitelist: Pubkey, user: Pubkey, bump: u8) -> Self {
+    pub const fn new(whitelist: Pubkey, user: Pubkey, bump: u8) -> Self {
         Self {
             whitelist,
             user,

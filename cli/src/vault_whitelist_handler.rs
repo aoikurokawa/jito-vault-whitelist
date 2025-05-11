@@ -10,7 +10,7 @@ use jito_vault_core::{
 use jito_vault_whitelist_client::instructions::{
     AddToWhitelistBuilder, BurnWithdrawalTicketBuilder, CloseWhitelistBuilder,
     EnqueueWithdrawalBuilder, InitializeConfigBuilder, InitializeWhitelistBuilder, MintBuilder,
-    SetMintBurnAdminBuilder,
+    RemoveFromWhitelistBuilder, SetMintBurnAdminBuilder,
 };
 use log::{debug, info};
 use solana_program::pubkey::Pubkey;
@@ -83,6 +83,9 @@ impl VaultWhitelistCliHandler {
             VaultWhitelistCommands::Whitelist {
                 action: VaultWhitelistActions::AddToWhitelist { vault, user },
             } => self.add_to_whitelist(vault, user),
+            VaultWhitelistCommands::Whitelist {
+                action: VaultWhitelistActions::RemoveFromWhitelist { vault, user },
+            } => self.remove_from_whitelist(vault, user),
             VaultWhitelistCommands::Whitelist {
                 action:
                     VaultWhitelistActions::Mint {
@@ -254,7 +257,7 @@ impl VaultWhitelistCliHandler {
         Ok(())
     }
 
-    /// Set meta merkle root
+    /// Add to whitelist
     pub fn add_to_whitelist(&self, vault: Pubkey, user: Pubkey) -> anyhow::Result<()> {
         let signer = self.signer()?;
         let admin = signer.pubkey();
@@ -299,6 +302,49 @@ impl VaultWhitelistCliHandler {
                 self.get_account::<jito_vault_whitelist_client::accounts::Whitelist>(&whitelist)?;
             info!("{}", account.pretty_display());
         }
+
+        Ok(())
+    }
+
+    /// Remove from whitelist
+    pub fn remove_from_whitelist(&self, vault: Pubkey, user: Pubkey) -> anyhow::Result<()> {
+        let signer = self.signer()?;
+        let admin = signer.pubkey();
+
+        let whitelist = jito_vault_whitelist_core::whitelist::Whitelist::find_program_address(
+            &self.vault_whitelist_program_id,
+            &vault,
+        )
+        .0;
+        let whitelist_user =
+            jito_vault_whitelist_core::whitelist_user::WhitelistUser::find_program_address(
+                &self.vault_whitelist_program_id,
+                &whitelist,
+                &user,
+            )
+            .0;
+
+        let mut ix_builder = RemoveFromWhitelistBuilder::new();
+        ix_builder
+            .config(
+                jito_vault_whitelist_core::config::Config::find_program_address(
+                    &self.vault_whitelist_program_id,
+                )
+                .0,
+            )
+            .whitelist(whitelist)
+            .whitelist_user(whitelist_user)
+            .vault(vault)
+            .vault_admin(admin)
+            .user(user);
+
+        let mut ix = ix_builder.instruction();
+        ix.program_id = self.vault_whitelist_program_id;
+
+        info!("Remove from whitelist");
+
+        let ixs = [ix];
+        self.process_transaction(&ixs, &signer.pubkey(), &[signer])?;
 
         Ok(())
     }

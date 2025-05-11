@@ -4,7 +4,6 @@ members = [
 	"client",
 	"core",
 	"integration-tests",
-	"meta-merkle-tree",
 	"program",
 	"sdk",
 	"shank-cli", 
@@ -46,7 +45,6 @@ jito-vault-program = { package = "jito-vault-program", git = "https://github.com
 jito-vault-sdk = { package = "jito-vault-sdk", git = "https://github.com/jito-foundation/restaking", rev = "6af1a30062504548da609b6bf9ad164da1627f76" }
 jito-vault-whitelist-client = { path = "./client" }
 jito-vault-whitelist-core = { path = "./core" }
-jito-vault-whitelist-meta-merkle-tree = { path = "./meta-merkle-tree" }
 jito-vault-whitelist-sdk = { path = "./sdk" }
 jito-vault-whitelist-program = { path = "./program" }
 log = "0.4.22"

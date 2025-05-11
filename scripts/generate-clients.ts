@@ -5,18 +5,20 @@ import * as renderers from '@codama/renderers';
 
 // Paths.
 const projectRoot = path.join(__dirname, "..");
-const idlDir = path.join(projectRoot, "idl");
-const rustClientsDir = path.join(__dirname, "..", "client");
 
-// Generate the restaking client in Rust and JavaScript.
-// Use require for IDL to avoid type issues
-const jitoVaultWhitelistIdl = require(path.join(idlDir, "jito_vault_whitelist.json"));
-const restakingRootNode = anchorIdl.rootNodeFromAnchor(jitoVaultWhitelistIdl);
+const idlDir = path.join(projectRoot, "idl");
+
+const rustClientsDir = path.join(__dirname, "..", "client");
+const jsClientsDir = path.join(__dirname, "..", "packages", "src");
+
+// Generate the vault whitelist client in Rust and JavaScript.
+const vaultWhitelistIdl = require(path.join(idlDir, "jito_vault_whitelist.json"));
+const vaultWhitelistRootNode = anchorIdl.rootNodeFromAnchor(vaultWhitelistIdl);
 // Cast to any to bypass strict type checking between library versions
-const restakingKinobi = codama.createFromRoot(restakingRootNode as any);
+const vaultWhitelistCodama = codama.createFromRoot(vaultWhitelistRootNode as any);
 
 // Using type assertions to overcome type compatibility issues
-restakingKinobi.update(codama.bottomUpTransformerVisitor([
+vaultWhitelistCodama.update(codama.bottomUpTransformerVisitor([
   {
     // PodU128 -> u128
     select: (node: any): boolean => {
@@ -143,7 +145,7 @@ restakingKinobi.update(codama.bottomUpTransformerVisitor([
 
 // Completely bypass type checking for the renderRustVisitor call
 // @ts-ignore - Intentionally ignoring type errors due to incompatible library versions
-restakingKinobi.accept(renderers.renderRustVisitor(
+vaultWhitelistCodama.accept(renderers.renderRustVisitor(
   path.join(rustClientsDir, "src", "generated"),
   {
     formatCode: true,
@@ -152,3 +154,4 @@ restakingKinobi.accept(renderers.renderRustVisitor(
     toolchain: "+nightly-2024-07-25"
   }
 ));
+vaultWhitelistCodama.accept(renderers.renderJavaScriptVisitor(path.join(jsClientsDir), {}));

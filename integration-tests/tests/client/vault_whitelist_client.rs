@@ -1,4 +1,4 @@
-use anchor_lang::AccountDeserialize;
+use jito_bytemuck::AccountDeserialize;
 use jito_vault_core::{
     config::Config as VaultConfig, vault::Vault,
     vault_staker_withdrawal_ticket::VaultStakerWithdrawalTicket,
@@ -92,47 +92,45 @@ impl VaultWhitelistClient {
         Ok(())
     }
 
-    pub async fn get_config(
-        &mut self,
-    ) -> TestResult<jito_vault_whitelist_client::accounts::Config> {
+    pub async fn get_config(&mut self) -> TestResult<jito_vault_whitelist_core::config::Config> {
         let config_pubkey = Config::find_program_address(&jito_vault_whitelist_program::id()).0;
         let account = self.banks_client.get_account(config_pubkey).await?.unwrap();
-        let config = jito_vault_whitelist_client::accounts::Config::try_deserialize(
-            &mut account.data.as_slice(),
-        )
-        .unwrap();
+        let config = jito_vault_whitelist_core::config::Config::try_from_slice_unchecked(
+            account.data.as_slice(),
+        )?;
 
-        Ok(config)
+        Ok(*config)
     }
 
     pub async fn get_whitelist(
         &mut self,
         account: &Pubkey,
-    ) -> TestResult<jito_vault_whitelist_client::accounts::Whitelist> {
+    ) -> TestResult<jito_vault_whitelist_core::whitelist::Whitelist> {
         let account = self.banks_client.get_account(*account).await?.unwrap();
-        let whitelist = jito_vault_whitelist_client::accounts::Whitelist::try_deserialize(
-            &mut account.data.as_slice(),
+        let whitelist = jito_vault_whitelist_core::whitelist::Whitelist::try_from_slice_unchecked(
+            account.data.as_slice(),
         )
         .unwrap();
 
-        Ok(whitelist)
+        Ok(*whitelist)
     }
 
     pub async fn get_whitelist_user(
         &mut self,
         account: &Pubkey,
-    ) -> TestResult<jito_vault_whitelist_client::accounts::WhitelistUser> {
+    ) -> TestResult<jito_vault_whitelist_core::whitelist_user::WhitelistUser> {
         let account = self
             .banks_client
             .get_account(*account)
             .await?
             .ok_or(TestError::AccountNotFound)?;
-        let whitelist = jito_vault_whitelist_client::accounts::WhitelistUser::try_deserialize(
-            &mut account.data.as_slice(),
-        )
-        .unwrap();
+        let whitelist =
+            jito_vault_whitelist_core::whitelist_user::WhitelistUser::try_from_slice_unchecked(
+                account.data.as_slice(),
+            )
+            .unwrap();
 
-        Ok(whitelist)
+        Ok(*whitelist)
     }
 
     pub async fn do_initialize_config(&mut self) -> TestResult<()> {

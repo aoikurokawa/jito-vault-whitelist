@@ -16,7 +16,7 @@ jito-restaking-sdk = { workspace = true }
 jito-vault-core = { workspace = true }
 jito-vault-program = { workspace = true }
 jito-vault-sdk = { workspace = true }
-jito-vault-whitelist-client = { workspace = true, features = ["anchor"] }
+jito-vault-whitelist-client = { workspace = true, features = ["anchor", "fetch"] }
 jito-vault-whitelist-core = { workspace = true }
 jito-vault-whitelist-program = { workspace = true }
 jito-vault-whitelist-sdk = { workspace = true }

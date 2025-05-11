@@ -592,6 +592,7 @@ impl VaultWhitelistClient {
 
 #[inline(always)]
 #[track_caller]
+#[allow(dead_code)]
 pub fn assert_vault_whitelist_error<T>(
     test_error: Result<T, TestError>,
     vault_whitelist_error: VaultWhitelistError,

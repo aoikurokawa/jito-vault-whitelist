@@ -32,11 +32,8 @@ pub enum VaultWhitelistActions {
     /// Set mint burn admin
     SetMintBurnAdmin { vault: Pubkey },
 
-    /// Set meta merkle root
-    SetMetaMerkleRoot {
-        whitelist_file_path: PathBuf,
-        vault: Pubkey,
-    },
+    /// Add to whitelist
+    AddToWhitelist { vault: Pubkey, user: Pubkey },
 
     /// Mint
     Mint {

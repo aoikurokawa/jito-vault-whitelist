@@ -8,12 +8,9 @@ use jito_vault_core::{
     config::Config, vault_staker_withdrawal_ticket::VaultStakerWithdrawalTicket,
 };
 use jito_vault_whitelist_client::instructions::{
-    BurnWithdrawalTicketBuilder, CloseWhitelistBuilder, EnqueueWithdrawalBuilder,
-    InitializeConfigBuilder, InitializeWhitelistBuilder, MintBuilder, SetMintBurnAdminBuilder,
-};
-use jito_vault_whitelist_meta_merkle_tree::{
-    generated_merkle_tree::GeneratedMerkleTree, read_json_from_file,
-    vault_whitelist_meta::VaultWhitelistMeta,
+    AddToWhitelistBuilder, BurnWithdrawalTicketBuilder, CloseWhitelistBuilder,
+    EnqueueWithdrawalBuilder, InitializeConfigBuilder, InitializeWhitelistBuilder, MintBuilder,
+    SetMintBurnAdminBuilder,
 };
 use log::{debug, info};
 use solana_program::pubkey::Pubkey;
@@ -84,12 +81,8 @@ impl VaultWhitelistCliHandler {
                 action: VaultWhitelistActions::SetMintBurnAdmin { vault },
             } => self.set_mint_burn_admin(vault),
             VaultWhitelistCommands::Whitelist {
-                action:
-                    VaultWhitelistActions::SetMetaMerkleRoot {
-                        whitelist_file_path,
-                        vault,
-                    },
-            } => todo!(),
+                action: VaultWhitelistActions::AddToWhitelist { vault, user },
+            } => self.add_to_whitelist(vault, user),
             VaultWhitelistCommands::Whitelist {
                 action:
                     VaultWhitelistActions::Mint {
@@ -262,53 +255,53 @@ impl VaultWhitelistCliHandler {
     }
 
     /// Set meta merkle root
-    // pub fn add_to_whitelist(
-    //     &self,
-    //     whitelist_file_path: PathBuf,
-    //     vault: Pubkey,
-    // ) -> anyhow::Result<()> {
-    //     let signer = self.signer()?;
-    //     let admin = signer.pubkey();
+    pub fn add_to_whitelist(&self, vault: Pubkey, user: Pubkey) -> anyhow::Result<()> {
+        let signer = self.signer()?;
+        let admin = signer.pubkey();
 
-    //     let whitelist = jito_vault_whitelist_core::whitelist::Whitelist::find_program_address(
-    //         &self.vault_whitelist_program_id,
-    //         &vault,
-    //     )
-    //     .0;
+        let whitelist = jito_vault_whitelist_core::whitelist::Whitelist::find_program_address(
+            &self.vault_whitelist_program_id,
+            &vault,
+        )
+        .0;
+        let whitelist_user =
+            jito_vault_whitelist_core::whitelist_user::WhitelistUser::find_program_address(
+                &self.vault_whitelist_program_id,
+                &whitelist,
+                &user,
+            )
+            .0;
 
-    //     let vault_whitelist_metas =
-    //         read_json_from_file::<Vec<VaultWhitelistMeta>>(&whitelist_file_path)?;
-    //     let merkle_tree = GeneratedMerkleTree::new(&vault_whitelist_metas)?;
+        let mut ix_builder = AddToWhitelistBuilder::new();
+        ix_builder
+            .config(
+                jito_vault_whitelist_core::config::Config::find_program_address(
+                    &self.vault_whitelist_program_id,
+                )
+                .0,
+            )
+            .whitelist(whitelist)
+            .whitelist(whitelist_user)
+            .vault(vault)
+            .vault_admin(admin)
+            .user(user);
 
-    //     let mut ix_builder = SetMetaMerkleRootBuilder::new();
-    //     ix_builder
-    //         .config(
-    //             jito_vault_whitelist_core::config::Config::find_program_address(
-    //                 &self.vault_whitelist_program_id,
-    //             )
-    //             .0,
-    //         )
-    //         .whitelist(whitelist)
-    //         .vault(vault)
-    //         .vault_admin(admin)
-    //         .meta_merkle_root(merkle_tree.merkle_root.to_bytes());
+        let mut ix = ix_builder.instruction();
+        ix.program_id = self.vault_whitelist_program_id;
 
-    //     let mut ix = ix_builder.instruction();
-    //     ix.program_id = self.vault_whitelist_program_id;
+        info!("Adding to whitelist");
 
-    //     info!("Setting meta merkle root");
+        let ixs = [ix];
+        self.process_transaction(&ixs, &signer.pubkey(), &[signer])?;
 
-    //     let ixs = [ix];
-    //     self.process_transaction(&ixs, &signer.pubkey(), &[signer])?;
+        if !self.print_tx {
+            let account =
+                self.get_account::<jito_vault_whitelist_client::accounts::Whitelist>(&whitelist)?;
+            info!("{}", account.pretty_display());
+        }
 
-    //     if !self.print_tx {
-    //         let account =
-    //             self.get_account::<jito_vault_whitelist_client::accounts::Whitelist>(&whitelist)?;
-    //         info!("{}", account.pretty_display());
-    //     }
-
-    //     Ok(())
-    // }
+        Ok(())
+    }
 
     pub fn mint(
         &self,

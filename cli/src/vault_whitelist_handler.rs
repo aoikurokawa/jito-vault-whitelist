@@ -281,7 +281,7 @@ impl VaultWhitelistCliHandler {
                 .0,
             )
             .whitelist(whitelist)
-            .whitelist(whitelist_user)
+            .whitelist_user(whitelist_user)
             .vault(vault)
             .vault_admin(admin)
             .user(user);

@@ -9,23 +9,23 @@ use borsh::BorshDeserialize;
 use borsh::BorshSerialize;
 
 /// Accounts.
-pub struct CloseWhitelist {
+pub struct RemoveFromWhitelist {
     pub config: solana_program::pubkey::Pubkey,
-
-    pub vault_config: solana_program::pubkey::Pubkey,
-
-    pub whitelist: solana_program::pubkey::Pubkey,
 
     pub vault: solana_program::pubkey::Pubkey,
 
+    pub whitelist: solana_program::pubkey::Pubkey,
+
+    pub whitelist_user: solana_program::pubkey::Pubkey,
+
     pub vault_admin: solana_program::pubkey::Pubkey,
 
-    pub jito_vault_program: solana_program::pubkey::Pubkey,
+    pub user: solana_program::pubkey::Pubkey,
 
     pub system_program: solana_program::pubkey::Pubkey,
 }
 
-impl CloseWhitelist {
+impl RemoveFromWhitelist {
     pub fn instruction(&self) -> solana_program::instruction::Instruction {
         self.instruction_with_remaining_accounts(&[])
     }
@@ -40,30 +40,31 @@ impl CloseWhitelist {
             false,
         ));
         accounts.push(solana_program::instruction::AccountMeta::new_readonly(
-            self.vault_config,
-            false,
+            self.vault, false,
         ));
-        accounts.push(solana_program::instruction::AccountMeta::new(
+        accounts.push(solana_program::instruction::AccountMeta::new_readonly(
             self.whitelist,
             false,
         ));
         accounts.push(solana_program::instruction::AccountMeta::new(
-            self.vault, false,
+            self.whitelist_user,
+            false,
         ));
-        accounts.push(solana_program::instruction::AccountMeta::new(
+        accounts.push(solana_program::instruction::AccountMeta::new_readonly(
             self.vault_admin,
             true,
         ));
         accounts.push(solana_program::instruction::AccountMeta::new_readonly(
-            self.jito_vault_program,
-            false,
+            self.user, false,
         ));
         accounts.push(solana_program::instruction::AccountMeta::new_readonly(
             self.system_program,
             false,
         ));
         accounts.extend_from_slice(remaining_accounts);
-        let data = CloseWhitelistInstructionData::new().try_to_vec().unwrap();
+        let data = RemoveFromWhitelistInstructionData::new()
+            .try_to_vec()
+            .unwrap();
 
         solana_program::instruction::Instruction {
             program_id: crate::JITO_VAULT_WHITELIST_ID,
@@ -74,46 +75,46 @@ impl CloseWhitelist {
 }
 
 #[derive(BorshDeserialize, BorshSerialize)]
-pub struct CloseWhitelistInstructionData {
+pub struct RemoveFromWhitelistInstructionData {
     discriminator: u8,
 }
 
-impl CloseWhitelistInstructionData {
+impl RemoveFromWhitelistInstructionData {
     pub fn new() -> Self {
-        Self { discriminator: 8 }
+        Self { discriminator: 4 }
     }
 }
 
-impl Default for CloseWhitelistInstructionData {
+impl Default for RemoveFromWhitelistInstructionData {
     fn default() -> Self {
         Self::new()
     }
 }
 
-/// Instruction builder for `CloseWhitelist`.
+/// Instruction builder for `RemoveFromWhitelist`.
 ///
 /// ### Accounts:
 ///
 ///   0. `[]` config
-///   1. `[]` vault_config
-///   2. `[writable]` whitelist
-///   3. `[writable]` vault
-///   4. `[writable, signer]` vault_admin
-///   5. `[]` jito_vault_program
+///   1. `[]` vault
+///   2. `[]` whitelist
+///   3. `[writable]` whitelist_user
+///   4. `[signer]` vault_admin
+///   5. `[]` user
 ///   6. `[optional]` system_program (default to `11111111111111111111111111111111`)
 #[derive(Clone, Debug, Default)]
-pub struct CloseWhitelistBuilder {
+pub struct RemoveFromWhitelistBuilder {
     config: Option<solana_program::pubkey::Pubkey>,
-    vault_config: Option<solana_program::pubkey::Pubkey>,
-    whitelist: Option<solana_program::pubkey::Pubkey>,
     vault: Option<solana_program::pubkey::Pubkey>,
+    whitelist: Option<solana_program::pubkey::Pubkey>,
+    whitelist_user: Option<solana_program::pubkey::Pubkey>,
     vault_admin: Option<solana_program::pubkey::Pubkey>,
-    jito_vault_program: Option<solana_program::pubkey::Pubkey>,
+    user: Option<solana_program::pubkey::Pubkey>,
     system_program: Option<solana_program::pubkey::Pubkey>,
     __remaining_accounts: Vec<solana_program::instruction::AccountMeta>,
 }
 
-impl CloseWhitelistBuilder {
+impl RemoveFromWhitelistBuilder {
     pub fn new() -> Self {
         Self::default()
     }
@@ -123,8 +124,8 @@ impl CloseWhitelistBuilder {
         self
     }
     #[inline(always)]
-    pub fn vault_config(&mut self, vault_config: solana_program::pubkey::Pubkey) -> &mut Self {
-        self.vault_config = Some(vault_config);
+    pub fn vault(&mut self, vault: solana_program::pubkey::Pubkey) -> &mut Self {
+        self.vault = Some(vault);
         self
     }
     #[inline(always)]
@@ -133,8 +134,8 @@ impl CloseWhitelistBuilder {
         self
     }
     #[inline(always)]
-    pub fn vault(&mut self, vault: solana_program::pubkey::Pubkey) -> &mut Self {
-        self.vault = Some(vault);
+    pub fn whitelist_user(&mut self, whitelist_user: solana_program::pubkey::Pubkey) -> &mut Self {
+        self.whitelist_user = Some(whitelist_user);
         self
     }
     #[inline(always)]
@@ -143,11 +144,8 @@ impl CloseWhitelistBuilder {
         self
     }
     #[inline(always)]
-    pub fn jito_vault_program(
-        &mut self,
-        jito_vault_program: solana_program::pubkey::Pubkey,
-    ) -> &mut Self {
-        self.jito_vault_program = Some(jito_vault_program);
+    pub fn user(&mut self, user: solana_program::pubkey::Pubkey) -> &mut Self {
+        self.user = Some(user);
         self
     }
     /// `[optional account, default to '11111111111111111111111111111111']`
@@ -176,15 +174,13 @@ impl CloseWhitelistBuilder {
     }
     #[allow(clippy::clone_on_copy)]
     pub fn instruction(&self) -> solana_program::instruction::Instruction {
-        let accounts = CloseWhitelist {
+        let accounts = RemoveFromWhitelist {
             config: self.config.expect("config is not set"),
-            vault_config: self.vault_config.expect("vault_config is not set"),
-            whitelist: self.whitelist.expect("whitelist is not set"),
             vault: self.vault.expect("vault is not set"),
+            whitelist: self.whitelist.expect("whitelist is not set"),
+            whitelist_user: self.whitelist_user.expect("whitelist_user is not set"),
             vault_admin: self.vault_admin.expect("vault_admin is not set"),
-            jito_vault_program: self
-                .jito_vault_program
-                .expect("jito_vault_program is not set"),
+            user: self.user.expect("user is not set"),
             system_program: self
                 .system_program
                 .unwrap_or(solana_program::pubkey!("11111111111111111111111111111111")),
@@ -194,56 +190,56 @@ impl CloseWhitelistBuilder {
     }
 }
 
-/// `close_whitelist` CPI accounts.
-pub struct CloseWhitelistCpiAccounts<'a, 'b> {
+/// `remove_from_whitelist` CPI accounts.
+pub struct RemoveFromWhitelistCpiAccounts<'a, 'b> {
     pub config: &'b solana_program::account_info::AccountInfo<'a>,
-
-    pub vault_config: &'b solana_program::account_info::AccountInfo<'a>,
-
-    pub whitelist: &'b solana_program::account_info::AccountInfo<'a>,
 
     pub vault: &'b solana_program::account_info::AccountInfo<'a>,
 
+    pub whitelist: &'b solana_program::account_info::AccountInfo<'a>,
+
+    pub whitelist_user: &'b solana_program::account_info::AccountInfo<'a>,
+
     pub vault_admin: &'b solana_program::account_info::AccountInfo<'a>,
 
-    pub jito_vault_program: &'b solana_program::account_info::AccountInfo<'a>,
+    pub user: &'b solana_program::account_info::AccountInfo<'a>,
 
     pub system_program: &'b solana_program::account_info::AccountInfo<'a>,
 }
 
-/// `close_whitelist` CPI instruction.
-pub struct CloseWhitelistCpi<'a, 'b> {
+/// `remove_from_whitelist` CPI instruction.
+pub struct RemoveFromWhitelistCpi<'a, 'b> {
     /// The program to invoke.
     pub __program: &'b solana_program::account_info::AccountInfo<'a>,
 
     pub config: &'b solana_program::account_info::AccountInfo<'a>,
 
-    pub vault_config: &'b solana_program::account_info::AccountInfo<'a>,
+    pub vault: &'b solana_program::account_info::AccountInfo<'a>,
 
     pub whitelist: &'b solana_program::account_info::AccountInfo<'a>,
 
-    pub vault: &'b solana_program::account_info::AccountInfo<'a>,
+    pub whitelist_user: &'b solana_program::account_info::AccountInfo<'a>,
 
     pub vault_admin: &'b solana_program::account_info::AccountInfo<'a>,
 
-    pub jito_vault_program: &'b solana_program::account_info::AccountInfo<'a>,
+    pub user: &'b solana_program::account_info::AccountInfo<'a>,
 
     pub system_program: &'b solana_program::account_info::AccountInfo<'a>,
 }
 
-impl<'a, 'b> CloseWhitelistCpi<'a, 'b> {
+impl<'a, 'b> RemoveFromWhitelistCpi<'a, 'b> {
     pub fn new(
         program: &'b solana_program::account_info::AccountInfo<'a>,
-        accounts: CloseWhitelistCpiAccounts<'a, 'b>,
+        accounts: RemoveFromWhitelistCpiAccounts<'a, 'b>,
     ) -> Self {
         Self {
             __program: program,
             config: accounts.config,
-            vault_config: accounts.vault_config,
-            whitelist: accounts.whitelist,
             vault: accounts.vault,
+            whitelist: accounts.whitelist,
+            whitelist_user: accounts.whitelist_user,
             vault_admin: accounts.vault_admin,
-            jito_vault_program: accounts.jito_vault_program,
+            user: accounts.user,
             system_program: accounts.system_program,
         }
     }
@@ -286,23 +282,23 @@ impl<'a, 'b> CloseWhitelistCpi<'a, 'b> {
             false,
         ));
         accounts.push(solana_program::instruction::AccountMeta::new_readonly(
-            *self.vault_config.key,
+            *self.vault.key,
             false,
         ));
-        accounts.push(solana_program::instruction::AccountMeta::new(
+        accounts.push(solana_program::instruction::AccountMeta::new_readonly(
             *self.whitelist.key,
             false,
         ));
         accounts.push(solana_program::instruction::AccountMeta::new(
-            *self.vault.key,
+            *self.whitelist_user.key,
             false,
         ));
-        accounts.push(solana_program::instruction::AccountMeta::new(
+        accounts.push(solana_program::instruction::AccountMeta::new_readonly(
             *self.vault_admin.key,
             true,
         ));
         accounts.push(solana_program::instruction::AccountMeta::new_readonly(
-            *self.jito_vault_program.key,
+            *self.user.key,
             false,
         ));
         accounts.push(solana_program::instruction::AccountMeta::new_readonly(
@@ -316,7 +312,9 @@ impl<'a, 'b> CloseWhitelistCpi<'a, 'b> {
                 is_writable: remaining_account.2,
             })
         });
-        let data = CloseWhitelistInstructionData::new().try_to_vec().unwrap();
+        let data = RemoveFromWhitelistInstructionData::new()
+            .try_to_vec()
+            .unwrap();
 
         let instruction = solana_program::instruction::Instruction {
             program_id: crate::JITO_VAULT_WHITELIST_ID,
@@ -326,11 +324,11 @@ impl<'a, 'b> CloseWhitelistCpi<'a, 'b> {
         let mut account_infos = Vec::with_capacity(7 + 1 + remaining_accounts.len());
         account_infos.push(self.__program.clone());
         account_infos.push(self.config.clone());
-        account_infos.push(self.vault_config.clone());
-        account_infos.push(self.whitelist.clone());
         account_infos.push(self.vault.clone());
+        account_infos.push(self.whitelist.clone());
+        account_infos.push(self.whitelist_user.clone());
         account_infos.push(self.vault_admin.clone());
-        account_infos.push(self.jito_vault_program.clone());
+        account_infos.push(self.user.clone());
         account_infos.push(self.system_program.clone());
         remaining_accounts
             .iter()
@@ -344,32 +342,32 @@ impl<'a, 'b> CloseWhitelistCpi<'a, 'b> {
     }
 }
 
-/// Instruction builder for `CloseWhitelist` via CPI.
+/// Instruction builder for `RemoveFromWhitelist` via CPI.
 ///
 /// ### Accounts:
 ///
 ///   0. `[]` config
-///   1. `[]` vault_config
-///   2. `[writable]` whitelist
-///   3. `[writable]` vault
-///   4. `[writable, signer]` vault_admin
-///   5. `[]` jito_vault_program
+///   1. `[]` vault
+///   2. `[]` whitelist
+///   3. `[writable]` whitelist_user
+///   4. `[signer]` vault_admin
+///   5. `[]` user
 ///   6. `[]` system_program
 #[derive(Clone, Debug)]
-pub struct CloseWhitelistCpiBuilder<'a, 'b> {
-    instruction: Box<CloseWhitelistCpiBuilderInstruction<'a, 'b>>,
+pub struct RemoveFromWhitelistCpiBuilder<'a, 'b> {
+    instruction: Box<RemoveFromWhitelistCpiBuilderInstruction<'a, 'b>>,
 }
 
-impl<'a, 'b> CloseWhitelistCpiBuilder<'a, 'b> {
+impl<'a, 'b> RemoveFromWhitelistCpiBuilder<'a, 'b> {
     pub fn new(program: &'b solana_program::account_info::AccountInfo<'a>) -> Self {
-        let instruction = Box::new(CloseWhitelistCpiBuilderInstruction {
+        let instruction = Box::new(RemoveFromWhitelistCpiBuilderInstruction {
             __program: program,
             config: None,
-            vault_config: None,
-            whitelist: None,
             vault: None,
+            whitelist: None,
+            whitelist_user: None,
             vault_admin: None,
-            jito_vault_program: None,
+            user: None,
             system_program: None,
             __remaining_accounts: Vec::new(),
         });
@@ -384,11 +382,8 @@ impl<'a, 'b> CloseWhitelistCpiBuilder<'a, 'b> {
         self
     }
     #[inline(always)]
-    pub fn vault_config(
-        &mut self,
-        vault_config: &'b solana_program::account_info::AccountInfo<'a>,
-    ) -> &mut Self {
-        self.instruction.vault_config = Some(vault_config);
+    pub fn vault(&mut self, vault: &'b solana_program::account_info::AccountInfo<'a>) -> &mut Self {
+        self.instruction.vault = Some(vault);
         self
     }
     #[inline(always)]
@@ -400,8 +395,11 @@ impl<'a, 'b> CloseWhitelistCpiBuilder<'a, 'b> {
         self
     }
     #[inline(always)]
-    pub fn vault(&mut self, vault: &'b solana_program::account_info::AccountInfo<'a>) -> &mut Self {
-        self.instruction.vault = Some(vault);
+    pub fn whitelist_user(
+        &mut self,
+        whitelist_user: &'b solana_program::account_info::AccountInfo<'a>,
+    ) -> &mut Self {
+        self.instruction.whitelist_user = Some(whitelist_user);
         self
     }
     #[inline(always)]
@@ -413,11 +411,8 @@ impl<'a, 'b> CloseWhitelistCpiBuilder<'a, 'b> {
         self
     }
     #[inline(always)]
-    pub fn jito_vault_program(
-        &mut self,
-        jito_vault_program: &'b solana_program::account_info::AccountInfo<'a>,
-    ) -> &mut Self {
-        self.instruction.jito_vault_program = Some(jito_vault_program);
+    pub fn user(&mut self, user: &'b solana_program::account_info::AccountInfo<'a>) -> &mut Self {
+        self.instruction.user = Some(user);
         self
     }
     #[inline(always)]
@@ -469,29 +464,26 @@ impl<'a, 'b> CloseWhitelistCpiBuilder<'a, 'b> {
         &self,
         signers_seeds: &[&[&[u8]]],
     ) -> solana_program::entrypoint::ProgramResult {
-        let instruction = CloseWhitelistCpi {
+        let instruction = RemoveFromWhitelistCpi {
             __program: self.instruction.__program,
 
             config: self.instruction.config.expect("config is not set"),
 
-            vault_config: self
-                .instruction
-                .vault_config
-                .expect("vault_config is not set"),
+            vault: self.instruction.vault.expect("vault is not set"),
 
             whitelist: self.instruction.whitelist.expect("whitelist is not set"),
 
-            vault: self.instruction.vault.expect("vault is not set"),
+            whitelist_user: self
+                .instruction
+                .whitelist_user
+                .expect("whitelist_user is not set"),
 
             vault_admin: self
                 .instruction
                 .vault_admin
                 .expect("vault_admin is not set"),
 
-            jito_vault_program: self
-                .instruction
-                .jito_vault_program
-                .expect("jito_vault_program is not set"),
+            user: self.instruction.user.expect("user is not set"),
 
             system_program: self
                 .instruction
@@ -506,14 +498,14 @@ impl<'a, 'b> CloseWhitelistCpiBuilder<'a, 'b> {
 }
 
 #[derive(Clone, Debug)]
-struct CloseWhitelistCpiBuilderInstruction<'a, 'b> {
+struct RemoveFromWhitelistCpiBuilderInstruction<'a, 'b> {
     __program: &'b solana_program::account_info::AccountInfo<'a>,
     config: Option<&'b solana_program::account_info::AccountInfo<'a>>,
-    vault_config: Option<&'b solana_program::account_info::AccountInfo<'a>>,
-    whitelist: Option<&'b solana_program::account_info::AccountInfo<'a>>,
     vault: Option<&'b solana_program::account_info::AccountInfo<'a>>,
+    whitelist: Option<&'b solana_program::account_info::AccountInfo<'a>>,
+    whitelist_user: Option<&'b solana_program::account_info::AccountInfo<'a>>,
     vault_admin: Option<&'b solana_program::account_info::AccountInfo<'a>>,
-    jito_vault_program: Option<&'b solana_program::account_info::AccountInfo<'a>>,
+    user: Option<&'b solana_program::account_info::AccountInfo<'a>>,
     system_program: Option<&'b solana_program::account_info::AccountInfo<'a>>,
     /// Additional instruction accounts `(AccountInfo, is_writable, is_signer)`.
     __remaining_accounts: Vec<(

@@ -5,4 +5,5 @@ mod enqueue_withdrawal;
 mod initialize_config;
 mod initialize_whitelist;
 mod mint;
+mod remove_from_whitelist;
 mod set_mint_burn_admin;

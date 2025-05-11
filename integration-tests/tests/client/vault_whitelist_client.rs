@@ -6,7 +6,7 @@ use jito_vault_core::{
 use jito_vault_whitelist_client::instructions::{
     AddToWhitelistBuilder, BurnWithdrawalTicketBuilder, CloseWhitelistBuilder,
     EnqueueWithdrawalBuilder, InitializeConfigBuilder, InitializeWhitelistBuilder, MintBuilder,
-    SetMintBurnAdminBuilder,
+    RemoveFromWhitelistBuilder, SetMintBurnAdminBuilder,
 };
 use jito_vault_whitelist_core::{
     config::Config, whitelist::Whitelist, whitelist_user::WhitelistUser,
@@ -122,7 +122,11 @@ impl VaultWhitelistClient {
         &mut self,
         account: &Pubkey,
     ) -> TestResult<jito_vault_whitelist_client::accounts::WhitelistUser> {
-        let account = self.banks_client.get_account(*account).await?.unwrap();
+        let account = self
+            .banks_client
+            .get_account(*account)
+            .await?
+            .ok_or(TestError::AccountNotFound)?;
         let whitelist = jito_vault_whitelist_client::accounts::WhitelistUser::try_deserialize(
             &mut account.data.as_slice(),
         )
@@ -260,6 +264,55 @@ impl VaultWhitelistClient {
         .0;
 
         let mut ix = AddToWhitelistBuilder::new()
+            .config(config)
+            .whitelist(whitelist)
+            .vault(vault_root.vault_pubkey)
+            .vault_admin(vault_root.vault_admin.pubkey())
+            .whitelist_user(whitelist_user)
+            .user(*user)
+            .instruction();
+        ix.program_id = jito_vault_whitelist_program::id();
+
+        let blockhash = self.banks_client.get_latest_blockhash().await?;
+
+        self.process_transaction(&Transaction::new_signed_with_payer(
+            &[ix],
+            Some(&vault_root.vault_admin.pubkey()),
+            &[&vault_root.vault_admin],
+            blockhash,
+        ))
+        .await
+    }
+
+    pub async fn do_remove_from_whitelist(
+        &mut self,
+        vault_root: &VaultRoot,
+        user: &Pubkey,
+    ) -> TestResult<()> {
+        self.remove_from_whitelist(vault_root, user).await?;
+
+        Ok(())
+    }
+
+    pub async fn remove_from_whitelist(
+        &mut self,
+        vault_root: &VaultRoot,
+        user: &Pubkey,
+    ) -> TestResult<()> {
+        let config = Config::find_program_address(&jito_vault_whitelist_program::id()).0;
+        let whitelist = Whitelist::find_program_address(
+            &jito_vault_whitelist_program::id(),
+            &vault_root.vault_pubkey,
+        )
+        .0;
+        let whitelist_user = WhitelistUser::find_program_address(
+            &jito_vault_whitelist_program::id(),
+            &whitelist,
+            user,
+        )
+        .0;
+
+        let mut ix = RemoveFromWhitelistBuilder::new()
             .config(config)
             .whitelist(whitelist)
             .vault(vault_root.vault_pubkey)

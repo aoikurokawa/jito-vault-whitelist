@@ -42,18 +42,20 @@ pub fn process_remove_from_whitelist(
     load_signer(vault_admin_info, true)?;
     load_system_program(system_program_info)?;
 
-    WhitelistUser::load(
-        program_id,
-        whitelist_user_info,
-        whitelist_info.key,
-        user_info.key,
-        true,
-    )?;
-    let whitelist_user_data = whitelist_user_info.data.borrow();
-    let whitelist_user = WhitelistUser::try_from_slice_unchecked(&whitelist_user_data)?;
+    {
+        WhitelistUser::load(
+            program_id,
+            whitelist_user_info,
+            whitelist_info.key,
+            user_info.key,
+            true,
+        )?;
+        let whitelist_user_data = whitelist_user_info.data.borrow();
+        let whitelist_user = WhitelistUser::try_from_slice_unchecked(&whitelist_user_data)?;
 
-    whitelist_user.check_whitelist(whitelist_info.key)?;
-    whitelist_user.check_user(user_info.key)?;
+        whitelist_user.check_whitelist(whitelist_info.key)?;
+        whitelist_user.check_user(user_info.key)?;
+    }
 
     msg!(
         "Removing user {} from Whitelist {}",

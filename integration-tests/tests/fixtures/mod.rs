@@ -14,6 +14,10 @@ pub enum TestError {
 
     #[error(transparent)]
     ProgramError(#[from] ProgramError),
+
+    /// Account not found
+    #[error("Account not found")]
+    AccountNotFound,
 }
 
 impl TestError {
@@ -25,6 +29,7 @@ impl TestError {
                 _ => None,
             },
             TestError::ProgramError(_) => None,
+            TestError::AccountNotFound => None,
         }
     }
 }

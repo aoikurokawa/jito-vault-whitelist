@@ -25,7 +25,7 @@ The Jito Vault Whitelist Program supports the following instructions:
 - Initialize Config: Set up initial configuration
 - Initialize Whitelist: Create and configure the whitelist
 - Set Mint Burn Admin: Assign administrative privileges
-- Set Merkle Root: Update the Merkle root for verification
+- Add To Whitelist: Add user to whitelist
 - Mint: Mint new VRT tokens (whitelisted users only)
 - Enqueue Withdrawal: Request token withdrawal (whitelisted users only)
 - Burn Withdrawal Ticket: Process withdrawal request

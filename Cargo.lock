@@ -1874,15 +1874,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "fast-math"
-version = "0.1.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2465292146cdfc2011350fe3b1c616ac83cf0faeedb33463ba1c332ed8948d66"
-dependencies = [
- "ieee754",
-]
-
-[[package]]
 name = "fastrand"
 version = "2.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2564,12 +2555,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "ieee754"
-version = "0.2.6"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9007da9cacbd3e6343da136e98b0d2df013f553d35bdec8b518f07bea768e19c"
-
-[[package]]
 name = "im"
 version = "15.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2670,7 +2655,6 @@ dependencies = [
  "jito-vault-sdk 0.0.5",
  "jito-vault-whitelist-client",
  "jito-vault-whitelist-core",
- "jito-vault-whitelist-meta-merkle-tree",
  "jito-vault-whitelist-program",
  "jito-vault-whitelist-sdk",
  "shank",
@@ -2924,7 +2908,6 @@ dependencies = [
  "jito-vault-sdk 0.0.5",
  "jito-vault-whitelist-client",
  "jito-vault-whitelist-core",
- "jito-vault-whitelist-meta-merkle-tree",
  "log",
  "solana-account-decoder",
  "solana-cli-config",
@@ -2968,19 +2951,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "jito-vault-whitelist-meta-merkle-tree"
-version = "0.0.1"
-dependencies = [
- "fast-math",
- "hex",
- "serde",
- "serde_json",
- "solana-program",
- "solana-sdk",
- "thiserror 1.0.69",
-]
-
-[[package]]
 name = "jito-vault-whitelist-program"
 version = "0.0.1"
 dependencies = [
@@ -2991,7 +2961,6 @@ dependencies = [
  "jito-vault-program",
  "jito-vault-sdk 0.0.5",
  "jito-vault-whitelist-core",
- "jito-vault-whitelist-meta-merkle-tree",
  "jito-vault-whitelist-sdk",
  "solana-program",
 ]

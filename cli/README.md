@@ -45,6 +45,14 @@ Vault Manager can add new user to whitelist.
 cargo r -p jito-vault-whitelist-cli -- vault-whitelist whitelist add_to_whitelist <VAULT_ADDRESS> <USER_ADDRESS>
 ```
 
+### `remove_from_whitelist`
+
+Vault Manager can remove user from whitelist.
+
+```bash
+cargo r -p jito-vault-whitelist-cli -- vault-whitelist whitelist remove_from_whitelist <VAULT_ADDRESS> <USER_ADDRESS>
+```
+
 ### `mint`
 
 Whitelist user can mint VRT:

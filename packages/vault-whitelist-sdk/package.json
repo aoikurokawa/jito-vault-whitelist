@@ -1,5 +1,5 @@
 {
-    "name": "@jito-foundation/vault-whitelist",
+    "name": "@jito-foundation/vault-whitelist-sdk",
     "version": "1.0.0",
     "description": "TypeScript SDK for interacting with Jito's Vault Whitelist program on Solana",
     "main": "dist/index.js",

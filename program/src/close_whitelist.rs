@@ -1,5 +1,8 @@
 use jito_bytemuck::AccountDeserialize;
-use jito_jsm_core::{close_program_account, loader::load_signer};
+use jito_jsm_core::{
+    close_program_account,
+    loader::{load_signer, load_system_program},
+};
 use jito_vault_core::vault::Vault;
 use jito_vault_sdk::{instruction::VaultAdminRole, sdk::set_secondary_admin};
 use jito_vault_whitelist_core::{config::Config, whitelist::Whitelist};
@@ -25,6 +28,7 @@ pub fn process_close_whitelist(program_id: &Pubkey, accounts: &[AccountInfo]) ->
     vault.check_admin(vault_admin_info.key)?;
 
     load_signer(vault_admin_info, true)?;
+    load_system_program(system_program_info)?;
 
     let new_admin = Pubkey::default();
 

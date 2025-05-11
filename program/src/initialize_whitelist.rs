@@ -11,7 +11,7 @@ use solana_program::{
     pubkey::Pubkey, rent::Rent, sysvar::Sysvar,
 };
 
-/// Process initializing Whitelist
+/// Process initializing whitelist
 pub fn process_initialize_whitelist(
     program_id: &Pubkey,
     accounts: &[AccountInfo],

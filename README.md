@@ -40,6 +40,13 @@ The Jito Vault Whitelist Program supports the following instructions:
 | Testnet | Jito Vault Whitelist | 7BHULFc6NKwtc7f2ap6y7ty1cRfTN5MBMfJQj1rxEUhP  | 0.0.1   |
 | Devnet  | Jito Vault Whitelist | 7BHULFc6NKwtc7f2ap6y7ty1cRfTN5MBMfJQj1rxEUhP  | 0.0.1   |
 
+
+## SDKs
+
+We provide TypeScript SDKs for interacting with the Jito Vault Whitelist system:
+
+- 📦 @jito-foundation/vault-whitelist-sdk – TypeScript SDK for interacting with the Jito Vault Whitelist program.
+
 ## Development Setup
 
 ### Prerequisites

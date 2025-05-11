@@ -10,10 +10,10 @@ pub type TestResult<T> = Result<T, TestError>;
 #[derive(Error, Debug)]
 pub enum TestError {
     #[error(transparent)]
-    BanksClientError(#[from] BanksClientError),
+    BanksClient(#[from] BanksClientError),
 
     #[error(transparent)]
-    ProgramError(#[from] ProgramError),
+    Program(#[from] ProgramError),
 
     /// Account not found
     #[error("Account not found")]
@@ -23,12 +23,12 @@ pub enum TestError {
 impl TestError {
     pub fn to_transaction_error(&self) -> Option<TransactionError> {
         match self {
-            TestError::BanksClientError(e) => match e {
+            TestError::BanksClient(e) => match e {
                 BanksClientError::TransactionError(e) => Some(e.clone()),
                 BanksClientError::SimulationError { err, .. } => Some(err.clone()),
                 _ => None,
             },
-            TestError::ProgramError(_) => None,
+            TestError::Program(_) => None,
             TestError::AccountNotFound => None,
         }
     }

@@ -32,6 +32,8 @@ pub struct EnqueueWithdrawal {
 
     pub whitelist: solana_program::pubkey::Pubkey,
 
+    pub whitelist_user: solana_program::pubkey::Pubkey,
+
     pub jito_vault_program: solana_program::pubkey::Pubkey,
 }
 
@@ -48,7 +50,7 @@ impl EnqueueWithdrawal {
         args: EnqueueWithdrawalInstructionArgs,
         remaining_accounts: &[solana_program::instruction::AccountMeta],
     ) -> solana_program::instruction::Instruction {
-        let mut accounts = Vec::with_capacity(12 + remaining_accounts.len());
+        let mut accounts = Vec::with_capacity(13 + remaining_accounts.len());
         accounts.push(solana_program::instruction::AccountMeta::new_readonly(
             self.vault_config,
             false,
@@ -92,6 +94,10 @@ impl EnqueueWithdrawal {
             false,
         ));
         accounts.push(solana_program::instruction::AccountMeta::new_readonly(
+            self.whitelist_user,
+            false,
+        ));
+        accounts.push(solana_program::instruction::AccountMeta::new_readonly(
             self.jito_vault_program,
             false,
         ));
@@ -130,7 +136,6 @@ impl Default for EnqueueWithdrawalInstructionData {
 #[derive(BorshSerialize, BorshDeserialize, Clone, Debug, Eq, PartialEq)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct EnqueueWithdrawalInstructionArgs {
-    pub proof: Vec<[u8; 32]>,
     pub amount: u64,
 }
 
@@ -149,7 +154,8 @@ pub struct EnqueueWithdrawalInstructionArgs {
 ///   8. `[optional]` system_program (default to `11111111111111111111111111111111`)
 ///   9. `[]` config
 ///   10. `[writable]` whitelist
-///   11. `[]` jito_vault_program
+///   11. `[]` whitelist_user
+///   12. `[]` jito_vault_program
 #[derive(Clone, Debug, Default)]
 pub struct EnqueueWithdrawalBuilder {
     vault_config: Option<solana_program::pubkey::Pubkey>,
@@ -163,8 +169,8 @@ pub struct EnqueueWithdrawalBuilder {
     system_program: Option<solana_program::pubkey::Pubkey>,
     config: Option<solana_program::pubkey::Pubkey>,
     whitelist: Option<solana_program::pubkey::Pubkey>,
+    whitelist_user: Option<solana_program::pubkey::Pubkey>,
     jito_vault_program: Option<solana_program::pubkey::Pubkey>,
-    proof: Option<Vec<[u8; 32]>>,
     amount: Option<u64>,
     __remaining_accounts: Vec<solana_program::instruction::AccountMeta>,
 }
@@ -241,16 +247,16 @@ impl EnqueueWithdrawalBuilder {
         self
     }
     #[inline(always)]
+    pub fn whitelist_user(&mut self, whitelist_user: solana_program::pubkey::Pubkey) -> &mut Self {
+        self.whitelist_user = Some(whitelist_user);
+        self
+    }
+    #[inline(always)]
     pub fn jito_vault_program(
         &mut self,
         jito_vault_program: solana_program::pubkey::Pubkey,
     ) -> &mut Self {
         self.jito_vault_program = Some(jito_vault_program);
-        self
-    }
-    #[inline(always)]
-    pub fn proof(&mut self, proof: Vec<[u8; 32]>) -> &mut Self {
-        self.proof = Some(proof);
         self
     }
     #[inline(always)]
@@ -300,12 +306,12 @@ impl EnqueueWithdrawalBuilder {
                 .unwrap_or(solana_program::pubkey!("11111111111111111111111111111111")),
             config: self.config.expect("config is not set"),
             whitelist: self.whitelist.expect("whitelist is not set"),
+            whitelist_user: self.whitelist_user.expect("whitelist_user is not set"),
             jito_vault_program: self
                 .jito_vault_program
                 .expect("jito_vault_program is not set"),
         };
         let args = EnqueueWithdrawalInstructionArgs {
-            proof: self.proof.clone().expect("proof is not set"),
             amount: self.amount.clone().expect("amount is not set"),
         };
 
@@ -338,6 +344,8 @@ pub struct EnqueueWithdrawalCpiAccounts<'a, 'b> {
 
     pub whitelist: &'b solana_program::account_info::AccountInfo<'a>,
 
+    pub whitelist_user: &'b solana_program::account_info::AccountInfo<'a>,
+
     pub jito_vault_program: &'b solana_program::account_info::AccountInfo<'a>,
 }
 
@@ -369,6 +377,8 @@ pub struct EnqueueWithdrawalCpi<'a, 'b> {
 
     pub whitelist: &'b solana_program::account_info::AccountInfo<'a>,
 
+    pub whitelist_user: &'b solana_program::account_info::AccountInfo<'a>,
+
     pub jito_vault_program: &'b solana_program::account_info::AccountInfo<'a>,
     /// The arguments for the instruction.
     pub __args: EnqueueWithdrawalInstructionArgs,
@@ -394,6 +404,7 @@ impl<'a, 'b> EnqueueWithdrawalCpi<'a, 'b> {
             system_program: accounts.system_program,
             config: accounts.config,
             whitelist: accounts.whitelist,
+            whitelist_user: accounts.whitelist_user,
             jito_vault_program: accounts.jito_vault_program,
             __args: args,
         }
@@ -431,7 +442,7 @@ impl<'a, 'b> EnqueueWithdrawalCpi<'a, 'b> {
             bool,
         )],
     ) -> solana_program::entrypoint::ProgramResult {
-        let mut accounts = Vec::with_capacity(12 + remaining_accounts.len());
+        let mut accounts = Vec::with_capacity(13 + remaining_accounts.len());
         accounts.push(solana_program::instruction::AccountMeta::new_readonly(
             *self.vault_config.key,
             false,
@@ -477,6 +488,10 @@ impl<'a, 'b> EnqueueWithdrawalCpi<'a, 'b> {
             false,
         ));
         accounts.push(solana_program::instruction::AccountMeta::new_readonly(
+            *self.whitelist_user.key,
+            false,
+        ));
+        accounts.push(solana_program::instruction::AccountMeta::new_readonly(
             *self.jito_vault_program.key,
             false,
         ));
@@ -498,7 +513,7 @@ impl<'a, 'b> EnqueueWithdrawalCpi<'a, 'b> {
             accounts,
             data,
         };
-        let mut account_infos = Vec::with_capacity(12 + 1 + remaining_accounts.len());
+        let mut account_infos = Vec::with_capacity(13 + 1 + remaining_accounts.len());
         account_infos.push(self.__program.clone());
         account_infos.push(self.vault_config.clone());
         account_infos.push(self.vault.clone());
@@ -511,6 +526,7 @@ impl<'a, 'b> EnqueueWithdrawalCpi<'a, 'b> {
         account_infos.push(self.system_program.clone());
         account_infos.push(self.config.clone());
         account_infos.push(self.whitelist.clone());
+        account_infos.push(self.whitelist_user.clone());
         account_infos.push(self.jito_vault_program.clone());
         remaining_accounts
             .iter()
@@ -539,7 +555,8 @@ impl<'a, 'b> EnqueueWithdrawalCpi<'a, 'b> {
 ///   8. `[]` system_program
 ///   9. `[]` config
 ///   10. `[writable]` whitelist
-///   11. `[]` jito_vault_program
+///   11. `[]` whitelist_user
+///   12. `[]` jito_vault_program
 #[derive(Clone, Debug)]
 pub struct EnqueueWithdrawalCpiBuilder<'a, 'b> {
     instruction: Box<EnqueueWithdrawalCpiBuilderInstruction<'a, 'b>>,
@@ -560,8 +577,8 @@ impl<'a, 'b> EnqueueWithdrawalCpiBuilder<'a, 'b> {
             system_program: None,
             config: None,
             whitelist: None,
+            whitelist_user: None,
             jito_vault_program: None,
-            proof: None,
             amount: None,
             __remaining_accounts: Vec::new(),
         });
@@ -654,16 +671,19 @@ impl<'a, 'b> EnqueueWithdrawalCpiBuilder<'a, 'b> {
         self
     }
     #[inline(always)]
+    pub fn whitelist_user(
+        &mut self,
+        whitelist_user: &'b solana_program::account_info::AccountInfo<'a>,
+    ) -> &mut Self {
+        self.instruction.whitelist_user = Some(whitelist_user);
+        self
+    }
+    #[inline(always)]
     pub fn jito_vault_program(
         &mut self,
         jito_vault_program: &'b solana_program::account_info::AccountInfo<'a>,
     ) -> &mut Self {
         self.instruction.jito_vault_program = Some(jito_vault_program);
-        self
-    }
-    #[inline(always)]
-    pub fn proof(&mut self, proof: Vec<[u8; 32]>) -> &mut Self {
-        self.instruction.proof = Some(proof);
         self
     }
     #[inline(always)]
@@ -713,7 +733,6 @@ impl<'a, 'b> EnqueueWithdrawalCpiBuilder<'a, 'b> {
         signers_seeds: &[&[&[u8]]],
     ) -> solana_program::entrypoint::ProgramResult {
         let args = EnqueueWithdrawalInstructionArgs {
-            proof: self.instruction.proof.clone().expect("proof is not set"),
             amount: self.instruction.amount.clone().expect("amount is not set"),
         };
         let instruction = EnqueueWithdrawalCpi {
@@ -759,6 +778,11 @@ impl<'a, 'b> EnqueueWithdrawalCpiBuilder<'a, 'b> {
 
             whitelist: self.instruction.whitelist.expect("whitelist is not set"),
 
+            whitelist_user: self
+                .instruction
+                .whitelist_user
+                .expect("whitelist_user is not set"),
+
             jito_vault_program: self
                 .instruction
                 .jito_vault_program
@@ -787,8 +811,8 @@ struct EnqueueWithdrawalCpiBuilderInstruction<'a, 'b> {
     system_program: Option<&'b solana_program::account_info::AccountInfo<'a>>,
     config: Option<&'b solana_program::account_info::AccountInfo<'a>>,
     whitelist: Option<&'b solana_program::account_info::AccountInfo<'a>>,
+    whitelist_user: Option<&'b solana_program::account_info::AccountInfo<'a>>,
     jito_vault_program: Option<&'b solana_program::account_info::AccountInfo<'a>>,
-    proof: Option<Vec<[u8; 32]>>,
     amount: Option<u64>,
     /// Additional instruction accounts `(AccountInfo, is_writable, is_signer)`.
     __remaining_accounts: Vec<(

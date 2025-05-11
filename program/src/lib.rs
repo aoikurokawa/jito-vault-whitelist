@@ -1,3 +1,4 @@
+use add_to_whitelist::process_add_to_whitelist;
 use borsh::BorshDeserialize;
 use burn_withdrawal_ticket::process_burn_withdrawal_ticket;
 use close_whitelist::process_close_whitelist;
@@ -6,20 +7,19 @@ use initialize_config::process_initialize_config;
 use initialize_whitelist::process_initialize_whitelist;
 use jito_vault_whitelist_sdk::instruction::VaultWhitelistInstruction;
 use mint::process_mint;
-use set_meta_merkle_root::process_set_meta_merkle_root;
 use set_mint_burn_admin::process_set_mint_burn_admin;
 use solana_program::{
     account_info::AccountInfo, declare_id, entrypoint::ProgramResult, msg,
     program_error::ProgramError, pubkey::Pubkey,
 };
 
+mod add_to_whitelist;
 mod burn_withdrawal_ticket;
 mod close_whitelist;
 mod enqueue_withdrawal;
 mod initialize_config;
 mod initialize_whitelist;
 mod mint;
-mod set_meta_merkle_root;
 mod set_mint_burn_admin;
 
 declare_id!(env!("VAULT_WHITELIST_PROGRAM_ID"));
@@ -44,9 +44,9 @@ pub fn process_instruction(
             process_initialize_config(program_id, accounts)
         }
 
-        VaultWhitelistInstruction::InitializeWhitelist { meta_merkle_root } => {
+        VaultWhitelistInstruction::InitializeWhitelist => {
             msg!("Instruction: InitializeWhitelist");
-            process_initialize_whitelist(program_id, accounts, &meta_merkle_root)
+            process_initialize_whitelist(program_id, accounts)
         }
 
         VaultWhitelistInstruction::SetMintBurnAdmin => {
@@ -54,28 +54,27 @@ pub fn process_instruction(
             process_set_mint_burn_admin(program_id, accounts)
         }
 
-        VaultWhitelistInstruction::SetMetaMerkleRoot { meta_merkle_root } => {
-            msg!("Instruction: SetMetaMerkleRoot");
-            process_set_meta_merkle_root(program_id, accounts, &meta_merkle_root)
+        VaultWhitelistInstruction::AddToWhitelist => {
+            msg!("Instruction: AddToWhitelist");
+            process_add_to_whitelist(program_id, accounts)
         }
 
         VaultWhitelistInstruction::Mint {
-            proof,
             amount_in,
             min_amount_out,
         } => {
             msg!("Instruction: Mint");
-            process_mint(program_id, accounts, &proof, amount_in, min_amount_out)
+            process_mint(program_id, accounts, amount_in, min_amount_out)
         }
 
-        VaultWhitelistInstruction::EnqueueWithdrawal { proof, amount } => {
+        VaultWhitelistInstruction::EnqueueWithdrawal { amount } => {
             msg!("Instruction: EnqueueWithdrawal");
-            process_enqueue_withdrawal(program_id, accounts, &proof, amount)
+            process_enqueue_withdrawal(program_id, accounts, amount)
         }
 
-        VaultWhitelistInstruction::BurnWithdrawalTicket { proof } => {
+        VaultWhitelistInstruction::BurnWithdrawalTicket => {
             msg!("Instruction: BurnWithdrawalTicket");
-            process_burn_withdrawal_ticket(program_id, accounts, &proof)
+            process_burn_withdrawal_ticket(program_id, accounts)
         }
 
         VaultWhitelistInstruction::CloseWhitelist => {

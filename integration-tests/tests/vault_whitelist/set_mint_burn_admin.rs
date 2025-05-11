@@ -19,10 +19,8 @@ mod tests {
         let mut vault_whitelist_client = fixture.vault_whitelist_program_client();
         vault_whitelist_client.do_initialize_config().await.unwrap();
 
-        let meta_merkle_root = [0; 32];
-
         vault_whitelist_client
-            .do_initialize_whitelist(&vault_root, &meta_merkle_root)
+            .do_initialize_whitelist(&vault_root)
             .await
             .unwrap();
 
@@ -58,10 +56,8 @@ mod tests {
         let mut vault_whitelist_client = fixture.vault_whitelist_program_client();
         vault_whitelist_client.do_initialize_config().await.unwrap();
 
-        let meta_merkle_root = [0; 32];
-
         vault_whitelist_client
-            .do_initialize_whitelist(&vault_root_a, &meta_merkle_root)
+            .do_initialize_whitelist(&vault_root_a)
             .await
             .unwrap();
 

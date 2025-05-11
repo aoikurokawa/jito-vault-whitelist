@@ -1,6 +1,6 @@
 use solana_program::program_error::ProgramError;
 use solana_program_test::BanksClientError;
-use solana_sdk::transaction::TransactionError;
+use solana_sdk::{instruction::InstructionError, transaction::TransactionError};
 use thiserror::Error;
 
 pub mod fixture;
@@ -29,12 +29,12 @@ impl TestError {
     }
 }
 
-// #[inline(always)]
-// #[track_caller]
-// pub fn assert_ix_error<T>(test_error: Result<T, TestError>, ix_error: InstructionError) {
-//     assert!(test_error.is_err());
-//     assert_eq!(
-//         test_error.err().unwrap().to_transaction_error().unwrap(),
-//         TransactionError::InstructionError(0, ix_error)
-//     );
-// }
+#[inline(always)]
+#[track_caller]
+pub fn assert_ix_error<T>(test_error: Result<T, TestError>, ix_error: InstructionError) {
+    assert!(test_error.is_err());
+    assert_eq!(
+        test_error.err().unwrap().to_transaction_error().unwrap(),
+        TransactionError::InstructionError(0, ix_error)
+    );
+}

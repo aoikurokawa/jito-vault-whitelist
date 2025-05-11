@@ -38,23 +38,21 @@ pub struct BurnWithdrawalTicket {
 
     pub whitelist: solana_program::pubkey::Pubkey,
 
+    pub whitelist_user: solana_program::pubkey::Pubkey,
+
     pub jito_vault_program: solana_program::pubkey::Pubkey,
 }
 
 impl BurnWithdrawalTicket {
-    pub fn instruction(
-        &self,
-        args: BurnWithdrawalTicketInstructionArgs,
-    ) -> solana_program::instruction::Instruction {
-        self.instruction_with_remaining_accounts(args, &[])
+    pub fn instruction(&self) -> solana_program::instruction::Instruction {
+        self.instruction_with_remaining_accounts(&[])
     }
     #[allow(clippy::vec_init_then_push)]
     pub fn instruction_with_remaining_accounts(
         &self,
-        args: BurnWithdrawalTicketInstructionArgs,
         remaining_accounts: &[solana_program::instruction::AccountMeta],
     ) -> solana_program::instruction::Instruction {
-        let mut accounts = Vec::with_capacity(15 + remaining_accounts.len());
+        let mut accounts = Vec::with_capacity(16 + remaining_accounts.len());
         accounts.push(solana_program::instruction::AccountMeta::new_readonly(
             self.vault_config,
             false,
@@ -111,15 +109,17 @@ impl BurnWithdrawalTicket {
             false,
         ));
         accounts.push(solana_program::instruction::AccountMeta::new_readonly(
+            self.whitelist_user,
+            false,
+        ));
+        accounts.push(solana_program::instruction::AccountMeta::new_readonly(
             self.jito_vault_program,
             false,
         ));
         accounts.extend_from_slice(remaining_accounts);
-        let mut data = BurnWithdrawalTicketInstructionData::new()
+        let data = BurnWithdrawalTicketInstructionData::new()
             .try_to_vec()
             .unwrap();
-        let mut args = args.try_to_vec().unwrap();
-        data.append(&mut args);
 
         solana_program::instruction::Instruction {
             program_id: crate::JITO_VAULT_WHITELIST_ID,
@@ -146,12 +146,6 @@ impl Default for BurnWithdrawalTicketInstructionData {
     }
 }
 
-#[derive(BorshSerialize, BorshDeserialize, Clone, Debug, Eq, PartialEq)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub struct BurnWithdrawalTicketInstructionArgs {
-    pub proof: Vec<[u8; 32]>,
-}
-
 /// Instruction builder for `BurnWithdrawalTicket`.
 ///
 /// ### Accounts:
@@ -170,7 +164,8 @@ pub struct BurnWithdrawalTicketInstructionArgs {
 ///   11. `[optional]` system_program (default to `11111111111111111111111111111111`)
 ///   12. `[]` config
 ///   13. `[writable]` whitelist
-///   14. `[]` jito_vault_program
+///   14. `[]` whitelist_user
+///   15. `[]` jito_vault_program
 #[derive(Clone, Debug, Default)]
 pub struct BurnWithdrawalTicketBuilder {
     vault_config: Option<solana_program::pubkey::Pubkey>,
@@ -187,8 +182,8 @@ pub struct BurnWithdrawalTicketBuilder {
     system_program: Option<solana_program::pubkey::Pubkey>,
     config: Option<solana_program::pubkey::Pubkey>,
     whitelist: Option<solana_program::pubkey::Pubkey>,
+    whitelist_user: Option<solana_program::pubkey::Pubkey>,
     jito_vault_program: Option<solana_program::pubkey::Pubkey>,
-    proof: Option<Vec<[u8; 32]>>,
     __remaining_accounts: Vec<solana_program::instruction::AccountMeta>,
 }
 
@@ -288,16 +283,16 @@ impl BurnWithdrawalTicketBuilder {
         self
     }
     #[inline(always)]
+    pub fn whitelist_user(&mut self, whitelist_user: solana_program::pubkey::Pubkey) -> &mut Self {
+        self.whitelist_user = Some(whitelist_user);
+        self
+    }
+    #[inline(always)]
     pub fn jito_vault_program(
         &mut self,
         jito_vault_program: solana_program::pubkey::Pubkey,
     ) -> &mut Self {
         self.jito_vault_program = Some(jito_vault_program);
-        self
-    }
-    #[inline(always)]
-    pub fn proof(&mut self, proof: Vec<[u8; 32]>) -> &mut Self {
-        self.proof = Some(proof);
         self
     }
     /// Add an additional account to the instruction.
@@ -351,15 +346,13 @@ impl BurnWithdrawalTicketBuilder {
                 .unwrap_or(solana_program::pubkey!("11111111111111111111111111111111")),
             config: self.config.expect("config is not set"),
             whitelist: self.whitelist.expect("whitelist is not set"),
+            whitelist_user: self.whitelist_user.expect("whitelist_user is not set"),
             jito_vault_program: self
                 .jito_vault_program
                 .expect("jito_vault_program is not set"),
         };
-        let args = BurnWithdrawalTicketInstructionArgs {
-            proof: self.proof.clone().expect("proof is not set"),
-        };
 
-        accounts.instruction_with_remaining_accounts(args, &self.__remaining_accounts)
+        accounts.instruction_with_remaining_accounts(&self.__remaining_accounts)
     }
 }
 
@@ -393,6 +386,8 @@ pub struct BurnWithdrawalTicketCpiAccounts<'a, 'b> {
     pub config: &'b solana_program::account_info::AccountInfo<'a>,
 
     pub whitelist: &'b solana_program::account_info::AccountInfo<'a>,
+
+    pub whitelist_user: &'b solana_program::account_info::AccountInfo<'a>,
 
     pub jito_vault_program: &'b solana_program::account_info::AccountInfo<'a>,
 }
@@ -431,16 +426,15 @@ pub struct BurnWithdrawalTicketCpi<'a, 'b> {
 
     pub whitelist: &'b solana_program::account_info::AccountInfo<'a>,
 
+    pub whitelist_user: &'b solana_program::account_info::AccountInfo<'a>,
+
     pub jito_vault_program: &'b solana_program::account_info::AccountInfo<'a>,
-    /// The arguments for the instruction.
-    pub __args: BurnWithdrawalTicketInstructionArgs,
 }
 
 impl<'a, 'b> BurnWithdrawalTicketCpi<'a, 'b> {
     pub fn new(
         program: &'b solana_program::account_info::AccountInfo<'a>,
         accounts: BurnWithdrawalTicketCpiAccounts<'a, 'b>,
-        args: BurnWithdrawalTicketInstructionArgs,
     ) -> Self {
         Self {
             __program: program,
@@ -459,8 +453,8 @@ impl<'a, 'b> BurnWithdrawalTicketCpi<'a, 'b> {
             system_program: accounts.system_program,
             config: accounts.config,
             whitelist: accounts.whitelist,
+            whitelist_user: accounts.whitelist_user,
             jito_vault_program: accounts.jito_vault_program,
-            __args: args,
         }
     }
     #[inline(always)]
@@ -496,7 +490,7 @@ impl<'a, 'b> BurnWithdrawalTicketCpi<'a, 'b> {
             bool,
         )],
     ) -> solana_program::entrypoint::ProgramResult {
-        let mut accounts = Vec::with_capacity(15 + remaining_accounts.len());
+        let mut accounts = Vec::with_capacity(16 + remaining_accounts.len());
         accounts.push(solana_program::instruction::AccountMeta::new_readonly(
             *self.vault_config.key,
             false,
@@ -554,6 +548,10 @@ impl<'a, 'b> BurnWithdrawalTicketCpi<'a, 'b> {
             false,
         ));
         accounts.push(solana_program::instruction::AccountMeta::new_readonly(
+            *self.whitelist_user.key,
+            false,
+        ));
+        accounts.push(solana_program::instruction::AccountMeta::new_readonly(
             *self.jito_vault_program.key,
             false,
         ));
@@ -564,18 +562,16 @@ impl<'a, 'b> BurnWithdrawalTicketCpi<'a, 'b> {
                 is_writable: remaining_account.2,
             })
         });
-        let mut data = BurnWithdrawalTicketInstructionData::new()
+        let data = BurnWithdrawalTicketInstructionData::new()
             .try_to_vec()
             .unwrap();
-        let mut args = self.__args.try_to_vec().unwrap();
-        data.append(&mut args);
 
         let instruction = solana_program::instruction::Instruction {
             program_id: crate::JITO_VAULT_WHITELIST_ID,
             accounts,
             data,
         };
-        let mut account_infos = Vec::with_capacity(15 + 1 + remaining_accounts.len());
+        let mut account_infos = Vec::with_capacity(16 + 1 + remaining_accounts.len());
         account_infos.push(self.__program.clone());
         account_infos.push(self.vault_config.clone());
         account_infos.push(self.vault.clone());
@@ -591,6 +587,7 @@ impl<'a, 'b> BurnWithdrawalTicketCpi<'a, 'b> {
         account_infos.push(self.system_program.clone());
         account_infos.push(self.config.clone());
         account_infos.push(self.whitelist.clone());
+        account_infos.push(self.whitelist_user.clone());
         account_infos.push(self.jito_vault_program.clone());
         remaining_accounts
             .iter()
@@ -622,7 +619,8 @@ impl<'a, 'b> BurnWithdrawalTicketCpi<'a, 'b> {
 ///   11. `[]` system_program
 ///   12. `[]` config
 ///   13. `[writable]` whitelist
-///   14. `[]` jito_vault_program
+///   14. `[]` whitelist_user
+///   15. `[]` jito_vault_program
 #[derive(Clone, Debug)]
 pub struct BurnWithdrawalTicketCpiBuilder<'a, 'b> {
     instruction: Box<BurnWithdrawalTicketCpiBuilderInstruction<'a, 'b>>,
@@ -646,8 +644,8 @@ impl<'a, 'b> BurnWithdrawalTicketCpiBuilder<'a, 'b> {
             system_program: None,
             config: None,
             whitelist: None,
+            whitelist_user: None,
             jito_vault_program: None,
-            proof: None,
             __remaining_accounts: Vec::new(),
         });
         Self { instruction }
@@ -766,16 +764,19 @@ impl<'a, 'b> BurnWithdrawalTicketCpiBuilder<'a, 'b> {
         self
     }
     #[inline(always)]
+    pub fn whitelist_user(
+        &mut self,
+        whitelist_user: &'b solana_program::account_info::AccountInfo<'a>,
+    ) -> &mut Self {
+        self.instruction.whitelist_user = Some(whitelist_user);
+        self
+    }
+    #[inline(always)]
     pub fn jito_vault_program(
         &mut self,
         jito_vault_program: &'b solana_program::account_info::AccountInfo<'a>,
     ) -> &mut Self {
         self.instruction.jito_vault_program = Some(jito_vault_program);
-        self
-    }
-    #[inline(always)]
-    pub fn proof(&mut self, proof: Vec<[u8; 32]>) -> &mut Self {
-        self.instruction.proof = Some(proof);
         self
     }
     /// Add an additional account to the instruction.
@@ -819,9 +820,6 @@ impl<'a, 'b> BurnWithdrawalTicketCpiBuilder<'a, 'b> {
         &self,
         signers_seeds: &[&[&[u8]]],
     ) -> solana_program::entrypoint::ProgramResult {
-        let args = BurnWithdrawalTicketInstructionArgs {
-            proof: self.instruction.proof.clone().expect("proof is not set"),
-        };
         let instruction = BurnWithdrawalTicketCpi {
             __program: self.instruction.__program,
 
@@ -880,11 +878,15 @@ impl<'a, 'b> BurnWithdrawalTicketCpiBuilder<'a, 'b> {
 
             whitelist: self.instruction.whitelist.expect("whitelist is not set"),
 
+            whitelist_user: self
+                .instruction
+                .whitelist_user
+                .expect("whitelist_user is not set"),
+
             jito_vault_program: self
                 .instruction
                 .jito_vault_program
                 .expect("jito_vault_program is not set"),
-            __args: args,
         };
         instruction.invoke_signed_with_remaining_accounts(
             signers_seeds,
@@ -911,8 +913,8 @@ struct BurnWithdrawalTicketCpiBuilderInstruction<'a, 'b> {
     system_program: Option<&'b solana_program::account_info::AccountInfo<'a>>,
     config: Option<&'b solana_program::account_info::AccountInfo<'a>>,
     whitelist: Option<&'b solana_program::account_info::AccountInfo<'a>>,
+    whitelist_user: Option<&'b solana_program::account_info::AccountInfo<'a>>,
     jito_vault_program: Option<&'b solana_program::account_info::AccountInfo<'a>>,
-    proof: Option<Vec<[u8; 32]>>,
     /// Additional instruction accounts `(AccountInfo, is_writable, is_signer)`.
     __remaining_accounts: Vec<(
         &'b solana_program::account_info::AccountInfo<'a>,

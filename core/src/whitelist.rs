@@ -1,5 +1,6 @@
 use bytemuck::{Pod, Zeroable};
 use jito_bytemuck::{AccountDeserialize, Discriminator};
+use jito_vault_whitelist_sdk::error::VaultWhitelistError;
 use shank::ShankAccount;
 use solana_program::msg;
 use solana_program::pubkey::Pubkey;
@@ -13,9 +14,6 @@ pub struct Whitelist {
     /// The vault pubkey
     vault: Pubkey,
 
-    /// The merkle root of the meta merkle tree
-    meta_merkle_root: [u8; 32],
-
     /// Bump seed for the PDA
     bump: u8,
 
@@ -25,23 +23,22 @@ pub struct Whitelist {
 
 impl Whitelist {
     /// Initiallize Whitelist
-    pub const fn new(vault: Pubkey, meta_merkle_root: [u8; 32], bump: u8) -> Self {
+    pub const fn new(vault: Pubkey, bump: u8) -> Self {
         Self {
             vault,
-            meta_merkle_root,
             bump,
             reserved: [0; RESERVED_SPACE_LEN],
         }
     }
 
-    /// Get meta merkle root
-    pub const fn get_meta_merkle_root(&self) -> &[u8; 32] {
-        &self.meta_merkle_root
-    }
+    /// Check Vault
+    pub fn check_vault(&self, vault: &Pubkey) -> Result<(), VaultWhitelistError> {
+        if self.vault.ne(vault) {
+            msg!("Vault pubkey does not match the provided vault pubkey");
+            return Err(VaultWhitelistError::InvalidVault);
+        }
 
-    /// Set new meta merkle root
-    pub fn set_meta_merkle_root(&mut self, meta_merkle_root: &[u8; 32]) {
-        self.meta_merkle_root = *meta_merkle_root;
+        Ok(())
     }
 
     /// Seeds of Whitelist Account
@@ -100,7 +97,6 @@ mod tests {
     fn test_whitelist_no_padding() {
         let whitelist = std::mem::size_of::<Whitelist>();
         let sum_of_fields = size_of::<Pubkey>() + // vault
-            32 + // meta_merkle_root
             size_of::<u8>() + // bump
             RESERVED_SPACE_LEN; // reserved
         assert_eq!(whitelist, sum_of_fields);

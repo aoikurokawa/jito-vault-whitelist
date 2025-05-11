@@ -1,17 +1,13 @@
 #[cfg(test)]
 mod tests {
-    use jito_vault_whitelist_meta_merkle_tree::{
-        generated_merkle_tree::GeneratedMerkleTree, vault_whitelist_meta::VaultWhitelistMeta,
-    };
-    use jito_vault_whitelist_sdk::error::VaultWhitelistError;
-    use solana_sdk::{pubkey::Pubkey, signature::Keypair, signer::Signer};
+    use solana_sdk::{instruction::InstructionError, signature::Keypair, signer::Signer};
 
     use crate::{
-        client::{
-            vault_client::VaultStakerWithdrawalTicketRoot,
-            vault_whitelist_client::assert_vault_whitelist_error,
+        client::vault_client::VaultStakerWithdrawalTicketRoot,
+        fixtures::{
+            assert_ix_error,
+            fixture::{ConfiguredVault, TestBuilder},
         },
-        fixtures::fixture::{ConfiguredVault, TestBuilder},
     };
 
     #[tokio::test]
@@ -46,10 +42,8 @@ mod tests {
 
         vault_whitelist_client.do_initialize_config().await.unwrap();
 
-        let meta_merkle_root = [0; 32];
-
         vault_whitelist_client
-            .do_initialize_whitelist(&vault_root, &meta_merkle_root)
+            .do_initialize_whitelist(&vault_root)
             .await
             .unwrap();
 
@@ -69,30 +63,15 @@ mod tests {
             .await
             .unwrap();
 
-        let meta = VaultWhitelistMeta::new(depositor.pubkey());
-        let vault_whitelist_metas = vec![meta];
-
-        let merkle_tree = GeneratedMerkleTree::new(&vault_whitelist_metas).unwrap();
-
         vault_whitelist_client
-            .do_set_meta_merkle_root(&vault_root, &merkle_tree.merkle_root.to_bytes())
+            .do_add_to_whitelist(&vault_root, &depositor.pubkey())
             .await
             .unwrap();
-
-        let proof =
-            GeneratedMerkleTree::get_proof(&vault_whitelist_metas, &depositor.pubkey()).unwrap();
 
         let min_amount_out: u64 = 90000;
 
         vault_whitelist_client
-            .do_mint(
-                &vault_root,
-                &vault,
-                &depositor,
-                &proof,
-                MINT_AMOUNT,
-                min_amount_out,
-            )
+            .do_mint(&vault_root, &vault, &depositor, MINT_AMOUNT, min_amount_out)
             .await
             .unwrap();
 
@@ -140,15 +119,8 @@ mod tests {
             .await
             .unwrap();
 
-        let vault_whitelist_metas = vec![VaultWhitelistMeta {
-            user: depositor.pubkey(),
-        }];
-
-        let proof =
-            GeneratedMerkleTree::get_proof(&vault_whitelist_metas, &depositor.pubkey()).unwrap();
-
         let VaultStakerWithdrawalTicketRoot { base } = vault_whitelist_client
-            .do_enqueue_withdrawal(&vault_root, &vault, &depositor, &proof, amount_to_dequeue)
+            .do_enqueue_withdrawal(&vault_root, &vault, &depositor, amount_to_dequeue)
             .await
             .unwrap();
 
@@ -181,13 +153,13 @@ mod tests {
             .unwrap();
 
         vault_whitelist_client
-            .do_burn_withdrawal_ticket(&config, &vault_root, &vault, &depositor, &base, &proof)
+            .do_burn_withdrawal_ticket(&config, &vault_root, &vault, &depositor, &base)
             .await
             .unwrap();
     }
 
     #[tokio::test]
-    async fn test_burn_withdrawal_ticket_invalid_proof_fails() {
+    async fn test_burn_withdrawal_ticket_invalid_user() {
         const MINT_AMOUNT: u64 = 100_000;
         const DEPOSIT_FEE_BPS: u16 = 100;
         const WITHDRAWAL_FEE_BPS: u16 = 100;
@@ -218,10 +190,8 @@ mod tests {
 
         vault_whitelist_client.do_initialize_config().await.unwrap();
 
-        let meta_merkle_root = [0; 32];
-
         vault_whitelist_client
-            .do_initialize_whitelist(&vault_root, &meta_merkle_root)
+            .do_initialize_whitelist(&vault_root)
             .await
             .unwrap();
 
@@ -241,30 +211,15 @@ mod tests {
             .await
             .unwrap();
 
-        let meta = VaultWhitelistMeta::new(depositor.pubkey());
-        let vault_whitelist_metas = vec![meta];
-
-        let merkle_tree = GeneratedMerkleTree::new(&vault_whitelist_metas).unwrap();
-
         vault_whitelist_client
-            .do_set_meta_merkle_root(&vault_root, &merkle_tree.merkle_root.to_bytes())
+            .do_add_to_whitelist(&vault_root, &depositor.pubkey())
             .await
             .unwrap();
-
-        let proof =
-            GeneratedMerkleTree::get_proof(&vault_whitelist_metas, &depositor.pubkey()).unwrap();
 
         let min_amount_out: u64 = 90000;
 
         vault_whitelist_client
-            .do_mint(
-                &vault_root,
-                &vault,
-                &depositor,
-                &proof,
-                MINT_AMOUNT,
-                min_amount_out,
-            )
+            .do_mint(&vault_root, &vault, &depositor, MINT_AMOUNT, min_amount_out)
             .await
             .unwrap();
 
@@ -312,15 +267,8 @@ mod tests {
             .await
             .unwrap();
 
-        let vault_whitelist_metas = vec![VaultWhitelistMeta {
-            user: depositor.pubkey(),
-        }];
-
-        let proof =
-            GeneratedMerkleTree::get_proof(&vault_whitelist_metas, &depositor.pubkey()).unwrap();
-
-        let VaultStakerWithdrawalTicketRoot { base } = vault_whitelist_client
-            .do_enqueue_withdrawal(&vault_root, &vault, &depositor, &proof, amount_to_dequeue)
+        let VaultStakerWithdrawalTicketRoot { base: _ } = vault_whitelist_client
+            .do_enqueue_withdrawal(&vault_root, &vault, &depositor, amount_to_dequeue)
             .await
             .unwrap();
 
@@ -352,21 +300,16 @@ mod tests {
             .await
             .unwrap();
 
-        let vault_whitelist_metas = vec![VaultWhitelistMeta {
-            user: Pubkey::new_unique(),
-        }];
-
-        let merkle_tree = GeneratedMerkleTree::new(&vault_whitelist_metas).unwrap();
-
-        vault_whitelist_client
-            .do_set_meta_merkle_root(&vault_root, &merkle_tree.merkle_root.to_bytes())
+        let invalid_depositor = Keypair::new();
+        vault_program_client
+            .configure_depositor(&vault_root, &invalid_depositor.pubkey(), MINT_AMOUNT)
             .await
             .unwrap();
 
         let result = vault_whitelist_client
-            .do_burn_withdrawal_ticket(&config, &vault_root, &vault, &depositor, &base, &proof)
+            .do_enqueue_withdrawal(&vault_root, &vault, &invalid_depositor, amount_to_dequeue)
             .await;
 
-        assert_vault_whitelist_error(result, VaultWhitelistError::InvalidProof);
+        assert_ix_error(result, InstructionError::InvalidAccountOwner);
     }
 }

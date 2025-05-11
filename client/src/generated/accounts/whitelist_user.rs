@@ -11,20 +11,25 @@ use solana_program::pubkey::Pubkey;
 
 #[derive(BorshSerialize, BorshDeserialize, Clone, Debug, Eq, PartialEq)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub struct Whitelist {
+pub struct WhitelistUser {
     pub discriminator: u64,
     #[cfg_attr(
         feature = "serde",
         serde(with = "serde_with::As::<serde_with::DisplayFromStr>")
     )]
-    pub vault: Pubkey,
+    pub whitelist: Pubkey,
+    #[cfg_attr(
+        feature = "serde",
+        serde(with = "serde_with::As::<serde_with::DisplayFromStr>")
+    )]
+    pub user: Pubkey,
     pub bump: u8,
     #[cfg_attr(feature = "serde", serde(with = "serde_with::As::<serde_with::Bytes>"))]
     pub reserved: [u8; 263],
 }
 
-impl Whitelist {
-    pub const LEN: usize = 296;
+impl WhitelistUser {
+    pub const LEN: usize = 328;
 
     #[inline(always)]
     pub fn from_bytes(data: &[u8]) -> Result<Self, std::io::Error> {
@@ -33,7 +38,7 @@ impl Whitelist {
     }
 }
 
-impl<'a> TryFrom<&solana_program::account_info::AccountInfo<'a>> for Whitelist {
+impl<'a> TryFrom<&solana_program::account_info::AccountInfo<'a>> for WhitelistUser {
     type Error = std::io::Error;
 
     fn try_from(
@@ -45,26 +50,26 @@ impl<'a> TryFrom<&solana_program::account_info::AccountInfo<'a>> for Whitelist {
 }
 
 #[cfg(feature = "anchor")]
-impl anchor_lang::AccountDeserialize for Whitelist {
+impl anchor_lang::AccountDeserialize for WhitelistUser {
     fn try_deserialize_unchecked(buf: &mut &[u8]) -> anchor_lang::Result<Self> {
         Ok(Self::deserialize(buf)?)
     }
 }
 
 #[cfg(feature = "anchor")]
-impl anchor_lang::AccountSerialize for Whitelist {}
+impl anchor_lang::AccountSerialize for WhitelistUser {}
 
 #[cfg(feature = "anchor")]
-impl anchor_lang::Owner for Whitelist {
+impl anchor_lang::Owner for WhitelistUser {
     fn owner() -> Pubkey {
         crate::JITO_VAULT_WHITELIST_ID
     }
 }
 
 #[cfg(feature = "anchor-idl-build")]
-impl anchor_lang::IdlBuild for Whitelist {}
+impl anchor_lang::IdlBuild for WhitelistUser {}
 
 #[cfg(feature = "anchor-idl-build")]
-impl anchor_lang::Discriminator for Whitelist {
+impl anchor_lang::Discriminator for WhitelistUser {
     const DISCRIMINATOR: &'static [u8] = &[0; 8];
 }

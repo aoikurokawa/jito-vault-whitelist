@@ -9,30 +9,32 @@ use borsh::BorshDeserialize;
 use borsh::BorshSerialize;
 
 /// Accounts.
-pub struct SetMetaMerkleRoot {
+pub struct AddToWhitelist {
     pub config: solana_program::pubkey::Pubkey,
 
     pub vault: solana_program::pubkey::Pubkey,
 
     pub whitelist: solana_program::pubkey::Pubkey,
 
+    pub whitelist_user: solana_program::pubkey::Pubkey,
+
     pub vault_admin: solana_program::pubkey::Pubkey,
+
+    pub user: solana_program::pubkey::Pubkey,
+
+    pub system_program: solana_program::pubkey::Pubkey,
 }
 
-impl SetMetaMerkleRoot {
-    pub fn instruction(
-        &self,
-        args: SetMetaMerkleRootInstructionArgs,
-    ) -> solana_program::instruction::Instruction {
-        self.instruction_with_remaining_accounts(args, &[])
+impl AddToWhitelist {
+    pub fn instruction(&self) -> solana_program::instruction::Instruction {
+        self.instruction_with_remaining_accounts(&[])
     }
     #[allow(clippy::vec_init_then_push)]
     pub fn instruction_with_remaining_accounts(
         &self,
-        args: SetMetaMerkleRootInstructionArgs,
         remaining_accounts: &[solana_program::instruction::AccountMeta],
     ) -> solana_program::instruction::Instruction {
-        let mut accounts = Vec::with_capacity(4 + remaining_accounts.len());
+        let mut accounts = Vec::with_capacity(7 + remaining_accounts.len());
         accounts.push(solana_program::instruction::AccountMeta::new_readonly(
             self.config,
             false,
@@ -40,20 +42,27 @@ impl SetMetaMerkleRoot {
         accounts.push(solana_program::instruction::AccountMeta::new_readonly(
             self.vault, false,
         ));
-        accounts.push(solana_program::instruction::AccountMeta::new(
+        accounts.push(solana_program::instruction::AccountMeta::new_readonly(
             self.whitelist,
+            false,
+        ));
+        accounts.push(solana_program::instruction::AccountMeta::new(
+            self.whitelist_user,
             false,
         ));
         accounts.push(solana_program::instruction::AccountMeta::new_readonly(
             self.vault_admin,
             true,
         ));
+        accounts.push(solana_program::instruction::AccountMeta::new_readonly(
+            self.user, false,
+        ));
+        accounts.push(solana_program::instruction::AccountMeta::new_readonly(
+            self.system_program,
+            false,
+        ));
         accounts.extend_from_slice(remaining_accounts);
-        let mut data = SetMetaMerkleRootInstructionData::new()
-            .try_to_vec()
-            .unwrap();
-        let mut args = args.try_to_vec().unwrap();
-        data.append(&mut args);
+        let data = AddToWhitelistInstructionData::new().try_to_vec().unwrap();
 
         solana_program::instruction::Instruction {
             program_id: crate::JITO_VAULT_WHITELIST_ID,
@@ -64,47 +73,46 @@ impl SetMetaMerkleRoot {
 }
 
 #[derive(BorshDeserialize, BorshSerialize)]
-pub struct SetMetaMerkleRootInstructionData {
+pub struct AddToWhitelistInstructionData {
     discriminator: u8,
 }
 
-impl SetMetaMerkleRootInstructionData {
+impl AddToWhitelistInstructionData {
     pub fn new() -> Self {
         Self { discriminator: 3 }
     }
 }
 
-impl Default for SetMetaMerkleRootInstructionData {
+impl Default for AddToWhitelistInstructionData {
     fn default() -> Self {
         Self::new()
     }
 }
 
-#[derive(BorshSerialize, BorshDeserialize, Clone, Debug, Eq, PartialEq)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub struct SetMetaMerkleRootInstructionArgs {
-    pub meta_merkle_root: [u8; 32],
-}
-
-/// Instruction builder for `SetMetaMerkleRoot`.
+/// Instruction builder for `AddToWhitelist`.
 ///
 /// ### Accounts:
 ///
 ///   0. `[]` config
 ///   1. `[]` vault
-///   2. `[writable]` whitelist
-///   3. `[signer]` vault_admin
+///   2. `[]` whitelist
+///   3. `[writable]` whitelist_user
+///   4. `[signer]` vault_admin
+///   5. `[]` user
+///   6. `[optional]` system_program (default to `11111111111111111111111111111111`)
 #[derive(Clone, Debug, Default)]
-pub struct SetMetaMerkleRootBuilder {
+pub struct AddToWhitelistBuilder {
     config: Option<solana_program::pubkey::Pubkey>,
     vault: Option<solana_program::pubkey::Pubkey>,
     whitelist: Option<solana_program::pubkey::Pubkey>,
+    whitelist_user: Option<solana_program::pubkey::Pubkey>,
     vault_admin: Option<solana_program::pubkey::Pubkey>,
-    meta_merkle_root: Option<[u8; 32]>,
+    user: Option<solana_program::pubkey::Pubkey>,
+    system_program: Option<solana_program::pubkey::Pubkey>,
     __remaining_accounts: Vec<solana_program::instruction::AccountMeta>,
 }
 
-impl SetMetaMerkleRootBuilder {
+impl AddToWhitelistBuilder {
     pub fn new() -> Self {
         Self::default()
     }
@@ -124,13 +132,24 @@ impl SetMetaMerkleRootBuilder {
         self
     }
     #[inline(always)]
+    pub fn whitelist_user(&mut self, whitelist_user: solana_program::pubkey::Pubkey) -> &mut Self {
+        self.whitelist_user = Some(whitelist_user);
+        self
+    }
+    #[inline(always)]
     pub fn vault_admin(&mut self, vault_admin: solana_program::pubkey::Pubkey) -> &mut Self {
         self.vault_admin = Some(vault_admin);
         self
     }
     #[inline(always)]
-    pub fn meta_merkle_root(&mut self, meta_merkle_root: [u8; 32]) -> &mut Self {
-        self.meta_merkle_root = Some(meta_merkle_root);
+    pub fn user(&mut self, user: solana_program::pubkey::Pubkey) -> &mut Self {
+        self.user = Some(user);
+        self
+    }
+    /// `[optional account, default to '11111111111111111111111111111111']`
+    #[inline(always)]
+    pub fn system_program(&mut self, system_program: solana_program::pubkey::Pubkey) -> &mut Self {
+        self.system_program = Some(system_program);
         self
     }
     /// Add an additional account to the instruction.
@@ -153,36 +172,41 @@ impl SetMetaMerkleRootBuilder {
     }
     #[allow(clippy::clone_on_copy)]
     pub fn instruction(&self) -> solana_program::instruction::Instruction {
-        let accounts = SetMetaMerkleRoot {
+        let accounts = AddToWhitelist {
             config: self.config.expect("config is not set"),
             vault: self.vault.expect("vault is not set"),
             whitelist: self.whitelist.expect("whitelist is not set"),
+            whitelist_user: self.whitelist_user.expect("whitelist_user is not set"),
             vault_admin: self.vault_admin.expect("vault_admin is not set"),
-        };
-        let args = SetMetaMerkleRootInstructionArgs {
-            meta_merkle_root: self
-                .meta_merkle_root
-                .clone()
-                .expect("meta_merkle_root is not set"),
+            user: self.user.expect("user is not set"),
+            system_program: self
+                .system_program
+                .unwrap_or(solana_program::pubkey!("11111111111111111111111111111111")),
         };
 
-        accounts.instruction_with_remaining_accounts(args, &self.__remaining_accounts)
+        accounts.instruction_with_remaining_accounts(&self.__remaining_accounts)
     }
 }
 
-/// `set_meta_merkle_root` CPI accounts.
-pub struct SetMetaMerkleRootCpiAccounts<'a, 'b> {
+/// `add_to_whitelist` CPI accounts.
+pub struct AddToWhitelistCpiAccounts<'a, 'b> {
     pub config: &'b solana_program::account_info::AccountInfo<'a>,
 
     pub vault: &'b solana_program::account_info::AccountInfo<'a>,
 
     pub whitelist: &'b solana_program::account_info::AccountInfo<'a>,
 
+    pub whitelist_user: &'b solana_program::account_info::AccountInfo<'a>,
+
     pub vault_admin: &'b solana_program::account_info::AccountInfo<'a>,
+
+    pub user: &'b solana_program::account_info::AccountInfo<'a>,
+
+    pub system_program: &'b solana_program::account_info::AccountInfo<'a>,
 }
 
-/// `set_meta_merkle_root` CPI instruction.
-pub struct SetMetaMerkleRootCpi<'a, 'b> {
+/// `add_to_whitelist` CPI instruction.
+pub struct AddToWhitelistCpi<'a, 'b> {
     /// The program to invoke.
     pub __program: &'b solana_program::account_info::AccountInfo<'a>,
 
@@ -192,24 +216,29 @@ pub struct SetMetaMerkleRootCpi<'a, 'b> {
 
     pub whitelist: &'b solana_program::account_info::AccountInfo<'a>,
 
+    pub whitelist_user: &'b solana_program::account_info::AccountInfo<'a>,
+
     pub vault_admin: &'b solana_program::account_info::AccountInfo<'a>,
-    /// The arguments for the instruction.
-    pub __args: SetMetaMerkleRootInstructionArgs,
+
+    pub user: &'b solana_program::account_info::AccountInfo<'a>,
+
+    pub system_program: &'b solana_program::account_info::AccountInfo<'a>,
 }
 
-impl<'a, 'b> SetMetaMerkleRootCpi<'a, 'b> {
+impl<'a, 'b> AddToWhitelistCpi<'a, 'b> {
     pub fn new(
         program: &'b solana_program::account_info::AccountInfo<'a>,
-        accounts: SetMetaMerkleRootCpiAccounts<'a, 'b>,
-        args: SetMetaMerkleRootInstructionArgs,
+        accounts: AddToWhitelistCpiAccounts<'a, 'b>,
     ) -> Self {
         Self {
             __program: program,
             config: accounts.config,
             vault: accounts.vault,
             whitelist: accounts.whitelist,
+            whitelist_user: accounts.whitelist_user,
             vault_admin: accounts.vault_admin,
-            __args: args,
+            user: accounts.user,
+            system_program: accounts.system_program,
         }
     }
     #[inline(always)]
@@ -245,7 +274,7 @@ impl<'a, 'b> SetMetaMerkleRootCpi<'a, 'b> {
             bool,
         )],
     ) -> solana_program::entrypoint::ProgramResult {
-        let mut accounts = Vec::with_capacity(4 + remaining_accounts.len());
+        let mut accounts = Vec::with_capacity(7 + remaining_accounts.len());
         accounts.push(solana_program::instruction::AccountMeta::new_readonly(
             *self.config.key,
             false,
@@ -254,13 +283,25 @@ impl<'a, 'b> SetMetaMerkleRootCpi<'a, 'b> {
             *self.vault.key,
             false,
         ));
-        accounts.push(solana_program::instruction::AccountMeta::new(
+        accounts.push(solana_program::instruction::AccountMeta::new_readonly(
             *self.whitelist.key,
+            false,
+        ));
+        accounts.push(solana_program::instruction::AccountMeta::new(
+            *self.whitelist_user.key,
             false,
         ));
         accounts.push(solana_program::instruction::AccountMeta::new_readonly(
             *self.vault_admin.key,
             true,
+        ));
+        accounts.push(solana_program::instruction::AccountMeta::new_readonly(
+            *self.user.key,
+            false,
+        ));
+        accounts.push(solana_program::instruction::AccountMeta::new_readonly(
+            *self.system_program.key,
+            false,
         ));
         remaining_accounts.iter().for_each(|remaining_account| {
             accounts.push(solana_program::instruction::AccountMeta {
@@ -269,23 +310,22 @@ impl<'a, 'b> SetMetaMerkleRootCpi<'a, 'b> {
                 is_writable: remaining_account.2,
             })
         });
-        let mut data = SetMetaMerkleRootInstructionData::new()
-            .try_to_vec()
-            .unwrap();
-        let mut args = self.__args.try_to_vec().unwrap();
-        data.append(&mut args);
+        let data = AddToWhitelistInstructionData::new().try_to_vec().unwrap();
 
         let instruction = solana_program::instruction::Instruction {
             program_id: crate::JITO_VAULT_WHITELIST_ID,
             accounts,
             data,
         };
-        let mut account_infos = Vec::with_capacity(4 + 1 + remaining_accounts.len());
+        let mut account_infos = Vec::with_capacity(7 + 1 + remaining_accounts.len());
         account_infos.push(self.__program.clone());
         account_infos.push(self.config.clone());
         account_infos.push(self.vault.clone());
         account_infos.push(self.whitelist.clone());
+        account_infos.push(self.whitelist_user.clone());
         account_infos.push(self.vault_admin.clone());
+        account_infos.push(self.user.clone());
+        account_infos.push(self.system_program.clone());
         remaining_accounts
             .iter()
             .for_each(|remaining_account| account_infos.push(remaining_account.0.clone()));
@@ -298,28 +338,33 @@ impl<'a, 'b> SetMetaMerkleRootCpi<'a, 'b> {
     }
 }
 
-/// Instruction builder for `SetMetaMerkleRoot` via CPI.
+/// Instruction builder for `AddToWhitelist` via CPI.
 ///
 /// ### Accounts:
 ///
 ///   0. `[]` config
 ///   1. `[]` vault
-///   2. `[writable]` whitelist
-///   3. `[signer]` vault_admin
+///   2. `[]` whitelist
+///   3. `[writable]` whitelist_user
+///   4. `[signer]` vault_admin
+///   5. `[]` user
+///   6. `[]` system_program
 #[derive(Clone, Debug)]
-pub struct SetMetaMerkleRootCpiBuilder<'a, 'b> {
-    instruction: Box<SetMetaMerkleRootCpiBuilderInstruction<'a, 'b>>,
+pub struct AddToWhitelistCpiBuilder<'a, 'b> {
+    instruction: Box<AddToWhitelistCpiBuilderInstruction<'a, 'b>>,
 }
 
-impl<'a, 'b> SetMetaMerkleRootCpiBuilder<'a, 'b> {
+impl<'a, 'b> AddToWhitelistCpiBuilder<'a, 'b> {
     pub fn new(program: &'b solana_program::account_info::AccountInfo<'a>) -> Self {
-        let instruction = Box::new(SetMetaMerkleRootCpiBuilderInstruction {
+        let instruction = Box::new(AddToWhitelistCpiBuilderInstruction {
             __program: program,
             config: None,
             vault: None,
             whitelist: None,
+            whitelist_user: None,
             vault_admin: None,
-            meta_merkle_root: None,
+            user: None,
+            system_program: None,
             __remaining_accounts: Vec::new(),
         });
         Self { instruction }
@@ -346,6 +391,14 @@ impl<'a, 'b> SetMetaMerkleRootCpiBuilder<'a, 'b> {
         self
     }
     #[inline(always)]
+    pub fn whitelist_user(
+        &mut self,
+        whitelist_user: &'b solana_program::account_info::AccountInfo<'a>,
+    ) -> &mut Self {
+        self.instruction.whitelist_user = Some(whitelist_user);
+        self
+    }
+    #[inline(always)]
     pub fn vault_admin(
         &mut self,
         vault_admin: &'b solana_program::account_info::AccountInfo<'a>,
@@ -354,8 +407,16 @@ impl<'a, 'b> SetMetaMerkleRootCpiBuilder<'a, 'b> {
         self
     }
     #[inline(always)]
-    pub fn meta_merkle_root(&mut self, meta_merkle_root: [u8; 32]) -> &mut Self {
-        self.instruction.meta_merkle_root = Some(meta_merkle_root);
+    pub fn user(&mut self, user: &'b solana_program::account_info::AccountInfo<'a>) -> &mut Self {
+        self.instruction.user = Some(user);
+        self
+    }
+    #[inline(always)]
+    pub fn system_program(
+        &mut self,
+        system_program: &'b solana_program::account_info::AccountInfo<'a>,
+    ) -> &mut Self {
+        self.instruction.system_program = Some(system_program);
         self
     }
     /// Add an additional account to the instruction.
@@ -399,14 +460,7 @@ impl<'a, 'b> SetMetaMerkleRootCpiBuilder<'a, 'b> {
         &self,
         signers_seeds: &[&[&[u8]]],
     ) -> solana_program::entrypoint::ProgramResult {
-        let args = SetMetaMerkleRootInstructionArgs {
-            meta_merkle_root: self
-                .instruction
-                .meta_merkle_root
-                .clone()
-                .expect("meta_merkle_root is not set"),
-        };
-        let instruction = SetMetaMerkleRootCpi {
+        let instruction = AddToWhitelistCpi {
             __program: self.instruction.__program,
 
             config: self.instruction.config.expect("config is not set"),
@@ -415,11 +469,22 @@ impl<'a, 'b> SetMetaMerkleRootCpiBuilder<'a, 'b> {
 
             whitelist: self.instruction.whitelist.expect("whitelist is not set"),
 
+            whitelist_user: self
+                .instruction
+                .whitelist_user
+                .expect("whitelist_user is not set"),
+
             vault_admin: self
                 .instruction
                 .vault_admin
                 .expect("vault_admin is not set"),
-            __args: args,
+
+            user: self.instruction.user.expect("user is not set"),
+
+            system_program: self
+                .instruction
+                .system_program
+                .expect("system_program is not set"),
         };
         instruction.invoke_signed_with_remaining_accounts(
             signers_seeds,
@@ -429,13 +494,15 @@ impl<'a, 'b> SetMetaMerkleRootCpiBuilder<'a, 'b> {
 }
 
 #[derive(Clone, Debug)]
-struct SetMetaMerkleRootCpiBuilderInstruction<'a, 'b> {
+struct AddToWhitelistCpiBuilderInstruction<'a, 'b> {
     __program: &'b solana_program::account_info::AccountInfo<'a>,
     config: Option<&'b solana_program::account_info::AccountInfo<'a>>,
     vault: Option<&'b solana_program::account_info::AccountInfo<'a>>,
     whitelist: Option<&'b solana_program::account_info::AccountInfo<'a>>,
+    whitelist_user: Option<&'b solana_program::account_info::AccountInfo<'a>>,
     vault_admin: Option<&'b solana_program::account_info::AccountInfo<'a>>,
-    meta_merkle_root: Option<[u8; 32]>,
+    user: Option<&'b solana_program::account_info::AccountInfo<'a>>,
+    system_program: Option<&'b solana_program::account_info::AccountInfo<'a>>,
     /// Additional instruction accounts `(AccountInfo, is_writable, is_signer)`.
     __remaining_accounts: Vec<(
         &'b solana_program::account_info::AccountInfo<'a>,

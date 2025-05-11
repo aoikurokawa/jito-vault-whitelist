@@ -15,7 +15,6 @@ use solana_program::{
 pub fn process_initialize_whitelist(
     program_id: &Pubkey,
     accounts: &[AccountInfo],
-    meta_merkle_root: &[u8; 32],
 ) -> ProgramResult {
     let [config_info, whitelist_info, vault_info, vault_admin_info, system_program_info] = accounts
     else {
@@ -63,7 +62,7 @@ pub fn process_initialize_whitelist(
     let mut whitelist_data = whitelist_info.try_borrow_mut_data()?;
     whitelist_data[0] = Whitelist::DISCRIMINATOR;
     let whitelist_acc = Whitelist::try_from_slice_unchecked_mut(&mut whitelist_data)?;
-    *whitelist_acc = Whitelist::new(*vault_info.key, *meta_merkle_root, whitelist_bump);
+    *whitelist_acc = Whitelist::new(*vault_info.key, whitelist_bump);
 
     Ok(())
 }

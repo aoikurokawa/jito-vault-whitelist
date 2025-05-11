@@ -1,13 +1,13 @@
 #[cfg(test)]
 mod tests {
     use jito_vault_sdk::error::VaultError;
-    use jito_vault_whitelist_core::whitelist::Whitelist;
+    use jito_vault_whitelist_core::{whitelist::Whitelist, whitelist_user::WhitelistUser};
     use solana_sdk::pubkey::Pubkey;
 
     use crate::{client::vault_client::assert_vault_error, fixtures::fixture::TestBuilder};
 
     #[tokio::test]
-    async fn test_set_meta_merkle_root() {
+    async fn test_add_to_whitelist() {
         let fixture = TestBuilder::new().await;
         let mut vault_program_client = fixture.vault_program_client();
         vault_program_client.do_initialize_config().await.unwrap();
@@ -19,17 +19,15 @@ mod tests {
         let mut vault_whitelist_client = fixture.vault_whitelist_program_client();
         vault_whitelist_client.do_initialize_config().await.unwrap();
 
-        let meta_merkle_root = [0; 32];
-
         vault_whitelist_client
-            .do_initialize_whitelist(&vault_root, &meta_merkle_root)
+            .do_initialize_whitelist(&vault_root)
             .await
             .unwrap();
 
-        let meta_merkle_root = [1; 32];
+        let depositor = Pubkey::new_unique();
 
         vault_whitelist_client
-            .do_set_meta_merkle_root(&vault_root, &meta_merkle_root)
+            .do_add_to_whitelist(&vault_root, &depositor)
             .await
             .unwrap();
 
@@ -38,12 +36,19 @@ mod tests {
             &vault_root.vault_pubkey,
         )
         .0;
-        let whitelist = vault_whitelist_client
-            .get_whitelist(&whitelist_pubkey)
+        let whitelist_user_pubkey = WhitelistUser::find_program_address(
+            &jito_vault_whitelist_program::id(),
+            &whitelist_pubkey,
+            &depositor,
+        )
+        .0;
+        let whitelist_user = vault_whitelist_client
+            .get_whitelist_user(&whitelist_user_pubkey)
             .await
             .unwrap();
 
-        assert_eq!(whitelist.meta_merkle_root, meta_merkle_root);
+        assert_eq!(whitelist_user.whitelist, whitelist_pubkey);
+        assert_eq!(whitelist_user.user, depositor);
     }
 
     #[tokio::test]
@@ -59,10 +64,8 @@ mod tests {
         let mut vault_whitelist_client = fixture.vault_whitelist_program_client();
         vault_whitelist_client.do_initialize_config().await.unwrap();
 
-        let meta_merkle_root = [0; 32];
-
         vault_whitelist_client
-            .do_initialize_whitelist(&vault_root_a, &meta_merkle_root)
+            .do_initialize_whitelist(&vault_root_a)
             .await
             .unwrap();
 
@@ -72,10 +75,10 @@ mod tests {
             .unwrap();
         vault_root_a.vault_admin = vault_root_b.vault_admin;
 
-        let meta_merkle_root = [1; 32];
+        let depositor = Pubkey::new_unique();
 
         let result = vault_whitelist_client
-            .do_set_meta_merkle_root(&vault_root_a, &meta_merkle_root)
+            .do_add_to_whitelist(&vault_root_a, &depositor)
             .await;
 
         assert_vault_error(result, VaultError::VaultAdminInvalid);

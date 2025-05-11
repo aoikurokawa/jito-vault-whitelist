@@ -2962,6 +2962,7 @@ dependencies = [
  "bytemuck",
  "jito-account-traits-derive",
  "jito-bytemuck",
+ "jito-vault-whitelist-sdk",
  "shank",
  "solana-program",
 ]

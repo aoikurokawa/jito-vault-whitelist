@@ -12,8 +12,14 @@ pub enum VaultWhitelistError {
     #[error("DivisionByZero")]
     DivisionByZero,
 
-    #[error("InvalidProof")]
-    InvalidProof,
+    #[error("InvalidVault")]
+    InvalidVault,
+
+    #[error("InvalidWhitelist")]
+    InvalidWhitelist,
+
+    #[error("InvalidWhitelistUser")]
+    InvalidWhitelistUser,
 }
 
 impl From<VaultWhitelistError> for ProgramError {

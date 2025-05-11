@@ -27,10 +27,7 @@ pub enum ConfigActions {
 #[derive(Subcommand)]
 pub enum VaultWhitelistActions {
     /// Creates a new vault whitelist
-    Initialize {
-        whitelist_file_path: PathBuf,
-        vault: Pubkey,
-    },
+    Initialize { vault: Pubkey },
 
     /// Set mint burn admin
     SetMintBurnAdmin { vault: Pubkey },
@@ -43,7 +40,6 @@ pub enum VaultWhitelistActions {
 
     /// Mint
     Mint {
-        whitelist_file_path: PathBuf,
         signer_keypair_path: PathBuf,
         vault: Pubkey,
         amount_in: u64,
@@ -52,7 +48,6 @@ pub enum VaultWhitelistActions {
 
     /// Enqueue Withdrawal
     EnqueueWithdrawal {
-        whitelist_file_path: PathBuf,
         signer_keypair_path: PathBuf,
         vault: Pubkey,
         amount: u64,
@@ -60,7 +55,6 @@ pub enum VaultWhitelistActions {
 
     /// Burn Withdrawal Ticket
     BurnWithdrawalTicket {
-        whitelist_file_path: PathBuf,
         signer_keypair_path: PathBuf,
         vault: Pubkey,
     },

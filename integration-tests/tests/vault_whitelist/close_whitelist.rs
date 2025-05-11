@@ -20,7 +20,7 @@ mod tests {
         let meta_merkle_root = [0; 32];
 
         vault_whitelist_client
-            .do_initialize_whitelist(&vault_root, &meta_merkle_root)
+            .do_initialize_whitelist(&vault_root)
             .await
             .unwrap();
 

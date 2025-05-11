@@ -61,17 +61,7 @@
           "isSigner": false
         }
       ],
-      "args": [
-        {
-          "name": "metaMerkleRoot",
-          "type": {
-            "array": [
-              "u8",
-              32
-            ]
-          }
-        }
-      ],
+      "args": [],
       "discriminant": {
         "type": "u8",
         "value": 1
@@ -118,7 +108,7 @@
       }
     },
     {
-      "name": "SetMetaMerkleRoot",
+      "name": "AddToWhitelist",
       "accounts": [
         {
           "name": "config",
@@ -132,6 +122,11 @@
         },
         {
           "name": "whitelist",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "whitelistUser",
           "isMut": true,
           "isSigner": false
         },
@@ -139,19 +134,19 @@
           "name": "vaultAdmin",
           "isMut": false,
           "isSigner": true
-        }
-      ],
-      "args": [
+        },
         {
-          "name": "metaMerkleRoot",
-          "type": {
-            "array": [
-              "u8",
-              32
-            ]
-          }
+          "name": "user",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
         }
       ],
+      "args": [],
       "discriminant": {
         "type": "u8",
         "value": 3
@@ -211,6 +206,11 @@
           "isSigner": false
         },
         {
+          "name": "whitelistUser",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
           "name": "jitoVaultProgram",
           "isMut": false,
           "isSigner": false
@@ -222,17 +222,6 @@
         }
       ],
       "args": [
-        {
-          "name": "proof",
-          "type": {
-            "vec": {
-              "array": [
-                "u8",
-                32
-              ]
-            }
-          }
-        },
         {
           "name": "amountIn",
           "type": "u64"
@@ -306,23 +295,17 @@
           "isSigner": false
         },
         {
+          "name": "whitelistUser",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
           "name": "jitoVaultProgram",
           "isMut": false,
           "isSigner": false
         }
       ],
       "args": [
-        {
-          "name": "proof",
-          "type": {
-            "vec": {
-              "array": [
-                "u8",
-                32
-              ]
-            }
-          }
-        },
         {
           "name": "amount",
           "type": "u64"
@@ -407,24 +390,17 @@
           "isSigner": false
         },
         {
+          "name": "whitelistUser",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
           "name": "jitoVaultProgram",
           "isMut": false,
           "isSigner": false
         }
       ],
-      "args": [
-        {
-          "name": "proof",
-          "type": {
-            "vec": {
-              "array": [
-                "u8",
-                32
-              ]
-            }
-          }
-        }
-      ],
+      "args": [],
       "discriminant": {
         "type": "u8",
         "value": 6
@@ -516,13 +492,33 @@
             "type": "publicKey"
           },
           {
-            "name": "metaMerkleRoot",
+            "name": "bump",
+            "type": "u8"
+          },
+          {
+            "name": "reserved",
             "type": {
               "array": [
                 "u8",
-                32
+                263
               ]
             }
+          }
+        ]
+      }
+    },
+    {
+      "name": "WhitelistUser",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "whitelist",
+            "type": "publicKey"
+          },
+          {
+            "name": "user",
+            "type": "publicKey"
           },
           {
             "name": "bump",
@@ -559,8 +555,18 @@
     },
     {
       "code": 3003,
-      "name": "InvalidProof",
-      "msg": "InvalidProof"
+      "name": "InvalidVault",
+      "msg": "InvalidVault"
+    },
+    {
+      "code": 3004,
+      "name": "InvalidWhitelist",
+      "msg": "InvalidWhitelist"
+    },
+    {
+      "code": 3005,
+      "name": "InvalidWhitelistUser",
+      "msg": "InvalidWhitelistUser"
     }
   ],
   "metadata": {

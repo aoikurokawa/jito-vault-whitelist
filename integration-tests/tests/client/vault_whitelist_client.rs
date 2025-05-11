@@ -4,11 +4,13 @@ use jito_vault_core::{
     vault_staker_withdrawal_ticket::VaultStakerWithdrawalTicket,
 };
 use jito_vault_whitelist_client::instructions::{
-    BurnWithdrawalTicketBuilder, CloseWhitelistBuilder, EnqueueWithdrawalBuilder,
-    InitializeConfigBuilder, InitializeWhitelistBuilder, MintBuilder, SetMetaMerkleRootBuilder,
+    AddToWhitelistBuilder, BurnWithdrawalTicketBuilder, CloseWhitelistBuilder,
+    EnqueueWithdrawalBuilder, InitializeConfigBuilder, InitializeWhitelistBuilder, MintBuilder,
     SetMintBurnAdminBuilder,
 };
-use jito_vault_whitelist_core::{config::Config, whitelist::Whitelist};
+use jito_vault_whitelist_core::{
+    config::Config, whitelist::Whitelist, whitelist_user::WhitelistUser,
+};
 use jito_vault_whitelist_sdk::error::VaultWhitelistError;
 use solana_program_test::BanksClient;
 use solana_sdk::{
@@ -103,13 +105,25 @@ impl VaultWhitelistClient {
         Ok(config)
     }
 
-    #[allow(dead_code)]
     pub async fn get_whitelist(
         &mut self,
         account: &Pubkey,
     ) -> TestResult<jito_vault_whitelist_client::accounts::Whitelist> {
         let account = self.banks_client.get_account(*account).await?.unwrap();
         let whitelist = jito_vault_whitelist_client::accounts::Whitelist::try_deserialize(
+            &mut account.data.as_slice(),
+        )
+        .unwrap();
+
+        Ok(whitelist)
+    }
+
+    pub async fn get_whitelist_user(
+        &mut self,
+        account: &Pubkey,
+    ) -> TestResult<jito_vault_whitelist_client::accounts::WhitelistUser> {
+        let account = self.banks_client.get_account(*account).await?.unwrap();
+        let whitelist = jito_vault_whitelist_client::accounts::WhitelistUser::try_deserialize(
             &mut account.data.as_slice(),
         )
         .unwrap();
@@ -147,22 +161,13 @@ impl VaultWhitelistClient {
         .await
     }
 
-    pub async fn do_initialize_whitelist(
-        &mut self,
-        vault_root: &VaultRoot,
-        meta_merkle_root: &[u8; 32],
-    ) -> TestResult<()> {
-        self.initialize_whitelist(vault_root, meta_merkle_root)
-            .await?;
+    pub async fn do_initialize_whitelist(&mut self, vault_root: &VaultRoot) -> TestResult<()> {
+        self.initialize_whitelist(vault_root).await?;
 
         Ok(())
     }
 
-    pub async fn initialize_whitelist(
-        &mut self,
-        vault_root: &VaultRoot,
-        meta_merkle_root: &[u8; 32],
-    ) -> TestResult<()> {
+    pub async fn initialize_whitelist(&mut self, vault_root: &VaultRoot) -> TestResult<()> {
         let config = Config::find_program_address(&jito_vault_whitelist_program::id()).0;
         let whitelist = Whitelist::find_program_address(
             &jito_vault_whitelist_program::id(),
@@ -175,7 +180,6 @@ impl VaultWhitelistClient {
             .whitelist(whitelist)
             .vault(vault_root.vault_pubkey)
             .vault_admin(vault_root.vault_admin.pubkey())
-            .meta_merkle_root(*meta_merkle_root)
             .instruction();
         ix.program_id = jito_vault_whitelist_program::id();
 
@@ -227,21 +231,20 @@ impl VaultWhitelistClient {
         .await
     }
 
-    pub async fn do_set_meta_merkle_root(
+    pub async fn do_add_to_whitelist(
         &mut self,
         vault_root: &VaultRoot,
-        meta_merkle_root: &[u8; 32],
+        user: &Pubkey,
     ) -> TestResult<()> {
-        self.set_meta_merkle_root(vault_root, meta_merkle_root)
-            .await?;
+        self.add_to_whitelist(vault_root, user).await?;
 
         Ok(())
     }
 
-    pub async fn set_meta_merkle_root(
+    pub async fn add_to_whitelist(
         &mut self,
         vault_root: &VaultRoot,
-        meta_merkle_root: &[u8; 32],
+        user: &Pubkey,
     ) -> TestResult<()> {
         let config = Config::find_program_address(&jito_vault_whitelist_program::id()).0;
         let whitelist = Whitelist::find_program_address(
@@ -249,13 +252,20 @@ impl VaultWhitelistClient {
             &vault_root.vault_pubkey,
         )
         .0;
+        let whitelist_user = WhitelistUser::find_program_address(
+            &jito_vault_whitelist_program::id(),
+            &whitelist,
+            user,
+        )
+        .0;
 
-        let mut ix = SetMetaMerkleRootBuilder::new()
+        let mut ix = AddToWhitelistBuilder::new()
             .config(config)
             .whitelist(whitelist)
             .vault(vault_root.vault_pubkey)
             .vault_admin(vault_root.vault_admin.pubkey())
-            .meta_merkle_root(*meta_merkle_root)
+            .whitelist_user(whitelist_user)
+            .user(*user)
             .instruction();
         ix.program_id = jito_vault_whitelist_program::id();
 
@@ -275,7 +285,6 @@ impl VaultWhitelistClient {
         vault_root: &VaultRoot,
         vault: &Vault,
         depositor: &Keypair,
-        proof: &[[u8; 32]],
         amount_in: u64,
         min_amount_out: u64,
     ) -> TestResult<()> {
@@ -287,7 +296,6 @@ impl VaultWhitelistClient {
             &get_associated_token_address(&vault_root.vault_pubkey, &vault.supported_mint),
             &get_associated_token_address(&depositor.pubkey(), &vault.vrt_mint),
             &get_associated_token_address(&vault.fee_wallet, &vault.vrt_mint),
-            proof,
             amount_in,
             min_amount_out,
         )
@@ -305,7 +313,6 @@ impl VaultWhitelistClient {
         vault_token_account: &Pubkey,
         depositor_vrt_token_account: &Pubkey,
         vault_fee_token_account: &Pubkey,
-        proof: &[[u8; 32]],
         amount_in: u64,
         min_amount_out: u64,
     ) -> TestResult<()> {
@@ -313,6 +320,12 @@ impl VaultWhitelistClient {
         let signers = vec![depositor];
         let whitelist =
             Whitelist::find_program_address(&jito_vault_whitelist_program::id(), &vault_pubkey).0;
+        let whitelist_user = WhitelistUser::find_program_address(
+            &jito_vault_whitelist_program::id(),
+            &whitelist,
+            &depositor.pubkey(),
+        )
+        .0;
 
         let mut ix = MintBuilder::new()
             .config(config)
@@ -327,9 +340,9 @@ impl VaultWhitelistClient {
             .depositor_vrt_token_account(*depositor_vrt_token_account)
             .vault_fee_token_account(*vault_fee_token_account)
             .whitelist(whitelist)
+            .whitelist_user(whitelist_user)
             .jito_vault_program(jito_vault_program::id())
             .token_program(spl_token::id())
-            .proof(proof.to_vec())
             .amount_in(amount_in)
             .min_amount_out(min_amount_out)
             .instruction();
@@ -351,7 +364,6 @@ impl VaultWhitelistClient {
         vault_root: &VaultRoot,
         vault: &Vault,
         depositor: &Keypair,
-        proof: &[[u8; 32]],
         amount: u64,
     ) -> TestResult<VaultStakerWithdrawalTicketRoot> {
         let depositor_vrt_token_account =
@@ -379,7 +391,6 @@ impl VaultWhitelistClient {
             &depositor_vrt_token_account,
             &base,
             amount,
-            proof,
         )
         .await?;
 
@@ -398,12 +409,17 @@ impl VaultWhitelistClient {
         staker_vrt_token_account: &Pubkey,
         base: &Keypair,
         amount: u64,
-        proof: &[[u8; 32]],
     ) -> TestResult<()> {
         let config = Config::find_program_address(&jito_vault_whitelist_program::id()).0;
         let signers = vec![staker, base];
         let whitelist =
             Whitelist::find_program_address(&jito_vault_whitelist_program::id(), &vault).0;
+        let whitelist_user = WhitelistUser::find_program_address(
+            &jito_vault_whitelist_program::id(),
+            &whitelist,
+            &staker.pubkey(),
+        )
+        .0;
 
         let mut ix = EnqueueWithdrawalBuilder::new()
             .config(config)
@@ -420,10 +436,10 @@ impl VaultWhitelistClient {
             .base(base.pubkey())
             .config(config)
             .whitelist(whitelist)
+            .whitelist_user(whitelist_user)
             .jito_vault_program(jito_vault_program::id())
             .token_program(spl_token::id())
             .amount(amount)
-            .proof(proof.to_vec())
             .instruction();
         ix.program_id = jito_vault_whitelist_program::id();
 
@@ -445,7 +461,6 @@ impl VaultWhitelistClient {
         vault: &Vault,
         depositor: &Keypair,
         vault_staker_withdrawal_ticket_base: &Pubkey,
-        proof: &[[u8; 32]],
     ) -> TestResult<VaultStakerWithdrawalTicketRoot> {
         let base = Keypair::new();
         let vault_staker_withdrawal_ticket = VaultStakerWithdrawalTicket::find_program_address(
@@ -473,7 +488,6 @@ impl VaultWhitelistClient {
             &vault_staker_withdrawal_ticket_token_account,
             &get_associated_token_address(&vault.fee_wallet, &vault.vrt_mint),
             &get_associated_token_address(&config.program_fee_wallet, &vault.vrt_mint),
-            proof,
         )
         .await?;
 
@@ -494,11 +508,16 @@ impl VaultWhitelistClient {
         vault_staker_withdrawal_ticket_token_account: &Pubkey,
         vault_fee_token_account: &Pubkey,
         program_fee_token_account: &Pubkey,
-        proof: &[[u8; 32]],
     ) -> TestResult<()> {
         let signers = vec![staker];
         let whitelist =
             Whitelist::find_program_address(&jito_vault_whitelist_program::id(), &vault).0;
+        let whitelist_user = WhitelistUser::find_program_address(
+            &jito_vault_whitelist_program::id(),
+            &whitelist,
+            &staker.pubkey(),
+        )
+        .0;
         let config = Config::find_program_address(&jito_vault_whitelist_program::id()).0;
 
         let mut ix = BurnWithdrawalTicketBuilder::new()
@@ -517,8 +536,8 @@ impl VaultWhitelistClient {
             .token_program(spl_token::id())
             .config(config)
             .whitelist(whitelist)
+            .whitelist_user(whitelist_user)
             .jito_vault_program(jito_vault_program::id())
-            .proof(proof.to_vec())
             .instruction();
         ix.program_id = jito_vault_whitelist_program::id();
 

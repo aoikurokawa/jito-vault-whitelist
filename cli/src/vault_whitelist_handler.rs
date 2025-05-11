@@ -9,8 +9,7 @@ use jito_vault_core::{
 };
 use jito_vault_whitelist_client::instructions::{
     BurnWithdrawalTicketBuilder, CloseWhitelistBuilder, EnqueueWithdrawalBuilder,
-    InitializeConfigBuilder, InitializeWhitelistBuilder, MintBuilder, SetMetaMerkleRootBuilder,
-    SetMintBurnAdminBuilder,
+    InitializeConfigBuilder, InitializeWhitelistBuilder, MintBuilder, SetMintBurnAdminBuilder,
 };
 use jito_vault_whitelist_meta_merkle_tree::{
     generated_merkle_tree::GeneratedMerkleTree, read_json_from_file,
@@ -79,12 +78,8 @@ impl VaultWhitelistCliHandler {
                 action: ConfigActions::Get,
             } => self.get_config(),
             VaultWhitelistCommands::Whitelist {
-                action:
-                    VaultWhitelistActions::Initialize {
-                        whitelist_file_path,
-                        vault,
-                    },
-            } => self.initialize_whitelist(whitelist_file_path, vault),
+                action: VaultWhitelistActions::Initialize { vault },
+            } => self.initialize_whitelist(vault),
             VaultWhitelistCommands::Whitelist {
                 action: VaultWhitelistActions::SetMintBurnAdmin { vault },
             } => self.set_mint_burn_admin(vault),
@@ -94,40 +89,31 @@ impl VaultWhitelistCliHandler {
                         whitelist_file_path,
                         vault,
                     },
-            } => self.set_meta_merkle_root(whitelist_file_path, vault),
+            } => todo!(),
             VaultWhitelistCommands::Whitelist {
                 action:
                     VaultWhitelistActions::Mint {
-                        whitelist_file_path,
                         signer_keypair_path,
                         vault,
                         amount_in,
                         min_amount_out,
                     },
-            } => self.mint(
-                whitelist_file_path,
-                signer_keypair_path,
-                vault,
-                amount_in,
-                min_amount_out,
-            ),
+            } => self.mint(signer_keypair_path, vault, amount_in, min_amount_out),
             VaultWhitelistCommands::Whitelist {
                 action:
                     VaultWhitelistActions::EnqueueWithdrawal {
-                        whitelist_file_path,
                         signer_keypair_path,
                         vault,
                         amount,
                     },
-            } => self.enqueue_withdrawal(whitelist_file_path, signer_keypair_path, vault, amount),
+            } => self.enqueue_withdrawal(signer_keypair_path, vault, amount),
             VaultWhitelistCommands::Whitelist {
                 action:
                     VaultWhitelistActions::BurnWithdrawalTicket {
-                        whitelist_file_path,
                         signer_keypair_path,
                         vault,
                     },
-            } => self.burn_withdrawal_ticket(whitelist_file_path, signer_keypair_path, vault),
+            } => self.burn_withdrawal_ticket(signer_keypair_path, vault),
             VaultWhitelistCommands::Whitelist {
                 action: VaultWhitelistActions::CloseWhitelist { vault },
             } => self.close_whitelist(vault),
@@ -193,11 +179,7 @@ impl VaultWhitelistCliHandler {
 /// Handle Vault Whitelist Whitelist
 impl VaultWhitelistCliHandler {
     /// Initialize Whitelist
-    pub fn initialize_whitelist(
-        &self,
-        whitelist_file_path: PathBuf,
-        vault: Pubkey,
-    ) -> anyhow::Result<()> {
+    pub fn initialize_whitelist(&self, vault: Pubkey) -> anyhow::Result<()> {
         let signer = self.signer()?;
         let admin = signer.pubkey();
 
@@ -206,10 +188,6 @@ impl VaultWhitelistCliHandler {
             &vault,
         )
         .0;
-
-        let vault_whitelist_metas =
-            read_json_from_file::<Vec<VaultWhitelistMeta>>(&whitelist_file_path)?;
-        let merkle_tree = GeneratedMerkleTree::new(&vault_whitelist_metas)?;
 
         let mut ix_builder = InitializeWhitelistBuilder::new();
         ix_builder
@@ -221,8 +199,7 @@ impl VaultWhitelistCliHandler {
             )
             .whitelist(whitelist)
             .vault(vault)
-            .vault_admin(admin)
-            .meta_merkle_root(merkle_tree.merkle_root.to_bytes());
+            .vault_admin(admin);
 
         let mut ix = ix_builder.instruction();
         ix.program_id = self.vault_whitelist_program_id;
@@ -285,57 +262,56 @@ impl VaultWhitelistCliHandler {
     }
 
     /// Set meta merkle root
-    pub fn set_meta_merkle_root(
-        &self,
-        whitelist_file_path: PathBuf,
-        vault: Pubkey,
-    ) -> anyhow::Result<()> {
-        let signer = self.signer()?;
-        let admin = signer.pubkey();
+    // pub fn add_to_whitelist(
+    //     &self,
+    //     whitelist_file_path: PathBuf,
+    //     vault: Pubkey,
+    // ) -> anyhow::Result<()> {
+    //     let signer = self.signer()?;
+    //     let admin = signer.pubkey();
 
-        let whitelist = jito_vault_whitelist_core::whitelist::Whitelist::find_program_address(
-            &self.vault_whitelist_program_id,
-            &vault,
-        )
-        .0;
+    //     let whitelist = jito_vault_whitelist_core::whitelist::Whitelist::find_program_address(
+    //         &self.vault_whitelist_program_id,
+    //         &vault,
+    //     )
+    //     .0;
 
-        let vault_whitelist_metas =
-            read_json_from_file::<Vec<VaultWhitelistMeta>>(&whitelist_file_path)?;
-        let merkle_tree = GeneratedMerkleTree::new(&vault_whitelist_metas)?;
+    //     let vault_whitelist_metas =
+    //         read_json_from_file::<Vec<VaultWhitelistMeta>>(&whitelist_file_path)?;
+    //     let merkle_tree = GeneratedMerkleTree::new(&vault_whitelist_metas)?;
 
-        let mut ix_builder = SetMetaMerkleRootBuilder::new();
-        ix_builder
-            .config(
-                jito_vault_whitelist_core::config::Config::find_program_address(
-                    &self.vault_whitelist_program_id,
-                )
-                .0,
-            )
-            .whitelist(whitelist)
-            .vault(vault)
-            .vault_admin(admin)
-            .meta_merkle_root(merkle_tree.merkle_root.to_bytes());
+    //     let mut ix_builder = SetMetaMerkleRootBuilder::new();
+    //     ix_builder
+    //         .config(
+    //             jito_vault_whitelist_core::config::Config::find_program_address(
+    //                 &self.vault_whitelist_program_id,
+    //             )
+    //             .0,
+    //         )
+    //         .whitelist(whitelist)
+    //         .vault(vault)
+    //         .vault_admin(admin)
+    //         .meta_merkle_root(merkle_tree.merkle_root.to_bytes());
 
-        let mut ix = ix_builder.instruction();
-        ix.program_id = self.vault_whitelist_program_id;
+    //     let mut ix = ix_builder.instruction();
+    //     ix.program_id = self.vault_whitelist_program_id;
 
-        info!("Setting meta merkle root");
+    //     info!("Setting meta merkle root");
 
-        let ixs = [ix];
-        self.process_transaction(&ixs, &signer.pubkey(), &[signer])?;
+    //     let ixs = [ix];
+    //     self.process_transaction(&ixs, &signer.pubkey(), &[signer])?;
 
-        if !self.print_tx {
-            let account =
-                self.get_account::<jito_vault_whitelist_client::accounts::Whitelist>(&whitelist)?;
-            info!("{}", account.pretty_display());
-        }
+    //     if !self.print_tx {
+    //         let account =
+    //             self.get_account::<jito_vault_whitelist_client::accounts::Whitelist>(&whitelist)?;
+    //         info!("{}", account.pretty_display());
+    //     }
 
-        Ok(())
-    }
+    //     Ok(())
+    // }
 
     pub fn mint(
         &self,
-        whitelist_file_path: PathBuf,
         signer_keypair_path: PathBuf,
         vault_pubkey: Pubkey,
         amount_in: u64,
@@ -350,6 +326,13 @@ impl VaultWhitelistCliHandler {
             &vault_pubkey,
         )
         .0;
+        let whitelist_user =
+            jito_vault_whitelist_core::whitelist_user::WhitelistUser::find_program_address(
+                &self.vault_whitelist_program_id,
+                &whitelist,
+                &signer.pubkey(),
+            )
+            .0;
 
         let vault = self.get_account::<jito_vault_client::accounts::Vault>(&vault_pubkey)?;
 
@@ -389,10 +372,6 @@ impl VaultWhitelistCliHandler {
             &spl_token::ID,
         );
 
-        let vault_whitelist_metas =
-            read_json_from_file::<Vec<VaultWhitelistMeta>>(&whitelist_file_path)?;
-        let proof = GeneratedMerkleTree::get_proof(&vault_whitelist_metas, &depositor)?;
-
         let mut ix_builder = MintBuilder::new();
         ix_builder
             .config(
@@ -412,8 +391,8 @@ impl VaultWhitelistCliHandler {
             .depositor_vrt_token_account(depositor_vrt_token_account)
             .vault_fee_token_account(vault_fee_token_account)
             .whitelist(whitelist)
+            .whitelist_user(whitelist_user)
             .jito_vault_program(self.vault_program_id)
-            .proof(proof)
             .amount_in(amount_in)
             .min_amount_out(min_amount_out);
 
@@ -442,7 +421,6 @@ impl VaultWhitelistCliHandler {
 
     pub fn enqueue_withdrawal(
         &self,
-        whitelist_file_path: PathBuf,
         signer_keypair_path: PathBuf,
         vault_pubkey: Pubkey,
         amount: u64,
@@ -456,6 +434,13 @@ impl VaultWhitelistCliHandler {
             &vault_pubkey,
         )
         .0;
+        let whitelist_user =
+            jito_vault_whitelist_core::whitelist_user::WhitelistUser::find_program_address(
+                &self.vault_whitelist_program_id,
+                &whitelist,
+                &signer.pubkey(),
+            )
+            .0;
 
         let vault = self.get_account::<jito_vault_client::accounts::Vault>(&vault_pubkey)?;
 
@@ -479,10 +464,6 @@ impl VaultWhitelistCliHandler {
             &spl_token::ID,
         );
 
-        let vault_whitelist_metas =
-            read_json_from_file::<Vec<VaultWhitelistMeta>>(&whitelist_file_path)?;
-        let proof = GeneratedMerkleTree::get_proof(&vault_whitelist_metas, &signer.pubkey())?;
-
         let mut ix_builder = EnqueueWithdrawalBuilder::new();
         ix_builder
             .vault_config(
@@ -503,9 +484,9 @@ impl VaultWhitelistCliHandler {
             .staker_vrt_token_account(staker_vrt_token_account)
             .base(signer.pubkey())
             .whitelist(whitelist)
+            .whitelist_user(whitelist_user)
             .jito_vault_program(self.vault_program_id)
-            .amount(amount)
-            .proof(proof);
+            .amount(amount);
 
         let mut ix = ix_builder.instruction();
         ix.program_id = self.vault_whitelist_program_id;
@@ -529,7 +510,6 @@ impl VaultWhitelistCliHandler {
 
     pub fn burn_withdrawal_ticket(
         &self,
-        whitelist_file_path: PathBuf,
         signer_keypair_path: PathBuf,
         vault_pubkey: Pubkey,
     ) -> anyhow::Result<()> {
@@ -542,6 +522,13 @@ impl VaultWhitelistCliHandler {
             &vault_pubkey,
         )
         .0;
+        let whitelist_user =
+            jito_vault_whitelist_core::whitelist_user::WhitelistUser::find_program_address(
+                &self.vault_whitelist_program_id,
+                &whitelist,
+                &signer.pubkey(),
+            )
+            .0;
 
         let vault = self.get_account::<jito_vault_client::accounts::Vault>(&vault_pubkey)?;
 
@@ -577,10 +564,6 @@ impl VaultWhitelistCliHandler {
         let program_fee_token_account =
             get_associated_token_address(&config_account.program_fee_wallet, &vault.vrt_mint);
 
-        let vault_whitelist_metas =
-            read_json_from_file::<Vec<VaultWhitelistMeta>>(&whitelist_file_path)?;
-        let proof = GeneratedMerkleTree::get_proof(&vault_whitelist_metas, &signer.pubkey())?;
-
         let mut ix_builder = BurnWithdrawalTicketBuilder::new();
         ix_builder
             .vault_config(
@@ -604,8 +587,8 @@ impl VaultWhitelistCliHandler {
                 .0,
             )
             .whitelist(whitelist)
-            .jito_vault_program(self.vault_program_id)
-            .proof(proof);
+            .whitelist_user(whitelist_user)
+            .jito_vault_program(self.vault_program_id);
 
         let mut ix = ix_builder.instruction();
         ix.program_id = self.vault_whitelist_program_id;

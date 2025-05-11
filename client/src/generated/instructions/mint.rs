@@ -30,6 +30,8 @@ pub struct Mint {
 
     pub whitelist: solana_program::pubkey::Pubkey,
 
+    pub whitelist_user: solana_program::pubkey::Pubkey,
+
     pub jito_vault_program: solana_program::pubkey::Pubkey,
 
     pub token_program: solana_program::pubkey::Pubkey,
@@ -48,7 +50,7 @@ impl Mint {
         args: MintInstructionArgs,
         remaining_accounts: &[solana_program::instruction::AccountMeta],
     ) -> solana_program::instruction::Instruction {
-        let mut accounts = Vec::with_capacity(12 + remaining_accounts.len());
+        let mut accounts = Vec::with_capacity(13 + remaining_accounts.len());
         accounts.push(solana_program::instruction::AccountMeta::new_readonly(
             self.config,
             false,
@@ -86,6 +88,10 @@ impl Mint {
         ));
         accounts.push(solana_program::instruction::AccountMeta::new(
             self.whitelist,
+            false,
+        ));
+        accounts.push(solana_program::instruction::AccountMeta::new_readonly(
+            self.whitelist_user,
             false,
         ));
         accounts.push(solana_program::instruction::AccountMeta::new_readonly(
@@ -129,7 +135,6 @@ impl Default for MintInstructionData {
 #[derive(BorshSerialize, BorshDeserialize, Clone, Debug, Eq, PartialEq)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct MintInstructionArgs {
-    pub proof: Vec<[u8; 32]>,
     pub amount_in: u64,
     pub min_amount_out: u64,
 }
@@ -148,8 +153,9 @@ pub struct MintInstructionArgs {
 ///   7. `[writable]` depositor_vrt_token_account
 ///   8. `[writable]` vault_fee_token_account
 ///   9. `[writable]` whitelist
-///   10. `[]` jito_vault_program
-///   11. `[optional]` token_program (default to `TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA`)
+///   10. `[]` whitelist_user
+///   11. `[]` jito_vault_program
+///   12. `[optional]` token_program (default to `TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA`)
 #[derive(Clone, Debug, Default)]
 pub struct MintBuilder {
     config: Option<solana_program::pubkey::Pubkey>,
@@ -162,9 +168,9 @@ pub struct MintBuilder {
     depositor_vrt_token_account: Option<solana_program::pubkey::Pubkey>,
     vault_fee_token_account: Option<solana_program::pubkey::Pubkey>,
     whitelist: Option<solana_program::pubkey::Pubkey>,
+    whitelist_user: Option<solana_program::pubkey::Pubkey>,
     jito_vault_program: Option<solana_program::pubkey::Pubkey>,
     token_program: Option<solana_program::pubkey::Pubkey>,
-    proof: Option<Vec<[u8; 32]>>,
     amount_in: Option<u64>,
     min_amount_out: Option<u64>,
     __remaining_accounts: Vec<solana_program::instruction::AccountMeta>,
@@ -237,6 +243,11 @@ impl MintBuilder {
         self
     }
     #[inline(always)]
+    pub fn whitelist_user(&mut self, whitelist_user: solana_program::pubkey::Pubkey) -> &mut Self {
+        self.whitelist_user = Some(whitelist_user);
+        self
+    }
+    #[inline(always)]
     pub fn jito_vault_program(
         &mut self,
         jito_vault_program: solana_program::pubkey::Pubkey,
@@ -248,11 +259,6 @@ impl MintBuilder {
     #[inline(always)]
     pub fn token_program(&mut self, token_program: solana_program::pubkey::Pubkey) -> &mut Self {
         self.token_program = Some(token_program);
-        self
-    }
-    #[inline(always)]
-    pub fn proof(&mut self, proof: Vec<[u8; 32]>) -> &mut Self {
-        self.proof = Some(proof);
         self
     }
     #[inline(always)]
@@ -304,6 +310,7 @@ impl MintBuilder {
                 .vault_fee_token_account
                 .expect("vault_fee_token_account is not set"),
             whitelist: self.whitelist.expect("whitelist is not set"),
+            whitelist_user: self.whitelist_user.expect("whitelist_user is not set"),
             jito_vault_program: self
                 .jito_vault_program
                 .expect("jito_vault_program is not set"),
@@ -312,7 +319,6 @@ impl MintBuilder {
             )),
         };
         let args = MintInstructionArgs {
-            proof: self.proof.clone().expect("proof is not set"),
             amount_in: self.amount_in.clone().expect("amount_in is not set"),
             min_amount_out: self
                 .min_amount_out
@@ -346,6 +352,8 @@ pub struct MintCpiAccounts<'a, 'b> {
 
     pub whitelist: &'b solana_program::account_info::AccountInfo<'a>,
 
+    pub whitelist_user: &'b solana_program::account_info::AccountInfo<'a>,
+
     pub jito_vault_program: &'b solana_program::account_info::AccountInfo<'a>,
 
     pub token_program: &'b solana_program::account_info::AccountInfo<'a>,
@@ -376,6 +384,8 @@ pub struct MintCpi<'a, 'b> {
 
     pub whitelist: &'b solana_program::account_info::AccountInfo<'a>,
 
+    pub whitelist_user: &'b solana_program::account_info::AccountInfo<'a>,
+
     pub jito_vault_program: &'b solana_program::account_info::AccountInfo<'a>,
 
     pub token_program: &'b solana_program::account_info::AccountInfo<'a>,
@@ -401,6 +411,7 @@ impl<'a, 'b> MintCpi<'a, 'b> {
             depositor_vrt_token_account: accounts.depositor_vrt_token_account,
             vault_fee_token_account: accounts.vault_fee_token_account,
             whitelist: accounts.whitelist,
+            whitelist_user: accounts.whitelist_user,
             jito_vault_program: accounts.jito_vault_program,
             token_program: accounts.token_program,
             __args: args,
@@ -439,7 +450,7 @@ impl<'a, 'b> MintCpi<'a, 'b> {
             bool,
         )],
     ) -> solana_program::entrypoint::ProgramResult {
-        let mut accounts = Vec::with_capacity(12 + remaining_accounts.len());
+        let mut accounts = Vec::with_capacity(13 + remaining_accounts.len());
         accounts.push(solana_program::instruction::AccountMeta::new_readonly(
             *self.config.key,
             false,
@@ -481,6 +492,10 @@ impl<'a, 'b> MintCpi<'a, 'b> {
             false,
         ));
         accounts.push(solana_program::instruction::AccountMeta::new_readonly(
+            *self.whitelist_user.key,
+            false,
+        ));
+        accounts.push(solana_program::instruction::AccountMeta::new_readonly(
             *self.jito_vault_program.key,
             false,
         ));
@@ -504,7 +519,7 @@ impl<'a, 'b> MintCpi<'a, 'b> {
             accounts,
             data,
         };
-        let mut account_infos = Vec::with_capacity(12 + 1 + remaining_accounts.len());
+        let mut account_infos = Vec::with_capacity(13 + 1 + remaining_accounts.len());
         account_infos.push(self.__program.clone());
         account_infos.push(self.config.clone());
         account_infos.push(self.vault_config.clone());
@@ -516,6 +531,7 @@ impl<'a, 'b> MintCpi<'a, 'b> {
         account_infos.push(self.depositor_vrt_token_account.clone());
         account_infos.push(self.vault_fee_token_account.clone());
         account_infos.push(self.whitelist.clone());
+        account_infos.push(self.whitelist_user.clone());
         account_infos.push(self.jito_vault_program.clone());
         account_infos.push(self.token_program.clone());
         remaining_accounts
@@ -544,8 +560,9 @@ impl<'a, 'b> MintCpi<'a, 'b> {
 ///   7. `[writable]` depositor_vrt_token_account
 ///   8. `[writable]` vault_fee_token_account
 ///   9. `[writable]` whitelist
-///   10. `[]` jito_vault_program
-///   11. `[]` token_program
+///   10. `[]` whitelist_user
+///   11. `[]` jito_vault_program
+///   12. `[]` token_program
 #[derive(Clone, Debug)]
 pub struct MintCpiBuilder<'a, 'b> {
     instruction: Box<MintCpiBuilderInstruction<'a, 'b>>,
@@ -565,9 +582,9 @@ impl<'a, 'b> MintCpiBuilder<'a, 'b> {
             depositor_vrt_token_account: None,
             vault_fee_token_account: None,
             whitelist: None,
+            whitelist_user: None,
             jito_vault_program: None,
             token_program: None,
-            proof: None,
             amount_in: None,
             min_amount_out: None,
             __remaining_accounts: Vec::new(),
@@ -652,6 +669,14 @@ impl<'a, 'b> MintCpiBuilder<'a, 'b> {
         self
     }
     #[inline(always)]
+    pub fn whitelist_user(
+        &mut self,
+        whitelist_user: &'b solana_program::account_info::AccountInfo<'a>,
+    ) -> &mut Self {
+        self.instruction.whitelist_user = Some(whitelist_user);
+        self
+    }
+    #[inline(always)]
     pub fn jito_vault_program(
         &mut self,
         jito_vault_program: &'b solana_program::account_info::AccountInfo<'a>,
@@ -665,11 +690,6 @@ impl<'a, 'b> MintCpiBuilder<'a, 'b> {
         token_program: &'b solana_program::account_info::AccountInfo<'a>,
     ) -> &mut Self {
         self.instruction.token_program = Some(token_program);
-        self
-    }
-    #[inline(always)]
-    pub fn proof(&mut self, proof: Vec<[u8; 32]>) -> &mut Self {
-        self.instruction.proof = Some(proof);
         self
     }
     #[inline(always)]
@@ -724,7 +744,6 @@ impl<'a, 'b> MintCpiBuilder<'a, 'b> {
         signers_seeds: &[&[&[u8]]],
     ) -> solana_program::entrypoint::ProgramResult {
         let args = MintInstructionArgs {
-            proof: self.instruction.proof.clone().expect("proof is not set"),
             amount_in: self
                 .instruction
                 .amount_in
@@ -774,6 +793,11 @@ impl<'a, 'b> MintCpiBuilder<'a, 'b> {
 
             whitelist: self.instruction.whitelist.expect("whitelist is not set"),
 
+            whitelist_user: self
+                .instruction
+                .whitelist_user
+                .expect("whitelist_user is not set"),
+
             jito_vault_program: self
                 .instruction
                 .jito_vault_program
@@ -805,9 +829,9 @@ struct MintCpiBuilderInstruction<'a, 'b> {
     depositor_vrt_token_account: Option<&'b solana_program::account_info::AccountInfo<'a>>,
     vault_fee_token_account: Option<&'b solana_program::account_info::AccountInfo<'a>>,
     whitelist: Option<&'b solana_program::account_info::AccountInfo<'a>>,
+    whitelist_user: Option<&'b solana_program::account_info::AccountInfo<'a>>,
     jito_vault_program: Option<&'b solana_program::account_info::AccountInfo<'a>>,
     token_program: Option<&'b solana_program::account_info::AccountInfo<'a>>,
-    proof: Option<Vec<[u8; 32]>>,
     amount_in: Option<u64>,
     min_amount_out: Option<u64>,
     /// Additional instruction accounts `(AccountInfo, is_writable, is_signer)`.

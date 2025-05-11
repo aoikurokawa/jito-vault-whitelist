@@ -19,10 +19,8 @@ mod tests {
         let mut vault_whitelist_client = fixture.vault_whitelist_program_client();
         vault_whitelist_client.do_initialize_config().await.unwrap();
 
-        let meta_merkle_root = [0; 32];
-
         vault_whitelist_client
-            .do_initialize_whitelist(&vault_root, &meta_merkle_root)
+            .do_initialize_whitelist(&vault_root)
             .await
             .unwrap();
 
@@ -37,7 +35,7 @@ mod tests {
             .unwrap();
 
         assert_eq!(whitelist.vault, vault_root.vault_pubkey);
-        assert_eq!(whitelist.meta_merkle_root, meta_merkle_root);
+        // assert_eq!(whitelist.meta_merkle_root, meta_merkle_root);
     }
 
     #[tokio::test]
@@ -53,8 +51,6 @@ mod tests {
         let mut vault_whitelist_client = fixture.vault_whitelist_program_client();
         vault_whitelist_client.do_initialize_config().await.unwrap();
 
-        let meta_merkle_root = [0; 32];
-
         let vault_root_b = vault_program_client
             .do_initialize_vault(1000, 1000, 1000, 9, &Pubkey::new_unique())
             .await
@@ -62,7 +58,7 @@ mod tests {
         vault_root_a.vault_admin = vault_root_b.vault_admin;
 
         let result = vault_whitelist_client
-            .do_initialize_whitelist(&vault_root_a, &meta_merkle_root)
+            .do_initialize_whitelist(&vault_root_a)
             .await;
 
         assert_vault_error(result, VaultError::VaultAdminInvalid);

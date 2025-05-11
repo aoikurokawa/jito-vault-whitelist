@@ -5,20 +5,20 @@
 //! <https://github.com/kinobi-so/kinobi>
 //!
 
+pub(crate) mod r#add_to_whitelist;
 pub(crate) mod r#burn_withdrawal_ticket;
 pub(crate) mod r#close_whitelist;
 pub(crate) mod r#enqueue_withdrawal;
 pub(crate) mod r#initialize_config;
 pub(crate) mod r#initialize_whitelist;
 pub(crate) mod r#mint;
-pub(crate) mod r#set_meta_merkle_root;
 pub(crate) mod r#set_mint_burn_admin;
 
+pub use self::r#add_to_whitelist::*;
 pub use self::r#burn_withdrawal_ticket::*;
 pub use self::r#close_whitelist::*;
 pub use self::r#enqueue_withdrawal::*;
 pub use self::r#initialize_config::*;
 pub use self::r#initialize_whitelist::*;
 pub use self::r#mint::*;
-pub use self::r#set_meta_merkle_root::*;
 pub use self::r#set_mint_burn_admin::*;

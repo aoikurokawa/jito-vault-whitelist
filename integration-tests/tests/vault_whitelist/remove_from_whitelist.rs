@@ -57,6 +57,7 @@ mod tests {
         let response = vault_whitelist_client
             .get_whitelist_user(&whitelist_user_pubkey)
             .await;
+
         assert!(response.is_err());
     }
 }

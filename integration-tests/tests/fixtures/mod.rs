@@ -7,7 +7,7 @@ pub mod fixture;
 
 pub type TestResult<T> = Result<T, TestError>;
 
-#[derive(Error, Debug)]
+#[derive(Debug, Error)]
 pub enum TestError {
     #[error(transparent)]
     BanksClient(#[from] BanksClientError),

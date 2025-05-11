@@ -12,7 +12,7 @@ const RESERVED_SPACE_LEN: usize = 263;
 #[repr(C)]
 pub struct Whitelist {
     /// The vault pubkey
-    vault: Pubkey,
+    pub vault: Pubkey,
 
     /// Bump seed for the PDA
     bump: u8,

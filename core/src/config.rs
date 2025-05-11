@@ -13,10 +13,10 @@ const RESERVED_SPACE_LEN: usize = 263;
 #[repr(C)]
 pub struct Config {
     /// Config admin
-    admin: Pubkey,
+    pub admin: Pubkey,
 
     /// The approved restaking program for this vault
-    vault_program: Pubkey,
+    pub vault_program: Pubkey,
 
     /// The bump seed for the PDA
     pub bump: u8,

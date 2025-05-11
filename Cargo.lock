@@ -2934,7 +2934,9 @@ dependencies = [
  "num-traits",
  "serde",
  "serde_with",
+ "solana-client",
  "solana-program",
+ "solana-sdk",
  "thiserror 1.0.69",
 ]
 
